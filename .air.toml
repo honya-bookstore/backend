@@ -1,0 +1,12 @@
+#:schema ""
+
+[build]
+cmd = """
+go build -gcflags='all=-N -l' -o ./backend ./cmd/main.go
+"""
+bin = "./backend"
+full_bin = "./backend"
+include_ext = ["go", "tpl", "tmpl", "html"]
+include_dir = ["cmd", "internal", "pkg", "docs"]
+include_file = ["go.sum"]
+delay = 1000

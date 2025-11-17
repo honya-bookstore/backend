@@ -8,12 +8,12 @@ INSERT INTO articles (
   user_id,
   created_at
 ) VALUES (
-  @slug,
-  @title,
-  @thumbnail,
-  @content,
-  @tags,
-  @user_id,
+  sql.arg('slug'),
+  sql.arg('title'),
+  sql.arg('thumbnail'),
+  sql.arg('content'),
+  sql.arg('tags'),
+  sql.arg('user_id'),
   COALESCE(sqlc.narg('created_at')::timestamp, NOW())
 );
 
@@ -42,9 +42,9 @@ WHERE
     ELSE user_id = ANY (sqlc.narg('user_ids')::uuid[])
   END
   AND CASE
-    WHEN @deleted::text = 'exclude' THEN deleted_at IS NOT NULL
-    WHEN @deleted::text = 'only' THEN deleted_at IS NULL
-    WHEN @deleted::text = 'all' THEN TRUE
+    WHEN sql.arg('deleted')::text = 'exclude' THEN deleted_at IS NOT NULL
+    WHEN sql.arg('deleted')::text = 'only' THEN deleted_at IS NULL
+    WHEN sql.arg('deleted')::text = 'all' THEN TRUE
     ELSE FALSE
   END
 ORDER BY
@@ -70,9 +70,9 @@ WHERE
     ELSE slug = sqlc.narg('slug')::text
   END
   AND CASE
-    WHEN @deleted::text = 'exclude' THEN deleted_at IS NOT NULL
-    WHEN @deleted::text = 'only' THEN deleted_at IS NULL
-    WHEN @deleted::text = 'all' THEN TRUE
+    WHEN sql.arg('deleted')::text = 'exclude' THEN deleted_at IS NOT NULL
+    WHEN sql.arg('deleted')::text = 'only' THEN deleted_at IS NULL
+    WHEN sql.arg('deleted')::text = 'all' THEN TRUE
     ELSE FALSE
   END;
 
@@ -88,7 +88,7 @@ SET
   updated_at = COALESCE(sqlc.narg('updated_at')::timestamp, NOW())
 WHERE
   deleted_at IS NULL
-  AND id = @id
+  AND id = sql.arg('id')
 RETURNING
   *;
 
@@ -99,4 +99,4 @@ SET
   deleted_at = COALESCE(sqlc.narg('deleted_at')::timestamp, NOW())
 WHERE
   deleted_at IS NULL
-  AND id = ANY (@ids::integer[]);
+  AND id = ANY (sql.arg('ids')::integer[]);

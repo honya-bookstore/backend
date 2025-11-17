@@ -1,0 +1,7 @@
+template: testify
+filename: "{{ .InterfaceName | lower }}_mock.go"
+packages:
+  backend/internal/domain:
+    config:
+      recursive: True
+      include-interface-regex: Repository

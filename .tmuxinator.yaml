@@ -1,0 +1,8 @@
+name: ele-be
+
+windows:
+  - editor: nvim
+  - backend: just
+  - compose: just compose
+  - shell:
+    layout: even-vertical

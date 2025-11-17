@@ -5,9 +5,9 @@ INSERT INTO categories (
   description,
   created_at
 ) VALUES (
-  @slug,
-  @name,
-  @description,
+  sql.arg('slug'),
+  sql.arg('name'),
+  sql.arg('description'),
   COALESCE(sqlc.narg('created_at')::timestamp, NOW())
 );
 
@@ -32,9 +32,9 @@ WHERE
     ELSE slug = ANY (sqlc.narg('slugs')::text[])
   END
   AND CASE
-    WHEN @deleted::text = 'exclude' THEN deleted_at IS NOT NULL
-    WHEN @deleted::text = 'only' THEN deleted_at IS NULL
-    WHEN @deleted::text = 'all' THEN TRUE
+    WHEN sql.arg('deleted')::text = 'exclude' THEN deleted_at IS NOT NULL
+    WHEN sql.arg('deleted')::text = 'only' THEN deleted_at IS NULL
+    WHEN sql.arg('deleted')::text = 'all' THEN TRUE
     ELSE FALSE
   END
 ORDER BY
@@ -55,7 +55,7 @@ SET
   updated_at = COALESCE(sqlc.narg('updated_at')::timestamp, NOW())
 WHERE
   deleted_at IS NULL
-  AND id = @id
+  AND id = sql.arg('id')
 RETURNING
   *;
 
@@ -66,4 +66,4 @@ SET
   deleted_at = COALESCE(sqlc.narg('deleted_at')::timestamp, NOW())
 WHERE
   deleted_at IS NULL
-  AND id = ANY (@ids::integer[]);
+  AND id = ANY (sql.arg('ids')::integer[]);

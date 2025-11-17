@@ -2,7 +2,7 @@
 INSERT INTO users (
   id
 ) VALUES (
-  @id
+  sql.arg('id')
 )
 RETURNING
   *;
@@ -21,4 +21,4 @@ SELECT
 FROM
   users
 WHERE
-  id = @id;
+  id = sql.arg('id');

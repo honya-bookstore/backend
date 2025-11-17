@@ -1,0 +1,12 @@
+{
+  "$schema": "https://www.schemastore.org/prettierrc.json",
+  "overrides": [
+    {
+      "files": ["**/*.json(c)?", "./.renovaterc.json5"],
+      "options": {
+        "trailingComma": "none",
+        "quoteProps": "preserve"
+      }
+    }
+  ]
+}

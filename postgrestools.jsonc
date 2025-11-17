@@ -1,0 +1,35 @@
+{
+  "$schema": "https://raw.githubusercontent.com/supabase-community/postgres-language-server/refs/heads/main/docs/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": false
+  },
+  "files": {
+    "ignore": [],
+    "include": []
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true
+    }
+  },
+  "migrations": {
+    "migrationsDir": "migration"
+  },
+  "typecheck": {
+    "enabled": true
+  },
+  "plpgsqlCheck": {
+    "enabled": true
+  },
+  "db": {
+    "host": "localhost",
+    "port": 5432,
+    "username": "postgres",
+    "password": "postgres",
+    "database": "honyabookstore",
+    "connTimeoutSecs": 10
+  }
+}

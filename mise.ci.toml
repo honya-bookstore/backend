@@ -1,0 +1,21 @@
+#:schema https://raw.githubusercontent.com/jdx/mise/refs/heads/main/schema/mise.json
+[settings.pipx]
+uvx = true
+
+[tools]
+"pipx:sqlfluff" = "3.4.2"
+atlas = "0.37.0"
+"go:github.com/google/wire/cmd/wire" = { version = "0.7.0", os = [
+  "linux",
+  "darwin",
+] }
+"go:github.com/sqlc-dev/sqlc/cmd/sqlc" = { version = "1.30.0", os = [
+  "linux",
+  "darwin",
+] }
+gofumpt = "0.9.1"
+golangci-lint = "2.5.0"
+just = "latest"
+uv = "0.9.3"
+swag = { version = "1.16.6", os = ["linux", "darwin"] }
+mockery = "3.5.5"
