@@ -1,0 +1,213 @@
+CREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid()
+);
+
+CREATE TABLE books (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  author TEXT,
+  price DECIMAL(12, 0),
+  pages_count INTEGER,
+  year_published INTEGER,
+  publisher TEXT,
+  weight DECIMAL,
+  stock_quantity INTEGER,
+  purchase_count INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  deleted_at TIMESTAMP NULL
+);
+
+CREATE TABLE categories (
+  id SERIAL PRIMARY KEY,
+  slug TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  description TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  deleted_at TIMESTAMP NULL
+);
+
+CREATE TABLE books_categories (
+  book_id INTEGER NOT NULL,
+  category_id INTEGER NOT NULL,
+  PRIMARY KEY (book_id, category_id),
+  FOREIGN KEY (book_id) REFERENCES books(id) ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY (category_id) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE media (
+  id SERIAL PRIMARY KEY,
+  url TEXT NOT NULL,
+  alt_text TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE books_media (
+  book_id INTEGER NOT NULL,
+  media_id INTEGER NOT NULL,
+  is_cover BOOLEAN NOT NULL DEFAULT FALSE,
+  PRIMARY KEY (book_id, media_id),
+  FOREIGN KEY (book_id) REFERENCES books(id) ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY (media_id) REFERENCES media(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE reviews (
+  id SERIAL PRIMARY KEY,
+  rating SMALLINT NOT NULL DEFAULT 0 CHECK (rating >= 1 AND rating <= 5),
+  vote_count INTEGER NOT NULL DEFAULT 0,
+  content TEXT,
+  user_id UUID NOT NULL,
+  book_id INTEGER NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  deleted_at TIMESTAMP NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY (book_id) REFERENCES books(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE review_votes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL,
+  review_id INTEGER NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY (review_id) REFERENCES reviews(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE articles (
+  id SERIAL PRIMARY KEY,
+  slug TEXT NOT NULL UNIQUE,
+  title TEXT NOT NULL,
+  thumbnail INTEGER,
+  content TEXT,
+  tags TEXT[] NULL DEFAULT '{}',
+  user_id UUID NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  deleted_at TIMESTAMP NULL,
+  FOREIGN KEY (thumbnail) REFERENCES media(id) ON UPDATE CASCADE ON DELETE SET NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE carts (
+  id SERIAL PRIMARY KEY,
+  user_id UUID NOT NULL UNIQUE,
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE cart_items (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  quantity INTEGER NOT NULL DEFAULT 1,
+  cart_id INTEGER NOT NULL,
+  book_id INTEGER NOT NULL,
+  FOREIGN KEY (cart_id) REFERENCES carts(id) ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY (book_id) REFERENCES books(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE order_statuses (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE orders (
+  id SERIAL PRIMARY KEY,
+  status_id INTEGER NOT NULL,
+  user_id UUID NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  FOREIGN KEY (status_id) REFERENCES order_statuses(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE order_items (
+  id SERIAL PRIMARY KEY,
+  quantity INTEGER NOT NULL DEFAULT 1,
+  price DECIMAL(12, 0) NOT NULL,
+  order_id INTEGER NOT NULL,
+  book_id INTEGER NOT NULL,
+  FOREIGN KEY (order_id) REFERENCES orders(id) ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY (book_id) REFERENCES books(id) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+CREATE TABLE discount_types (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE discount_categories (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE discount_operators (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE discounts (
+  id SERIAL PRIMARY KEY,
+  description TEXT,
+  start_date TIMESTAMP NOT NULL,
+  end_date TIMESTAMP NOT NULL,
+  type TEXT,
+  type_id INTEGER NOT NULL,
+  value TEXT NOT NULL,
+  category_id INTEGER NOT NULL,
+  operator_id INTEGER NOT NULL,
+  conditions TEXT[],
+  FOREIGN KEY (type_id) REFERENCES discount_types(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+  FOREIGN KEY (category_id) REFERENCES discount_categories(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+  FOREIGN KEY (operator_id) REFERENCES discount_operators(id) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+CREATE TABLE payment_statuses (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE payment_providers (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE payments (
+  id SERIAL PRIMARY KEY,
+  amount DECIMAL(12, 0) NOT NULL,
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  status_id INTEGER NOT NULL,
+  provider_id INTEGER NOT NULL,
+  order_id INTEGER NOT NULL,
+  FOREIGN KEY (status_id) REFERENCES payment_statuses(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+  FOREIGN KEY (provider_id) REFERENCES payment_providers(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+  FOREIGN KEY (order_id) REFERENCES orders(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE ticket_statuses (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE tickets (
+  id SERIAL PRIMARY KEY,
+  category TEXT NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  user_id UUID NOT NULL,
+  status_id INTEGER NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY (status_id) REFERENCES ticket_statuses(id) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+CREATE TABLE ticket_responses (
+  id SERIAL PRIMARY KEY,
+  ticket_id INTEGER NOT NULL,
+  user_id UUID NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  FOREIGN KEY (ticket_id) REFERENCES tickets(id) ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
