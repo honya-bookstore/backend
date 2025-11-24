@@ -1,69 +1,82 @@
--- name: CreateCategory :one
+-- name: UpsertCategory :exec
 INSERT INTO categories (
+  id,
   slug,
   name,
   description,
-  created_at
-) VALUES (
-  sql.arg('slug'),
-  sql.arg('name'),
-  sql.arg('description'),
-  COALESCE(sqlc.narg('created_at')::timestamp, NOW())
-);
+  created_at,
+  updated_at,
+  deleted_at
+)
+VALUES (
+  sqlc.arg('id'),
+  sqlc.arg('slug'),
+  sqlc.arg('name'),
+  sqlc.arg('description'),
+  sqlc.arg('created_at'),
+  sqlc.arg('updated_at'),
+  sqlc.narg('deleted_at')
+)
+ON CONFLICT (id) DO UPDATE SET
+  slug = EXCLUDED.slug,
+  name = EXCLUDED.name,
+  description = EXCLUDED.description,
+  created_at = EXCLUDED.created_at,
+  updated_at = EXCLUDED.updated_at,
+  deleted_at = EXCLUDED.deleted_at;
 
 -- name: ListCategories :many
 SELECT
-  *,
-  COUNT(*) OVER() AS current_count,
-  COUNT(*) AS total_count
+  *
 FROM
   categories
 WHERE
   CASE
-    WHEN sqlc.narg('search')::text IS NULL THEN TRUE
-    ELSE name ||| (sqlc.narg('search')::text)::pdb.fuzzy(2)
+    WHEN sqlc.narg('ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.narg('ids')::uuid[]) = 0 THEN TRUE
+    ELSE id = ANY (sqlc.narg('ids')::uuid[])
   END
   AND CASE
-    WHEN sqlc.narg('ids')::integer[] IS NULL THEN TRUE
-    ELSE id = ANY (sqlc.narg('ids')::integer[])
-  END
-  AND CASE
-    WHEN sqlc.narg('slugs')::text[] IS NULL THEN TRUE
-    ELSE slug = ANY (sqlc.narg('slugs')::text[])
-  END
-  AND CASE
-    WHEN sql.arg('deleted')::text = 'exclude' THEN deleted_at IS NOT NULL
-    WHEN sql.arg('deleted')::text = 'only' THEN deleted_at IS NULL
-    WHEN sql.arg('deleted')::text = 'all' THEN TRUE
-    ELSE FALSE
+    WHEN sqlc.arg('deleted')::text = 'exclude' THEN deleted_at IS NULL
+    WHEN sqlc.arg('deleted')::text = 'only' THEN deleted_at IS NOT NULL
+    WHEN sqlc.arg('deleted')::text = 'all' THEN TRUE
+    ELSE deleted_at IS NULL
   END
 ORDER BY
-  CASE WHEN
-    sqlc.narg('search') IS NOT NULL THEN pdb.score(id)
-  END DESC,
   id DESC
-OFFSET COALESCE(sqlc.narg('offset')::integer, 0)
-LIMIT COALESCE(sqlc.narg('limit')::integer, 20);
+OFFSET sqlc.arg('offset')::integer
+LIMIT NULLIF(sqlc.arg('limit')::integer, 0);
 
--- name: UpdateCategory :one
-UPDATE
+-- name: CountCategories :one
+SELECT
+  COUNT(*) AS count
+FROM
   categories
-SET
-  slug = COALESCE(sqlc.narg('slug')::text, slug),
-  name = COALESCE(sqlc.narg('name')::text, name),
-  description = COALESCE(sqlc.narg('description')::text, description),
-  updated_at = COALESCE(sqlc.narg('updated_at')::timestamp, NOW())
 WHERE
-  deleted_at IS NULL
-  AND id = sql.arg('id')
-RETURNING
-  *;
+  CASE
+    WHEN sqlc.arg('deleted')::text = 'exclude' THEN deleted_at IS NULL
+    WHEN sqlc.arg('deleted')::text = 'only' THEN deleted_at IS NOT NULL
+    WHEN sqlc.arg('deleted')::text = 'all' THEN TRUE
+    ELSE deleted_at IS NULL
+  END;
 
--- name: DeleteCategory :execrows
-UPDATE
+-- name: GetCategory :one
+SELECT
+  *
+FROM
   categories
-SET
-  deleted_at = COALESCE(sqlc.narg('deleted_at')::timestamp, NOW())
 WHERE
-  deleted_at IS NULL
-  AND id = ANY (sql.arg('ids')::integer[]);
+  CASE
+    WHEN sqlc.narg('id')::uuid IS NULL THEN TRUE
+    ELSE id = sqlc.narg('id')::uuid
+  END
+  AND CASE
+    WHEN sqlc.narg('slug')::text IS NULL THEN TRUE
+    ELSE slug = sqlc.narg('slug')::text
+  END
+  AND CASE
+    WHEN sqlc.arg('deleted')::text = 'exclude' THEN deleted_at IS NULL
+    WHEN sqlc.arg('deleted')::text = 'only' THEN deleted_at IS NOT NULL
+    WHEN sqlc.arg('deleted')::text = 'all' THEN TRUE
+    ELSE deleted_at IS NULL
+  END;
