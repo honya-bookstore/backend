@@ -16,7 +16,7 @@ linters:
       enable-all: true
     lll:
       tab-width: 8
-      line-length: 120
+      line-length: 180
 formatters:
   enable:
     - gofumpt
