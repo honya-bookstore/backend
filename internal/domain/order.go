@@ -19,13 +19,6 @@ type Order struct {
 	UserID      uuid.UUID     `json:"userId"      binding:"required"        validate:"required"`
 }
 
-func (o *Order) AddItems(items ...OrderItem) {
-	if o.Items == nil {
-		o.Items = []OrderItem{}
-	}
-	o.Items = append(o.Items, items...)
-}
-
 type OrderItem struct {
 	ID       uuid.UUID `json:"id"       binding:"required" validate:"required"`
 	Book     *Book     `json:"book"`
