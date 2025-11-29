@@ -19,7 +19,7 @@ type Book struct {
 	StockQuantity int         `json:"stockQuantity" binding:"required"                     validate:"required,gte=0"`
 	PurchaseCount int         `json:"purchaseCount" binding:"required"                     validate:"required,gte=0"`
 	Rating        float32     `json:"rating"        binding:"required"                     validate:"required,gte=0,lte=5"`
-	CategoryID    uuid.UUID   `json:"categoryId"`
+	CategoryIDs   []uuid.UUID `json:"categoryIds"`
 	MediaIDs      []uuid.UUID `json:"mediaIds"      validate:"omitempty,dive"`
 	CreatedAt     time.Time   `json:"createdAt"     binding:"required"                     validate:"required"`
 	UpdatedAt     time.Time   `json:"updatedAt"     binding:"required"                     validate:"required,gtefield=CreatedAt"`
@@ -36,7 +36,7 @@ func NewBook(
 	publisher string,
 	weight float64,
 	stockQuantity int,
-	categoryID uuid.UUID,
+	categoryID []uuid.UUID,
 	mediaIDs []uuid.UUID,
 ) (*Book, error) {
 	id, err := uuid.NewV7()
@@ -57,69 +57,11 @@ func NewBook(
 		StockQuantity: stockQuantity,
 		PurchaseCount: 0,
 		Rating:        0,
-		CategoryID:    categoryID,
+		CategoryIDs:   categoryID,
 		MediaIDs:      mediaIDs,
 		CreatedAt:     now,
 		UpdatedAt:     now,
 	}, err
-}
-
-func (b *Book) Update(
-	title *string,
-	description *string,
-	author *string,
-	price *int64,
-	pagesCount *int,
-	yearPublished *int,
-	publisher *string,
-	weight *float64,
-	stockQuantity *int,
-	categoryID *uuid.UUID,
-) {
-	updated := false
-	if title != nil {
-		b.Title = *title
-		updated = true
-	}
-	if description != nil {
-		b.Description = *description
-		updated = true
-	}
-	if author != nil {
-		b.Author = *author
-		updated = true
-	}
-	if price != nil {
-		b.Price = *price
-		updated = true
-	}
-	if pagesCount != nil {
-		b.PagesCount = *pagesCount
-		updated = true
-	}
-	if yearPublished != nil {
-		b.YearPublished = *yearPublished
-		updated = true
-	}
-	if publisher != nil {
-		b.Publisher = *publisher
-		updated = true
-	}
-	if weight != nil {
-		b.Weight = *weight
-		updated = true
-	}
-	if stockQuantity != nil {
-		b.StockQuantity = *stockQuantity
-		updated = true
-	}
-	if categoryID != nil {
-		b.CategoryID = *categoryID
-		updated = true
-	}
-	if updated {
-		b.UpdatedAt = time.Now()
-	}
 }
 
 func (a *Book) AddMediaIDs(newMediaIDs ...uuid.UUID) {

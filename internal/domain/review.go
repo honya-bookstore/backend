@@ -16,7 +16,7 @@ type Review struct {
 	Votes     []ReviewVote `json:"votes"     validate:"omitempty,dive"`
 	CreatedAt time.Time    `json:"createdAt" binding:"required"                    validate:"required"`
 	UpdatedAt time.Time    `json:"updatedAt" binding:"required"                    validate:"required,gtefield=CreatedAt"`
-	DeletedAt *time.Time   `json:"deletedAt" validate:"omitnil,gtefield=CreatedAt"`
+	DeletedAt time.Time    `json:"deletedAt" validate:"omitnil,gtefield=CreatedAt"`
 }
 
 type ReviewVote struct {
