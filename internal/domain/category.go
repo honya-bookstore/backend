@@ -54,11 +54,3 @@ func (c *Category) Update(name *string, description *string, slug *string) {
 		c.UpdatedAt = time.Now()
 	}
 }
-
-func (c *Category) Remove() {
-	if c == nil {
-		return
-	}
-	now := time.Now()
-	c.DeletedAt = &now
-}

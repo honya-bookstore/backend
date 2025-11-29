@@ -23,7 +23,7 @@ type Book struct {
 	MediaIDs      []uuid.UUID `json:"mediaIds"      validate:"omitempty,dive"`
 	CreatedAt     time.Time   `json:"createdAt"     binding:"required"                     validate:"required"`
 	UpdatedAt     time.Time   `json:"updatedAt"     binding:"required"                     validate:"required,gtefield=CreatedAt"`
-	DeletedAt     *time.Time  `json:"deletedAt"     validate:"omitnil,gtefield=CreatedAt"`
+	DeletedAt     time.Time   `json:"deletedAt"     validate:"omitnil,gtefield=CreatedAt"`
 }
 
 func NewBook(
@@ -81,11 +81,4 @@ func (a *Book) RemoveMediaIDs(mediaIDsToRemove ...uuid.UUID) {
 		}
 	}
 	a.MediaIDs = filteredMediaIDs
-}
-
-func (b *Book) Remove() {
-	now := time.Now()
-	if b.DeletedAt == nil {
-		b.DeletedAt = &now
-	}
 }

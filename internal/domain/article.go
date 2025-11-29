@@ -7,16 +7,16 @@ import (
 )
 
 type Article struct {
-	ID          uuid.UUID  `json:"id"          binding:"required"                     validate:"required"`
-	Slug        string     `json:"slug"        binding:"required"                     validate:"required,gte=2,lte=200"`
-	Title       string     `json:"title"       binding:"required"                     validate:"required,gte=2,lte=200"`
-	ThumbnailID uuid.UUID  `json:"thumbnailId" validate:"required"`
-	Content     string     `json:"content"     validate:"omitempty,lte=50000"`
-	Tags        []string   `json:"tags"        validate:"omitempty,dive,gte=1,lte=50"`
-	UserID      uuid.UUID  `json:"userId"      binding:"required"                     validate:"required,uuid"`
-	CreatedAt   time.Time  `json:"createdAt"   binding:"required"                     validate:"required"`
-	UpdatedAt   time.Time  `json:"updatedAt"   binding:"required"                     validate:"required,gtefield=CreatedAt"`
-	DeletedAt   *time.Time `json:"deletedAt"   validate:"omitnil,gtefield=CreatedAt"`
+	ID          uuid.UUID `json:"id"          binding:"required"                     validate:"required"`
+	Slug        string    `json:"slug"        binding:"required"                     validate:"required,gte=2,lte=200"`
+	Title       string    `json:"title"       binding:"required"                     validate:"required,gte=2,lte=200"`
+	ThumbnailID uuid.UUID `json:"thumbnailId" validate:"required"`
+	Content     string    `json:"content"     validate:"omitempty,lte=50000"`
+	Tags        []string  `json:"tags"        validate:"omitempty,dive,gte=1,lte=50"`
+	UserID      uuid.UUID `json:"userId"      binding:"required"                     validate:"required,uuid"`
+	CreatedAt   time.Time `json:"createdAt"   binding:"required"                     validate:"required"`
+	UpdatedAt   time.Time `json:"updatedAt"   binding:"required"                     validate:"required,gtefield=CreatedAt"`
+	DeletedAt   time.Time `json:"deletedAt"   validate:"omitnil,gtefield=CreatedAt"`
 }
 
 func NewArticle(slug string, title string, thumbnailID uuid.UUID, content string, tags []string, userID uuid.UUID) (*Article, error) {
@@ -59,13 +59,6 @@ func (a *Article) Update(slug *string, title *string, thumbnailID *uuid.UUID, co
 
 	if updated {
 		a.UpdatedAt = time.Now()
-	}
-}
-
-func (a *Article) Remove() {
-	now := time.Now()
-	if a.DeletedAt == nil {
-		a.DeletedAt = &now
 	}
 }
 
