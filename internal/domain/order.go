@@ -20,10 +20,10 @@ type Order struct {
 }
 
 type OrderItem struct {
-	ID       uuid.UUID `json:"id"       binding:"required" validate:"required"`
-	Book     *Book     `json:"book"`
-	Quantity int       `json:"quantity" binding:"required" validate:"required,gt=0"`
-	Price    int64     `json:"price"    binding:"required" validate:"required,gt=0"`
+	ID       uuid.UUID `json:"id"       binding:"required"  validate:"required"`
+	BookID   uuid.UUID `json:"bookID"   validate:"required"`
+	Quantity int       `json:"quantity" binding:"required"  validate:"required,gt=0"`
+	Price    int64     `json:"price"    binding:"required"  validate:"required,gt=0"`
 }
 
 type OrderProvider string

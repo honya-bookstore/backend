@@ -10,7 +10,7 @@ type Article struct {
 	ID          uuid.UUID  `json:"id"          binding:"required"                     validate:"required"`
 	Slug        string     `json:"slug"        binding:"required"                     validate:"required,gte=2,lte=200"`
 	Title       string     `json:"title"       binding:"required"                     validate:"required,gte=2,lte=200"`
-	ThumbnailID *uuid.UUID `json:"thumbnailId" validate:"omitempty,uuid"`
+	ThumbnailID uuid.UUID  `json:"thumbnailId" validate:"required"`
 	Content     string     `json:"content"     validate:"omitempty,lte=50000"`
 	Tags        []string   `json:"tags"        validate:"omitempty,dive,gte=1,lte=50"`
 	UserID      uuid.UUID  `json:"userId"      binding:"required"                     validate:"required,uuid"`
@@ -19,7 +19,7 @@ type Article struct {
 	DeletedAt   *time.Time `json:"deletedAt"   validate:"omitnil,gtefield=CreatedAt"`
 }
 
-func NewArticle(slug string, title string, thumbnailID *uuid.UUID, content string, tags []string, userID uuid.UUID) (*Article, error) {
+func NewArticle(slug string, title string, thumbnailID uuid.UUID, content string, tags []string, userID uuid.UUID) (*Article, error) {
 	id, err := uuid.NewV7()
 	if err != nil {
 		return nil, err
@@ -49,7 +49,7 @@ func (a *Article) Update(slug *string, title *string, thumbnailID *uuid.UUID, co
 		updated = true
 	}
 	if thumbnailID != nil {
-		a.ThumbnailID = thumbnailID
+		a.ThumbnailID = *thumbnailID
 		updated = true
 	}
 	if content != nil {

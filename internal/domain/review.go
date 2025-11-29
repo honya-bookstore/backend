@@ -13,24 +13,15 @@ type Review struct {
 	Content   string       `json:"content"   validate:"omitempty,lte=2000"`
 	UserID    uuid.UUID    `json:"userId"    binding:"required"                    validate:"required,uuid"`
 	BookID    uuid.UUID    `json:"bookId"    binding:"required"                    validate:"required,uuid"`
-	Book      *Book        `json:"book"`
 	Votes     []ReviewVote `json:"votes"     validate:"omitempty,dive"`
 	CreatedAt time.Time    `json:"createdAt" binding:"required"                    validate:"required"`
 	UpdatedAt time.Time    `json:"updatedAt" binding:"required"                    validate:"required,gtefield=CreatedAt"`
 	DeletedAt *time.Time   `json:"deletedAt" validate:"omitnil,gtefield=CreatedAt"`
 }
 
-func (r *Review) AddVotes(votes ...ReviewVote) {
-	if r.Votes == nil {
-		r.Votes = []ReviewVote{}
-	}
-	r.Votes = append(r.Votes, votes...)
-}
-
 type ReviewVote struct {
 	ID        uuid.UUID `json:"id"        binding:"required" validate:"required"`
 	UserID    uuid.UUID `json:"userId"    binding:"required" validate:"required,uuid"`
-	ReviewID  uuid.UUID `json:"reviewId"  binding:"required" validate:"required,uuid"`
 	IsUp      bool      `json:"isUp"      binding:"required" validate:"required"`
 	CreatedAt time.Time `json:"createdAt" binding:"required" validate:"required"`
 }
