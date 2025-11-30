@@ -18,7 +18,7 @@ type Book struct {
 	Weight        float64     `json:"weight"        validate:"omitempty,gt=0"`
 	StockQuantity int         `json:"stockQuantity" binding:"required"                     validate:"required,gte=0"`
 	PurchaseCount int         `json:"purchaseCount" binding:"required"                     validate:"required,gte=0"`
-	Rating        float32     `json:"rating"        binding:"required"                     validate:"required,gte=0,lte=5"`
+	Rating        float64     `json:"rating"        binding:"required"                     validate:"required,gte=0,lte=5"`
 	CategoryIDs   []uuid.UUID `json:"categoryIds"`
 	MediaIDs      []uuid.UUID `json:"mediaIds"      validate:"omitempty,dive"`
 	CreatedAt     time.Time   `json:"createdAt"     binding:"required"                     validate:"required"`
