@@ -64,21 +64,25 @@ func NewBook(
 	}, err
 }
 
-func (a *Book) AddMediaIDs(newMediaIDs ...uuid.UUID) {
-	a.MediaIDs = append(a.MediaIDs, newMediaIDs...)
+func (b *Book) AddMediaIDs(newMediaIDs ...uuid.UUID) {
+	b.MediaIDs = append(b.MediaIDs, newMediaIDs...)
 }
 
-func (a *Book) RemoveMediaIDs(mediaIDsToRemove ...uuid.UUID) {
+func (b *Book) RemoveMediaIDs(mediaIDsToRemove ...uuid.UUID) {
 	mediaIDMap := make(map[uuid.UUID]struct{})
 	for _, mediaID := range mediaIDsToRemove {
 		mediaIDMap[mediaID] = struct{}{}
 	}
 
-	filteredMediaIDs := make([]uuid.UUID, 0, len(a.MediaIDs)-len(mediaIDsToRemove))
-	for _, mediaID := range a.MediaIDs {
+	filteredMediaIDs := make([]uuid.UUID, 0, len(b.MediaIDs)-len(mediaIDsToRemove))
+	for _, mediaID := range b.MediaIDs {
 		if _, found := mediaIDMap[mediaID]; !found {
 			filteredMediaIDs = append(filteredMediaIDs, mediaID)
 		}
 	}
-	a.MediaIDs = filteredMediaIDs
+	b.MediaIDs = filteredMediaIDs
+}
+
+func (b *Book) Remove() {
+	b.DeletedAt = time.Now()
 }

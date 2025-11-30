@@ -36,3 +36,7 @@ func NewMedia(
 		CreatedAt: now,
 	}, nil
 }
+
+func (m *Media) Delete() {
+	m.DeletedAt = time.Now()
+}

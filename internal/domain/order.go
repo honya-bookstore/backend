@@ -44,3 +44,72 @@ const (
 	OrderStatusDelivered  OrderStatus = "Delivered"
 	OrderStatusCancelled  OrderStatus = "Cancelled"
 )
+
+func NewOrder(
+	userID uuid.UUID,
+	address string,
+	provider OrderProvider,
+	items []OrderItem,
+) (*Order, error) {
+	id, err := uuid.NewV7()
+	if err != nil {
+		return nil, err
+	}
+	totalAmount := int64(0)
+	for _, item := range items {
+		totalAmount += item.Price * int64(item.Quantity)
+	}
+	now := time.Now()
+	return &Order{
+		ID:          id,
+		UserID:      userID,
+		Address:     address,
+		Provider:    provider,
+		Status:      OrderStatusPending,
+		IsPaid:      false,
+		CreatedAt:   now,
+		UpdatedAt:   now,
+		Items:       items,
+		TotalAmount: totalAmount,
+	}, nil
+}
+
+func NewOrderItem(
+	bookID uuid.UUID,
+	quantity int,
+	price int64,
+) (*OrderItem, error) {
+	id, err := uuid.NewV7()
+	if err != nil {
+		return nil, err
+	}
+	return &OrderItem{
+		ID:       id,
+		BookID:   bookID,
+		Quantity: quantity,
+		Price:    price,
+	}, nil
+}
+
+func (o *Order) Update(
+	address string,
+	status OrderStatus,
+	isPaid bool,
+) {
+	updated := false
+	if o.Address != address {
+		o.Address = address
+		updated = true
+	}
+	if o.Status != status {
+		o.Status = status
+		updated = true
+	}
+	if o.IsPaid != isPaid {
+		o.IsPaid = isPaid
+		updated = true
+	}
+	if updated {
+		o.UpdatedAt = time.Now()
+	}
+}

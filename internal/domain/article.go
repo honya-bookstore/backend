@@ -80,3 +80,7 @@ func (a *Article) RemoveTags(tagsToRemove ...string) {
 	}
 	a.Tags = filteredTags
 }
+
+func (a *Article) Remove() {
+	a.DeletedAt = time.Now()
+}
