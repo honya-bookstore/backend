@@ -6,64 +6,86 @@ type Router interface {
 	RegisterRoutes(e *gin.Engine)
 }
 
-type RouterImpl struct{}
-
-func ProvideRouter() *RouterImpl {
-	return &RouterImpl{}
+type RouterImpl struct {
+	articleHandler  ArticleHandler
+	bookHandler     BookHandler
+	cartHandler     CartHandler
+	categoryHandler CategoryHandler
+	mediaHandler    MediaHandler
+	orderHandler    OrderHandler
 }
 
-func (r *RouterImpl) RegisterRoutes(e *gin.Engine) {
+func ProvideRouter(
+	articleHandler ArticleHandler,
+	bookHandler BookHandler,
+	cartHandler CartHandler,
+	categoryHandler CategoryHandler,
+	mediaHandler MediaHandler,
+	orderHandler OrderHandler,
+) *RouterImpl {
+	return &RouterImpl{
+		articleHandler:  articleHandler,
+		bookHandler:     bookHandler,
+		cartHandler:     cartHandler,
+		categoryHandler: categoryHandler,
+		mediaHandler:    mediaHandler,
+		orderHandler:    orderHandler,
+	}
+}
+
+func (r *RouterImpl) RegisterRoutes(
+	e *gin.Engine,
+) {
 	api := e.Group("/api")
 	{
 		articles := api.Group("/articles")
 		{
-			articles.GET("")
-			articles.POST("")
-			articles.GET("/:id")
-			articles.PATCH("/:id")
-			articles.DELETE("/:id")
+			articles.GET("", r.articleHandler.List)
+			articles.POST("", r.articleHandler.Create)
+			articles.GET("/:id", r.articleHandler.Get)
+			articles.PATCH("/:id", r.articleHandler.Update)
+			articles.DELETE("/:id", r.articleHandler.Delete)
 		}
 		books := api.Group("/books")
 		{
-			books.GET("")
-			books.POST("")
-			books.GET("/:id")
-			books.PATCH("/:id")
-			books.DELETE("/:id")
+			books.GET("", r.bookHandler.List)
+			books.POST("", r.bookHandler.Create)
+			books.GET("/:id", r.bookHandler.Get)
+			books.PATCH("/:id", r.bookHandler.Update)
+			books.DELETE("/:id", r.bookHandler.Delete)
 		}
 		cart := api.Group("/cart")
 		{
-			cart.GET("/:id")
-			cart.GET("/user/:id")
-			cart.GET("/me")
-			cart.POST("")
-			cart.PATCH("/:id")
-			cart.POST("/:id/items/item_id")
-			cart.PATCH("/:id/items/item_id")
-			cart.DELETE("/:id/items/item_id")
-
+			cart.GET("/:id", r.cartHandler.Get)
+			cart.GET("/user/:id", r.cartHandler.GetByUser)
+			cart.GET("/me", r.cartHandler.GetMine)
+			cart.POST("", r.cartHandler.Create)
+			cart.PATCH("/:id", r.cartHandler.Update)
+			cart.POST("/:id/items/:item_id", r.cartHandler.AddItem)
+			cart.PATCH("/:id/items/:item_id", r.cartHandler.UpdateItem)
+			cart.DELETE("/:id/items/:item_id", r.cartHandler.DeleteItem)
 		}
 		categories := api.Group("/categories")
 		{
-			categories.GET("")
-			categories.GET("/:id")
-			categories.POST("")
-			categories.PATCH("/:id")
-			categories.DELETE("/:id")
+			categories.GET("", r.categoryHandler.List)
+			categories.GET("/:id", r.categoryHandler.Get)
+			categories.POST("", r.categoryHandler.Create)
+			categories.PATCH("/:id", r.categoryHandler.Update)
+			categories.DELETE("/:id", r.categoryHandler.Delete)
 		}
 		media := api.Group("/media")
 		{
-			media.GET("")
-			media.GET("/:id")
-			media.POST("")
-			media.DELETE("/:id")
+			media.GET("", r.mediaHandler.List)
+			media.GET("/:id", r.mediaHandler.Get)
+			media.POST("", r.mediaHandler.Create)
+			media.DELETE("/:id", r.mediaHandler.Delete)
 		}
 		orders := api.Group("/orders")
 		{
-			orders.GET("")
-			orders.GET("/:id")
-			orders.POST("")
-			orders.PUT("/:id")
+			orders.GET("", r.orderHandler.List)
+			orders.GET("/:id", r.orderHandler.Get)
+			orders.POST("", r.orderHandler.Create)
+			orders.PUT("/:id", r.orderHandler.Update)
 		}
 		// reviews := api.Group("/reviews")
 		// {
