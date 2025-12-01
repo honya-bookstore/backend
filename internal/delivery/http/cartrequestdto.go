@@ -3,11 +3,19 @@ package http
 import "github.com/google/uuid"
 
 type GetCartRequestDTO struct {
-	ID uuid.UUID
+	PathParams *GetCartRequestPathParams
+}
+
+type GetCartRequestPathParams struct {
+	CartID uuid.UUID `json:"id" binding:"required" format:"uuid"`
 }
 
 type GetCartByUserRequestDTO struct {
-	UserID uuid.UUID
+	PathParams *GetCartByUserRequestPathParams
+}
+
+type GetCartByUserRequestPathParams struct {
+	UserID uuid.UUID `json:"userId" binding:"required" format:"uuid"`
 }
 
 type CreateCartRequestDTO struct {
@@ -19,21 +27,23 @@ type CreateCartData struct {
 }
 
 type CreateCartItemRequestDTO struct {
-	UserID uuid.UUID
-	CartID uuid.UUID
-	Data   *CreateCartItemData
+	Data *CreateCartItemData
 }
 
 type CreateCartItemData struct {
 	BookID   uuid.UUID `json:"bookId"   binding:"required"`
 	Quantity int       `json:"quantity" binding:"required,gt=0"`
+	UserID   uuid.UUID `json:"userId"   binding:"required"`
 }
 
 type UpdateCartItemRequestDTO struct {
-	UserID     uuid.UUID
-	CartID     uuid.UUID
-	CartItemID uuid.UUID
+	PathParams *UpdateCartItemRequestPathParams
 	Data       *UpdateCartItemData
+}
+
+type UpdateCartItemRequestPathParams struct {
+	CartID     uuid.UUID `json:"id"      binding:"required" format:"uuid"`
+	CartItemID uuid.UUID `json:"item_id" binding:"required" format:"uuid"`
 }
 
 type UpdateCartItemData struct {
@@ -41,7 +51,10 @@ type UpdateCartItemData struct {
 }
 
 type DeleteCartItemRequestDTO struct {
-	UserID     uuid.UUID
-	CartID     uuid.UUID
-	CartItemID uuid.UUID
+	PathParams *DeleteCartItemRequestPathParams
+}
+
+type DeleteCartItemRequestPathParams struct {
+	CartID     uuid.UUID `json:"id"      binding:"required" format:"uuid"`
+	CartItemID uuid.UUID `json:"item_id" binding:"required" format:"uuid"`
 }

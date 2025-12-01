@@ -1,9 +1,20 @@
 package http
 
-type ListMediaRequestDTO struct{}
+type ListMediaRequestDTO struct {
+	QueryParams *ListMediaRequestQueryParams
+}
+
+type ListMediaRequestQueryParams struct {
+	PaginationRequestDto
+	Search string `json:"search"`
+}
 
 type GetMediaRequestDTO struct {
-	ID string `json:"id" binding:"required"`
+	PathParams *GetMediaRequestPathParams
+}
+
+type GetMediaRequestPathParams struct {
+	MediaID string `json:"id" binding:"required"`
 }
 
 type CreateMediaRequestDTO struct {
@@ -17,5 +28,9 @@ type CreateMediaRequestData struct {
 }
 
 type DeleteMediaRequestDTO struct {
-	ID string `json:"id" binding:"required"`
+	PathParams *DeleteMediaRequestPathParams
+}
+
+type DeleteMediaRequestPathParams struct {
+	MediaID string `json:"id" binding:"required"`
 }

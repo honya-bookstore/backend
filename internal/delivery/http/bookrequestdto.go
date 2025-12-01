@@ -4,7 +4,21 @@ import (
 	"github.com/google/uuid"
 )
 
-type ListBookRequestDTO struct{}
+type ListBookRequestDTO struct {
+	QueryParams *ListBookRequestQueryParams
+}
+
+type ListBookRequestQueryParams struct {
+	PaginationRequestDto
+	Search     string    `json:"search"`
+	CategoryID uuid.UUID `json:"categoryId"`
+	Publisher  string    `json:"publisher"`
+	Year       int       `json:"year"`
+	MinPrice   int64     `json:"minPrice"`
+	MaxPrice   int64     `json:"maxPrice"`
+	SortRecent string    `json:"sortRecent" enums:"asc,desc"`
+	SortPrice  string    `json:"sortPrice"  enums:"asc,desc"`
+}
 
 type CreateBookRequestDTO struct {
 	Data *CreateBookRequestData
@@ -25,12 +39,20 @@ type CreateBookRequestData struct {
 }
 
 type GetBookRequestDTO struct {
-	ID uuid.UUID `json:"Id" binding:"required"`
+	PathParams *GetBookRequestPathParams
+}
+
+type GetBookRequestPathParams struct {
+	BookID uuid.UUID `json:"id" binding:"required" format:"uuid"`
 }
 
 type UpdateBookRequestDTO struct {
-	ID   uuid.UUID `json:"Id" binding:"required"`
-	Data *UpdateBookRequestData
+	PathParams *UpdateBookRequestPathParams
+	Data       *UpdateBookRequestData
+}
+
+type UpdateBookRequestPathParams struct {
+	BookID uuid.UUID `json:"id" binding:"required" format:"uuid"`
 }
 
 type UpdateBookRequestData struct {
@@ -47,5 +69,9 @@ type UpdateBookRequestData struct {
 }
 
 type DeleteBookRequestDTO struct {
-	ID uuid.UUID `json:"Id" binding:"required"`
+	PathParams *DeleteBookRequestPathParams
+}
+
+type DeleteBookRequestPathParams struct {
+	BookID uuid.UUID `json:"id" binding:"required" format:"uuid"`
 }

@@ -1,9 +1,19 @@
 package http
 
-type ListCategoryRequestDTO struct{}
+type ListCategoryRequestDTO struct {
+	QueryParams *ListCategoryRequestQueryParams
+}
+
+type ListCategoryRequestQueryParams struct {
+	PaginationRequestDto
+}
 
 type GetCategoryRequestDTO struct {
-	ID string `json:"id" binding:"required"`
+	PathParams *GetCategoryRequestPathParams
+}
+
+type GetCategoryRequestPathParams struct {
+	CategoryID string `json:"id" binding:"required"`
 }
 
 type CreateCategoryRequestDTO struct {
@@ -17,8 +27,12 @@ type CreateCategoryRequestData struct {
 }
 
 type UpdateCategoryRequestDTO struct {
-	ID   string `json:"id" binding:"required"`
-	Data *UpdateCategoryRequestData
+	PathParams *UpdateCategoryRequestPathParams
+	Data       *UpdateCategoryRequestData
+}
+
+type UpdateCategoryRequestPathParams struct {
+	CategoryID string `json:"id" binding:"required"`
 }
 
 type UpdateCategoryRequestData struct {
@@ -28,5 +42,9 @@ type UpdateCategoryRequestData struct {
 }
 
 type DeleteCategoryRequestDTO struct {
-	ID string `json:"id" binding:"required"`
+	PathParams *DeleteCategoryRequestPathParams
+}
+
+type DeleteCategoryRequestPathParams struct {
+	CategoryID string `json:"id" binding:"required"`
 }

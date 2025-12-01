@@ -6,10 +6,21 @@ import (
 	"github.com/google/uuid"
 )
 
-type ListOrderRequestDTO struct{}
+type ListOrderRequestDTO struct {
+	QueryParams *ListOrderRequestQueryParams
+}
+
+type ListOrderRequestQueryParams struct {
+	PaginationRequestDto
+	Status domain.OrderStatus `json:"status" enums:"pending,processing,shipped,delivered,cancelled"`
+}
 
 type GetOrderRequestDTO struct {
-	ID uuid.UUID
+	PathParams *GetOrderRequestPathParams
+}
+
+type GetOrderRequestPathParams struct {
+	OrderID uuid.UUID `json:"id" binding:"required" format:"uuid"`
 }
 
 type CreateOrderRequestDTO struct {
@@ -29,8 +40,12 @@ type CreateOrderItemData struct {
 }
 
 type UpdateOrderRequestDTO struct {
-	ID   uuid.UUID
-	Data UpdateOrderData
+	PathParams *UpdateOrderRequestPathParams
+	Data       UpdateOrderData
+}
+
+type UpdateOrderRequestPathParams struct {
+	OrderID uuid.UUID `json:"id" binding:"required" format:"uuid"`
 }
 
 type UpdateOrderData struct {
@@ -40,5 +55,9 @@ type UpdateOrderData struct {
 }
 
 type DeleteOrderRequestDTO struct {
-	ID uuid.UUID
+	PathParams *DeleteOrderRequestPathParams
+}
+
+type DeleteOrderRequestPathParams struct {
+	OrderID uuid.UUID `json:"id" binding:"required" format:"uuid"`
 }

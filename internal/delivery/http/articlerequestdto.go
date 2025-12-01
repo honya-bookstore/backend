@@ -2,7 +2,14 @@ package http
 
 import "github.com/google/uuid"
 
-type ListArticleRequestDTO struct{}
+type ListArticleRequestDTO struct {
+	QueryParams *ListArticleRequestQueryParams
+}
+
+type ListArticleRequestQueryParams struct {
+	PaginationRequestDto
+	Search string `json:"search"`
+}
 
 type CreateArticleRequestDTO struct {
 	Data *CreateArticleData
@@ -17,12 +24,20 @@ type CreateArticleData struct {
 }
 
 type GetArticleRequestDTO struct {
-	ID uuid.UUID `json:"Id" binding:"required"`
+	PathParams *GetArticleRequestPathParams
+}
+
+type GetArticleRequestPathParams struct {
+	ArticleID uuid.UUID `json:"id" binding:"required" format:"uuid"`
 }
 
 type UpdateArticleRequestDTO struct {
-	ID   uuid.UUID          `json:"Id"   binding:"required"`
-	Data *UpdateArticleData `json:"data"`
+	PathParams *UpdateArticleRequestPathParams
+	Data       *UpdateArticleData
+}
+
+type UpdateArticleRequestPathParams struct {
+	ArticleID uuid.UUID `json:"id" binding:"required" format:"uuid"`
 }
 
 type UpdateArticleData struct {
@@ -33,5 +48,9 @@ type UpdateArticleData struct {
 }
 
 type DeleteArticleRequestDTO struct {
-	ID uuid.UUID `json:"Id" binding:"required"`
+	PathParams *DeleteArticleRequestPathParams
+}
+
+type DeleteArticleRequestPathParams struct {
+	ArticleID uuid.UUID `json:"id" binding:"required" format:"uuid"`
 }
