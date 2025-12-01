@@ -7,23 +7,23 @@ import (
 )
 
 type Order struct {
-	ID          uuid.UUID     `json:"id"          binding:"required"        validate:"required"`
-	Address     string        `json:"address"     binding:"required"        validate:"required"`
-	Provider    OrderProvider `json:"provider"    binding:"required"        validate:"required,oneof=COD VNPAY MOMO ZALOPAY"`
-	Status      OrderStatus   `json:"status"      binding:"required"        validate:"required,oneof=Pending Processing Shipped Delivered Cancelled"`
-	IsPaid      bool          `json:"isPaid"      binding:"required"        validate:"required"`
-	CreatedAt   time.Time     `json:"createdAt"   binding:"required"        validate:"required"`
-	UpdatedAt   time.Time     `json:"updatedAt"   binding:"required"        validate:"required,gtefield=CreatedAt"`
-	Items       []OrderItem   `json:"items"       validate:"omitempty,dive"`
-	TotalAmount int64         `json:"totalAmount" binding:"required"        validate:"required"`
-	UserID      uuid.UUID     `json:"userId"      binding:"required"        validate:"required"`
+	ID          uuid.UUID     `validate:"required"`
+	Address     string        `validate:"required"`
+	Provider    OrderProvider `validate:"required,oneof=COD VNPAY MOMO ZALOPAY"`
+	Status      OrderStatus   `validate:"required,oneof=Pending Processing Shipped Delivered Cancelled"`
+	IsPaid      bool          `validate:"required"`
+	CreatedAt   time.Time     `validate:"required"`
+	UpdatedAt   time.Time     `validate:"required,gtefield=CreatedAt"`
+	Items       []OrderItem   `validate:"omitempty,dive"`
+	TotalAmount int64         `validate:"required"`
+	UserID      uuid.UUID     `validate:"required"`
 }
 
 type OrderItem struct {
-	ID       uuid.UUID `json:"id"       binding:"required"  validate:"required"`
-	BookID   uuid.UUID `json:"bookID"   validate:"required"`
-	Quantity int       `json:"quantity" binding:"required"  validate:"required,gt=0"`
-	Price    int64     `json:"price"    binding:"required"  validate:"required,gt=0"`
+	ID       uuid.UUID `validate:"required"`
+	BookID   uuid.UUID `validate:"required"`
+	Quantity int       `validate:"required,gt=0"`
+	Price    int64     `validate:"required,gt=0"`
 }
 
 type OrderProvider string

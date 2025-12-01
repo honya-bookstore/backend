@@ -7,16 +7,16 @@ import (
 )
 
 type Cart struct {
-	ID        uuid.UUID  `json:"id"        binding:"required"        validate:"required"`
-	Items     []CartItem `json:"items"     validate:"omitempty,dive"`
-	UserID    uuid.UUID  `json:"userId"    binding:"required"        validate:"required,uuid"`
-	UpdatedAt time.Time  `json:"updatedAt" binding:"required"        validate:"required"`
+	ID        uuid.UUID  `validate:"required"`
+	Items     []CartItem `validate:"omitempty,dive"`
+	UserID    uuid.UUID  `validate:"required"`
+	UpdatedAt time.Time  `validate:"required"`
 }
 
 type CartItem struct {
-	ID       uuid.UUID `json:"id"       binding:"required" validate:"required,uuid"`
-	BookID   uuid.UUID `json:"bookId"`
-	Quantity int       `json:"quantity" binding:"required" validate:"required,gt=0,lte=100"`
+	ID       uuid.UUID `validate:"required"`
+	BookID   uuid.UUID `validate:"required"`
+	Quantity int       `validate:"required,gt=0,lte=100"`
 }
 
 func NewCart(userID uuid.UUID) (*Cart, error) {

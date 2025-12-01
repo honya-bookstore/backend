@@ -7,13 +7,13 @@ import (
 )
 
 type Category struct {
-	ID          uuid.UUID `json:"id"          binding:"required"                    validate:"required"`
-	Slug        string    `json:"slug"        binding:"required"                    validate:"required,gte=2,lte=100"`
-	Name        string    `json:"name"        binding:"required"                    validate:"required,gte=2,lte=100"`
-	Description string    `json:"description" validate:"omitempty,lte=500"`
-	CreatedAt   time.Time `json:"createdAt"   binding:"required"                    validate:"required"`
-	UpdatedAt   time.Time `json:"updatedAt"   binding:"required"                    validate:"required,gtefield=CreatedAt"`
-	DeletedAt   time.Time `json:"deletedAt"   validate:"omitnil,gtefield=CreatedAt"`
+	ID          uuid.UUID `validate:"required"`
+	Slug        string    `validate:"required,gte=2,lte=100"`
+	Name        string    `validate:"required,gte=2,lte=100"`
+	Description string    `validate:"omitempty,lte=500"`
+	CreatedAt   time.Time `validate:"required"`
+	UpdatedAt   time.Time `validate:"required,gtefield=CreatedAt"`
+	DeletedAt   time.Time `validate:"omitempty,gtefield=CreatedAt"`
 }
 
 func NewCategory(slug string, name string, description string) (*Category, error) {
@@ -33,21 +33,21 @@ func NewCategory(slug string, name string, description string) (*Category, error
 	return category, nil
 }
 
-func (c *Category) Update(name *string, description *string, slug *string) {
+func (c *Category) Update(name string, description string, slug string) {
 	if c == nil {
 		return
 	}
 	updated := false
-	if name != nil {
-		c.Name = *name
+	if name != "" && name != c.Name {
+		c.Name = name
 		updated = true
 	}
-	if description != nil {
-		c.Description = *description
+	if description != "" && description != c.Description {
+		c.Description = description
 		updated = true
 	}
-	if slug != nil {
-		c.Slug = *slug
+	if slug != "" && slug != c.Slug {
+		c.Slug = slug
 		updated = true
 	}
 	if updated {

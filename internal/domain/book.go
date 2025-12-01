@@ -7,23 +7,23 @@ import (
 )
 
 type Book struct {
-	ID            uuid.UUID   `json:"id"            binding:"required"                     validate:"required"`
-	Title         string      `json:"title"         binding:"required"                     validate:"required,gte=1,lte=200"`
-	Description   string      `json:"description"   validate:"omitempty,lte=2000"`
-	Author        string      `json:"author"        validate:"omitempty,lte=200"`
-	Price         int64       `json:"price"         binding:"required"                     validate:"required,gt=0"`
-	PagesCount    int         `json:"pagesCount"    validate:"omitempty,gt=0,lte=10000"`
-	YearPublished int         `json:"yearPublished" validate:"omitempty,gte=1000,lte=9999"`
-	Publisher     string      `json:"publisher"     validate:"omitempty,lte=200"`
-	Weight        float64     `json:"weight"        validate:"omitempty,gt=0"`
-	StockQuantity int         `json:"stockQuantity" binding:"required"                     validate:"required,gte=0"`
-	PurchaseCount int         `json:"purchaseCount" binding:"required"                     validate:"required,gte=0"`
-	Rating        float64     `json:"rating"        binding:"required"                     validate:"required,gte=0,lte=5"`
-	CategoryIDs   []uuid.UUID `json:"categoryIds"`
-	MediaIDs      []uuid.UUID `json:"mediaIds"      validate:"omitempty,dive"`
-	CreatedAt     time.Time   `json:"createdAt"     binding:"required"                     validate:"required"`
-	UpdatedAt     time.Time   `json:"updatedAt"     binding:"required"                     validate:"required,gtefield=CreatedAt"`
-	DeletedAt     time.Time   `json:"deletedAt"     validate:"omitnil,gtefield=CreatedAt"`
+	ID            uuid.UUID   `validate:"required"`
+	Title         string      `validate:"required,gte=1,lte=200"`
+	Description   string      `validate:"omitempty,lte=2000"`
+	Author        string      `validate:"omitempty,lte=200"`
+	Price         int64       `validate:"required,gt=0"`
+	PagesCount    int         `validate:"omitempty,gt=0,lte=10000"`
+	YearPublished int         `validate:"omitempty,gte=1000,lte=9999"`
+	Publisher     string      `validate:"omitempty,lte=200"`
+	Weight        float64     `validate:"omitempty,gt=0"`
+	StockQuantity int         `validate:"required,gte=0"`
+	PurchaseCount int         `validate:"required,gte=0"`
+	Rating        float64     `validate:"required,gte=0,lte=5"`
+	CategoryIDs   []uuid.UUID `validate:"required"`
+	MediaIDs      []uuid.UUID `validate:"omitempty,dive"`
+	CreatedAt     time.Time   `validate:"required"`
+	UpdatedAt     time.Time   `validate:"required,gtefield=CreatedAt"`
+	DeletedAt     time.Time   `validate:"omitempty,gtefield=CreatedAt"`
 }
 
 func NewBook(
@@ -62,6 +62,64 @@ func NewBook(
 		CreatedAt:     now,
 		UpdatedAt:     now,
 	}, err
+}
+
+func (b *Book) Update(
+	title string,
+	description string,
+	author string,
+	price int64,
+	pagesCount int,
+	yearPublished int,
+	publisher string,
+	weight float64,
+	stockQuantity int,
+	categoryIDs []uuid.UUID,
+) {
+	updated := false
+	if title != "" && title != b.Title {
+		b.Title = title
+		updated = true
+	}
+	if description != "" && description != b.Description {
+		b.Description = description
+		updated = true
+	}
+	if author != "" && author != b.Author {
+		b.Author = author
+		updated = true
+	}
+	if price > 0 && price != b.Price {
+		b.Price = price
+		updated = true
+	}
+	if pagesCount > 0 && pagesCount != b.PagesCount {
+		b.PagesCount = pagesCount
+		updated = true
+	}
+	if yearPublished != 0 && yearPublished != b.YearPublished {
+		b.YearPublished = yearPublished
+		updated = true
+	}
+	if publisher != "" && publisher != b.Publisher {
+		b.Publisher = publisher
+		updated = true
+	}
+	if weight > 0 && weight != b.Weight {
+		b.Weight = weight
+		updated = true
+	}
+	if stockQuantity >= 0 && stockQuantity != b.StockQuantity {
+		b.StockQuantity = stockQuantity
+		updated = true
+	}
+	if categoryIDs != nil {
+		b.CategoryIDs = categoryIDs
+		updated = true
+	}
+	if updated {
+		b.UpdatedAt = time.Now()
+	}
 }
 
 func (b *Book) AddMediaIDs(newMediaIDs ...uuid.UUID) {

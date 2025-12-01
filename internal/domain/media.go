@@ -7,12 +7,12 @@ import (
 )
 
 type Media struct {
-	ID        uuid.UUID `json:"id"        binding:"required"                    validate:"required"`
-	URL       string    `json:"url"       binding:"required"                    validate:"required,url"`
-	AltText   string    `json:"altText"   validate:"omitempty,lte=200"`
-	Order     int       `json:"order"     binding:"required"                    validate:"required,gte=0"`
-	CreatedAt time.Time `json:"createdAt" binding:"required"                    validate:"required"`
-	DeletedAt time.Time `json:"deletedAt" validate:"omitnil,gtefield=CreatedAt"`
+	ID        uuid.UUID `validate:"required"`
+	URL       string    `validate:"required,url"`
+	AltText   string    `validate:"omitempty,lte=200"`
+	Order     int       `validate:"required,gte=0"`
+	CreatedAt time.Time `validate:"required"`
+	DeletedAt time.Time `validate:"omitempty,gtefield=CreatedAt"`
 }
 
 func NewMedia(

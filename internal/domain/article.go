@@ -7,19 +7,26 @@ import (
 )
 
 type Article struct {
-	ID          uuid.UUID `json:"id"          binding:"required"                     validate:"required"`
-	Slug        string    `json:"slug"        binding:"required"                     validate:"required,gte=2,lte=200"`
-	Title       string    `json:"title"       binding:"required"                     validate:"required,gte=2,lte=200"`
-	ThumbnailID uuid.UUID `json:"thumbnailId" validate:"required"`
-	Content     string    `json:"content"     validate:"omitempty,lte=50000"`
-	Tags        []string  `json:"tags"        validate:"omitempty,dive,gte=1,lte=50"`
-	UserID      uuid.UUID `json:"userId"      binding:"required"                     validate:"required,uuid"`
-	CreatedAt   time.Time `json:"createdAt"   binding:"required"                     validate:"required"`
-	UpdatedAt   time.Time `json:"updatedAt"   binding:"required"                     validate:"required,gtefield=CreatedAt"`
-	DeletedAt   time.Time `json:"deletedAt"   validate:"omitnil,gtefield=CreatedAt"`
+	ID          uuid.UUID `validate:"required"`
+	Slug        string    `validate:"required,gte=2,lte=200"`
+	Title       string    `validate:"required,gte=2,lte=200"`
+	ThumbnailID uuid.UUID `validate:"required"`
+	Content     string    `validate:"omitempty,lte=50000"`
+	Tags        []string  `validate:"omitempty,dive,gte=1,lte=50"`
+	UserID      uuid.UUID `validate:"required,uuid"`
+	CreatedAt   time.Time `validate:"required"`
+	UpdatedAt   time.Time `validate:"required,gtefield=CreatedAt"`
+	DeletedAt   time.Time `validate:"omitempty,gtefield=CreatedAt"`
 }
 
-func NewArticle(slug string, title string, thumbnailID uuid.UUID, content string, tags []string, userID uuid.UUID) (*Article, error) {
+func NewArticle(
+	slug string,
+	title string,
+	thumbnailID uuid.UUID,
+	content string,
+	tags []string,
+	userID uuid.UUID,
+) (*Article, error) {
 	id, err := uuid.NewV7()
 	if err != nil {
 		return nil, err
@@ -32,28 +39,33 @@ func NewArticle(slug string, title string, thumbnailID uuid.UUID, content string
 		ThumbnailID: thumbnailID,
 		Content:     content,
 		Tags:        tags,
-		UserID:      userID,
-		CreatedAt:   now,
-		UpdatedAt:   now,
+
+		CreatedAt: now,
+		UpdatedAt: now,
 	}, nil
 }
 
-func (a *Article) Update(slug *string, title *string, thumbnailID *uuid.UUID, content *string) {
+func (a *Article) Update(
+	slug string,
+	title string,
+	thumbnailID uuid.UUID,
+	content string,
+) {
 	updated := false
-	if slug != nil {
-		a.Slug = *slug
+	if slug != "" && slug != a.Slug {
+		a.Slug = slug
 		updated = true
 	}
-	if title != nil {
-		a.Title = *title
+	if title != "" && title != a.Title {
+		a.Title = title
 		updated = true
 	}
-	if thumbnailID != nil {
-		a.ThumbnailID = *thumbnailID
+	if thumbnailID != uuid.Nil && thumbnailID != a.ThumbnailID {
+		a.ThumbnailID = thumbnailID
 		updated = true
 	}
-	if content != nil {
-		a.Content = *content
+	if content != "" && content != a.Content {
+		a.Content = content
 		updated = true
 	}
 

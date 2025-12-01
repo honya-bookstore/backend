@@ -7,27 +7,27 @@ import (
 )
 
 type Review struct {
-	ID        uuid.UUID    `json:"id"        binding:"required"                    validate:"required"`
-	Rating    int16        `json:"rating"    binding:"required"                    validate:"required,gte=1,lte=5"`
-	VoteCount int          `json:"voteCount" binding:"required"                    validate:"required,gte=0"`
-	Content   string       `json:"content"   validate:"omitempty,lte=2000"`
-	UserID    uuid.UUID    `json:"userId"    binding:"required"                    validate:"required,uuid"`
-	BookID    uuid.UUID    `json:"bookId"    binding:"required"                    validate:"required,uuid"`
-	Votes     []ReviewVote `json:"votes"     validate:"omitempty,dive"`
-	CreatedAt time.Time    `json:"createdAt" binding:"required"                    validate:"required"`
-	UpdatedAt time.Time    `json:"updatedAt" binding:"required"                    validate:"required,gtefield=CreatedAt"`
-	DeletedAt time.Time    `json:"deletedAt" validate:"omitnil,gtefield=CreatedAt"`
+	ID        uuid.UUID    `validate:"required"`
+	Rating    uint8        `validate:"required,gte=1,lte=5"`
+	VoteCount int          `validate:"required,gte=0"`
+	Content   string       `validate:"omitempty,lte=2000"`
+	UserID    uuid.UUID    `validate:"required"`
+	BookID    uuid.UUID    `validate:"required"`
+	Votes     []ReviewVote `validate:"omitempty,dive"`
+	CreatedAt time.Time    `validate:"required"`
+	UpdatedAt time.Time    `validate:"required,gtefield=CreatedAt"`
+	DeletedAt time.Time    `validate:"omitempty,gtefield=CreatedAt"`
 }
 
 type ReviewVote struct {
-	ID        uuid.UUID `json:"id"        binding:"required" validate:"required"`
-	UserID    uuid.UUID `json:"userId"    binding:"required" validate:"required,uuid"`
-	IsUp      bool      `json:"isUp"      binding:"required" validate:"required"`
-	CreatedAt time.Time `json:"createdAt" binding:"required" validate:"required"`
+	ID        uuid.UUID `validate:"required"`
+	UserID    uuid.UUID `validate:"required,uuid"`
+	IsUp      bool      `validate:"required"`
+	CreatedAt time.Time `validate:"required"`
 }
 
 func NewReview(
-	rating int16,
+	rating uint8,
 	content string,
 	userID uuid.UUID,
 	bookID uuid.UUID,
@@ -63,16 +63,17 @@ func NewReviewVote(userID uuid.UUID, isUp bool) (*ReviewVote, error) {
 	}, nil
 }
 
-func (r *Review) Update(rating *int16, content *string) {
+func (r *Review) Update(rating uint8, content string) {
 	updated := false
-	if rating != nil {
-		r.Rating = *rating
+	if r.Rating != rating && rating != 0 {
+		r.Rating = rating
 		updated = true
 	}
-	if content != nil {
-		r.Content = *content
+	if r.Content != content && content != "" {
+		r.Content = content
 		updated = true
 	}
+
 	if updated {
 		r.UpdatedAt = time.Now()
 	}
