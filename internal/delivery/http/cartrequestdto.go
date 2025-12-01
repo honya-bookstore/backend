@@ -15,7 +15,7 @@ type GetCartByUserRequestDTO struct {
 }
 
 type GetCartByUserRequestPathParams struct {
-	UserID uuid.UUID `json:"userId" binding:"required" format:"uuid"`
+	UserID uuid.UUID `json:"user_id" binding:"required" format:"uuid"`
 }
 
 type CreateCartRequestDTO struct {
