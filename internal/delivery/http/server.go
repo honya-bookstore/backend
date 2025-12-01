@@ -16,11 +16,11 @@ type Server struct {
 
 func NewServer(
 	e *gin.Engine,
-	// r Router,
+	r Router,
 	srvCfg *config.Server,
 	authHandler AuthHandler,
 ) *Server {
-	// r.RegisterRoutes(e)
+	r.RegisterRoutes(e)
 	auth := e.Group("/auth")
 	{
 		auth.GET("/*path", authHandler.Handler())

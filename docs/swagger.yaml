@@ -1,0 +1,1782 @@
+basePath: /api
+definitions:
+  domain.Book:
+    properties:
+      author:
+        maxLength: 200
+        type: string
+      categoryIDs:
+        items:
+          type: string
+        type: array
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      description:
+        maxLength: 2000
+        type: string
+      id:
+        type: string
+      mediaIDs:
+        items:
+          type: string
+        type: array
+      pagesCount:
+        maximum: 10000
+        type: integer
+      price:
+        type: integer
+      publisher:
+        maxLength: 200
+        type: string
+      purchaseCount:
+        minimum: 0
+        type: integer
+      rating:
+        maximum: 5
+        minimum: 0
+        type: number
+      stockQuantity:
+        minimum: 0
+        type: integer
+      title:
+        maxLength: 200
+        minLength: 1
+        type: string
+      updatedAt:
+        type: string
+      weight:
+        type: number
+      yearPublished:
+        maximum: 9999
+        minimum: 1000
+        type: integer
+    required:
+    - categoryIDs
+    - createdAt
+    - id
+    - price
+    - purchaseCount
+    - rating
+    - stockQuantity
+    - title
+    - updatedAt
+    type: object
+  domain.OrderProvider:
+    enum:
+    - COD
+    - VNPAY
+    - MOMO
+    - ZALOPAY
+    type: string
+    x-enum-varnames:
+    - PaymentProviderCOD
+    - PaymentProviderVNPAY
+    - PaymentProviderMOMO
+    - PaymentProviderZALOPAY
+  domain.OrderStatus:
+    enum:
+    - Pending
+    - Processing
+    - Shipped
+    - Delivered
+    - Cancelled
+    type: string
+    x-enum-varnames:
+    - OrderStatusPending
+    - OrderStatusProcessing
+    - OrderStatusShipped
+    - OrderStatusDelivered
+    - OrderStatusCancelled
+  http.ArticleResponseDTO:
+    properties:
+      content:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      id:
+        type: string
+      slug:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      thumbnail:
+        $ref: '#/definitions/http.ArticleThumbnailResponseDTO'
+      title:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    required:
+    - createdAt
+    - id
+    - slug
+    - title
+    - updatedAt
+    - userId
+    type: object
+  http.ArticleThumbnailResponseDTO:
+    properties:
+      altText:
+        type: string
+      fileName:
+        type: string
+      fileUrl:
+        type: string
+      id:
+        type: string
+    required:
+    - fileName
+    - fileUrl
+    - id
+    type: object
+  http.BookCategoryResponseDTO:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      slug:
+        type: string
+    required:
+    - id
+    - name
+    - slug
+    type: object
+  http.BookMediaResponseDTO:
+    properties:
+      altText:
+        type: string
+      fileName:
+        type: string
+      fileUrl:
+        type: string
+      id:
+        type: string
+    required:
+    - fileName
+    - fileUrl
+    - id
+    type: object
+  http.BookResponseDTO:
+    properties:
+      author:
+        type: string
+      categories:
+        items:
+          $ref: '#/definitions/http.BookCategoryResponseDTO'
+        type: array
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      media:
+        items:
+          $ref: '#/definitions/http.BookMediaResponseDTO'
+        type: array
+      pagesCount:
+        type: integer
+      price:
+        type: integer
+      publisher:
+        type: string
+      purchaseCount:
+        type: integer
+      rating:
+        type: number
+      stockQuantity:
+        type: integer
+      title:
+        type: string
+      updatedAt:
+        type: string
+      weight:
+        type: number
+      yearPublished:
+        type: integer
+    required:
+    - createdAt
+    - id
+    - price
+    - purchaseCount
+    - rating
+    - stockQuantity
+    - title
+    - updatedAt
+    type: object
+  http.CartItemResponseDTO:
+    properties:
+      book:
+        $ref: '#/definitions/domain.Book'
+      id:
+        type: string
+      quantity:
+        type: integer
+    required:
+    - book
+    - id
+    - quantity
+    type: object
+  http.CartResponseDTO:
+    properties:
+      id:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/http.CartItemResponseDTO'
+        type: array
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    required:
+    - id
+    - items
+    - updatedAt
+    - userId
+    type: object
+  http.CategoryResponseDTO:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      slug:
+        type: string
+      updatedAt:
+        type: string
+    required:
+    - createdAt
+    - id
+    - name
+    - slug
+    - updatedAt
+    type: object
+  http.CreateArticleData:
+    properties:
+      content:
+        type: string
+      slug:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      thumbnailId:
+        type: string
+      title:
+        type: string
+    required:
+    - slug
+    - thumbnailId
+    - title
+    type: object
+  http.CreateBookRequestData:
+    properties:
+      author:
+        type: string
+      categoryIds:
+        items:
+          type: string
+        type: array
+      description:
+        type: string
+      media:
+        items:
+          type: string
+        type: array
+      pagesCount:
+        type: integer
+      price:
+        type: integer
+      publisher:
+        type: string
+      stockQuantity:
+        type: integer
+      title:
+        type: string
+      weight:
+        type: number
+      yearPublished:
+        type: integer
+    required:
+    - author
+    - categoryIds
+    - description
+    - media
+    - pagesCount
+    - price
+    - publisher
+    - stockQuantity
+    - title
+    - weight
+    - yearPublished
+    type: object
+  http.CreateCartData:
+    properties:
+      userId:
+        type: string
+    required:
+    - userId
+    type: object
+  http.CreateCartItemData:
+    properties:
+      bookId:
+        type: string
+      quantity:
+        type: integer
+      userId:
+        type: string
+    required:
+    - bookId
+    - quantity
+    - userId
+    type: object
+  http.CreateCategoryRequestData:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      slug:
+        type: string
+    required:
+    - name
+    - slug
+    type: object
+  http.CreateMediaRequestData:
+    properties:
+      altText:
+        maxLength: 200
+        type: string
+      order:
+        minimum: 0
+        type: integer
+      url:
+        type: string
+    required:
+    - order
+    - url
+    type: object
+  http.CreateOrderData:
+    properties:
+      address:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/http.CreateOrderItemData'
+        type: array
+      provider:
+        $ref: '#/definitions/domain.OrderProvider'
+      userId:
+        type: string
+    required:
+    - address
+    - items
+    - provider
+    - userId
+    type: object
+  http.CreateOrderItemData:
+    properties:
+      bookId:
+        type: string
+      quantity:
+        type: integer
+    required:
+    - bookId
+    - quantity
+    type: object
+  http.Error:
+    properties:
+      message:
+        type: string
+    type: object
+  http.MediaResponseDTO:
+    properties:
+      altText:
+        maxLength: 200
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      id:
+        type: string
+      order:
+        minimum: 0
+        type: integer
+      url:
+        type: string
+    required:
+    - createdAt
+    - id
+    - order
+    - url
+    type: object
+  http.OrderItemResponseDto:
+    properties:
+      book:
+        $ref: '#/definitions/domain.Book'
+      id:
+        type: string
+      price:
+        type: integer
+      quantity:
+        type: integer
+    required:
+    - book
+    - id
+    - price
+    - quantity
+    type: object
+  http.OrderResponseDto:
+    properties:
+      address:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: string
+      isPaid:
+        type: boolean
+      items:
+        items:
+          $ref: '#/definitions/http.OrderItemResponseDto'
+        type: array
+      provider:
+        $ref: '#/definitions/domain.OrderProvider'
+      status:
+        $ref: '#/definitions/domain.OrderStatus'
+      totalAmount:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    required:
+    - address
+    - createdAt
+    - id
+    - isPaid
+    - provider
+    - status
+    - totalAmount
+    - updatedAt
+    - userId
+    type: object
+  http.PaginationMetaResponseDto:
+    properties:
+      currentPage:
+        type: integer
+      itemsPerPage:
+        type: integer
+      pageItems:
+        type: integer
+      totalItems:
+        type: integer
+    required:
+    - currentPage
+    - itemsPerPage
+    - totalItems
+    type: object
+  http.PaginationResponseDto-http_ArticleResponseDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/http.ArticleResponseDTO'
+        type: array
+      meta:
+        $ref: '#/definitions/http.PaginationMetaResponseDto'
+    required:
+    - data
+    - meta
+    type: object
+  http.PaginationResponseDto-http_BookResponseDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/http.BookResponseDTO'
+        type: array
+      meta:
+        $ref: '#/definitions/http.PaginationMetaResponseDto'
+    required:
+    - data
+    - meta
+    type: object
+  http.PaginationResponseDto-http_CategoryResponseDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/http.CategoryResponseDTO'
+        type: array
+      meta:
+        $ref: '#/definitions/http.PaginationMetaResponseDto'
+    required:
+    - data
+    - meta
+    type: object
+  http.PaginationResponseDto-http_MediaResponseDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/http.MediaResponseDTO'
+        type: array
+      meta:
+        $ref: '#/definitions/http.PaginationMetaResponseDto'
+    required:
+    - data
+    - meta
+    type: object
+  http.UpdateArticleData:
+    properties:
+      content:
+        type: string
+      slug:
+        type: string
+      thumbnailId:
+        type: string
+      title:
+        type: string
+    type: object
+  http.UpdateBookRequestData:
+    properties:
+      author:
+        type: string
+      categoryIds:
+        items:
+          type: string
+        type: array
+      description:
+        type: string
+      pagesCount:
+        type: integer
+      price:
+        type: integer
+      publisher:
+        type: string
+      stockQuantity:
+        type: integer
+      title:
+        type: string
+      weight:
+        type: number
+      yearPublished:
+        type: integer
+    type: object
+  http.UpdateCartItemData:
+    properties:
+      quantity:
+        type: integer
+    type: object
+  http.UpdateCategoryRequestData:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      slug:
+        type: string
+    type: object
+  http.UpdateOrderData:
+    properties:
+      address:
+        type: string
+      isPaid:
+        type: boolean
+      status:
+        $ref: '#/definitions/domain.OrderStatus'
+    required:
+    - address
+    - isPaid
+    - status
+    type: object
+info:
+  contact: {}
+paths:
+  /articles:
+    get:
+      consumes:
+      - application/json
+      description: Get all articles with optional search
+      parameters:
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - in: query
+        maximum: 50
+        minimum: 1
+        name: page
+        type: integer
+      - in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.PaginationResponseDto-http_ArticleResponseDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: List all articles
+      tags:
+      - Article
+    post:
+      consumes:
+      - application/json
+      description: Create a new article
+      parameters:
+      - description: Article request
+        in: body
+        name: article
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateArticleData'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.ArticleResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Error'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Create a new article
+      tags:
+      - Article
+  /articles/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete article by ID
+      parameters:
+      - description: Article ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Delete article
+      tags:
+      - Article
+    get:
+      consumes:
+      - application/json
+      description: Get article details by ID
+      parameters:
+      - description: Article ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.ArticleResponseDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Get article by ID
+      tags:
+      - Article
+    patch:
+      consumes:
+      - application/json
+      description: Update article details
+      parameters:
+      - description: Article ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update article request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/http.UpdateArticleData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.ArticleResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Update article
+      tags:
+      - Article
+  /books:
+    get:
+      consumes:
+      - application/json
+      description: Get all books with optional filters
+      parameters:
+      - in: query
+        name: categoryId
+        type: string
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - in: query
+        name: maxPrice
+        type: integer
+      - in: query
+        name: minPrice
+        type: integer
+      - in: query
+        maximum: 50
+        minimum: 1
+        name: page
+        type: integer
+      - in: query
+        name: publisher
+        type: string
+      - in: query
+        name: search
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sortPrice
+        type: string
+      - enum:
+        - asc
+        - desc
+        in: query
+        name: sortRecent
+        type: string
+      - in: query
+        name: year
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.PaginationResponseDto-http_BookResponseDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: List all books
+      tags:
+      - Book
+    post:
+      consumes:
+      - application/json
+      description: Create a new book
+      parameters:
+      - description: Book request
+        in: body
+        name: book
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateBookRequestData'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.BookResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Error'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Create a new book
+      tags:
+      - Book
+  /books/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete book by ID
+      parameters:
+      - description: Book ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Delete book
+      tags:
+      - Book
+    get:
+      consumes:
+      - application/json
+      description: Get book details by ID
+      parameters:
+      - description: Book ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.BookResponseDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Get book by ID
+      tags:
+      - Book
+    patch:
+      consumes:
+      - application/json
+      description: Update book details
+      parameters:
+      - description: Book ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update book request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/http.UpdateBookRequestData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.BookResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Update book
+      tags:
+      - Book
+  /cart:
+    post:
+      consumes:
+      - application/json
+      description: Create a new cart
+      parameters:
+      - description: Cart request
+        in: body
+        name: cart
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateCartData'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.CartResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Error'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Create a new cart
+      tags:
+      - Cart
+  /cart/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get cart details by ID
+      parameters:
+      - description: Cart ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.CartResponseDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Get cart by ID
+      tags:
+      - Cart
+    patch:
+      consumes:
+      - application/json
+      description: Update cart details
+      parameters:
+      - description: Cart ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.CartResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Update cart
+      tags:
+      - Cart
+  /cart/{id}/items/{item_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove item from cart
+      parameters:
+      - description: Cart ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Item ID
+        format: uuid
+        in: path
+        name: item_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Delete cart item
+      tags:
+      - Cart
+    patch:
+      consumes:
+      - application/json
+      description: Update cart item quantity
+      parameters:
+      - description: Cart ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Item ID
+        format: uuid
+        in: path
+        name: item_id
+        required: true
+        type: string
+      - description: Update cart item request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/http.UpdateCartItemData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.CartResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Update cart item
+      tags:
+      - Cart
+    post:
+      consumes:
+      - application/json
+      description: Add a new item to the cart
+      parameters:
+      - description: Cart ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Item ID
+        format: uuid
+        in: path
+        name: item_id
+        required: true
+        type: string
+      - description: Cart item request
+        in: body
+        name: item
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateCartItemData'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.CartResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Error'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Add item to cart
+      tags:
+      - Cart
+  /cart/me:
+    get:
+      consumes:
+      - application/json
+      description: Get cart details for the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.CartResponseDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Get current user's cart
+      tags:
+      - Cart
+  /cart/user/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get cart details by user ID
+      parameters:
+      - description: User ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.CartResponseDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Get cart by user ID
+      tags:
+      - Cart
+  /categories:
+    get:
+      consumes:
+      - application/json
+      description: Get all categories
+      parameters:
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - in: query
+        maximum: 50
+        minimum: 1
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.PaginationResponseDto-http_CategoryResponseDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: List all categories
+      tags:
+      - Category
+    post:
+      consumes:
+      - application/json
+      description: Create a new category
+      parameters:
+      - description: Category request
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateCategoryRequestData'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.CategoryResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Error'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Create a new category
+      tags:
+      - Category
+  /categories/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete category by ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Delete category
+      tags:
+      - Category
+    get:
+      consumes:
+      - application/json
+      description: Get category details by ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.CategoryResponseDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Get category by ID
+      tags:
+      - Category
+    patch:
+      consumes:
+      - application/json
+      description: Update category details
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update category request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/http.UpdateCategoryRequestData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.CategoryResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Update category
+      tags:
+      - Category
+  /media:
+    get:
+      consumes:
+      - application/json
+      description: Get all media with optional search
+      parameters:
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - in: query
+        maximum: 50
+        minimum: 1
+        name: page
+        type: integer
+      - in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.PaginationResponseDto-http_MediaResponseDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: List all media
+      tags:
+      - Media
+    post:
+      consumes:
+      - application/json
+      description: Create a new media
+      parameters:
+      - description: Media request
+        in: body
+        name: media
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateMediaRequestData'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.MediaResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Error'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Create a new media
+      tags:
+      - Media
+  /media/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete media by ID
+      parameters:
+      - description: Media ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Delete media
+      tags:
+      - Media
+    get:
+      consumes:
+      - application/json
+      description: Get media details by ID
+      parameters:
+      - description: Media ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.MediaResponseDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Get media by ID
+      tags:
+      - Media
+  /orders:
+    get:
+      consumes:
+      - application/json
+      description: Get all orders
+      parameters:
+      - in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - in: query
+        maximum: 50
+        minimum: 1
+        name: page
+        type: integer
+      - enum:
+        - Pending
+        - Processing
+        - Shipped
+        - Delivered
+        - Cancelled
+        in: query
+        name: status
+        type: string
+        x-enum-varnames:
+        - OrderStatusPending
+        - OrderStatusProcessing
+        - OrderStatusShipped
+        - OrderStatusDelivered
+        - OrderStatusCancelled
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/http.OrderResponseDto'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: List all orders
+      tags:
+      - Order
+    post:
+      consumes:
+      - application/json
+      description: Create a new order
+      parameters:
+      - description: Order request
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateOrderData'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.OrderResponseDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Error'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Create a new order
+      tags:
+      - Order
+  /orders/{order_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get order details by ID
+      parameters:
+      - format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.OrderResponseDto'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Get order by ID
+      tags:
+      - Order
+    put:
+      consumes:
+      - application/json
+      description: Update  order
+      parameters:
+      - format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update order status request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/http.UpdateOrderData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.OrderResponseDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.Error'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.Error'
+      security:
+      - OAuth2AccessCode: []
+      - OAuth2Password: []
+      summary: Update order
+      tags:
+      - Order
+securityDefinitions:
+  OAuth2AccessCode:
+    authorizationUrl: /auth/protocol/openid-connect/auth
+    flow: accessCode
+    tokenUrl: /auth/protocol/openid-connect/token
+    type: oauth2
+  OAuth2Password:
+    flow: password
+    tokenUrl: /auth/protocol/openid-connect/token
+    type: oauth2
+swagger: "2.0"
