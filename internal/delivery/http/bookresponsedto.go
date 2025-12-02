@@ -10,17 +10,17 @@ type BookResponseDTO struct {
 	ID            uuid.UUID                 `json:"id"            binding:"required"`
 	Title         string                    `json:"title"         binding:"required"`
 	Description   string                    `json:"description"`
-	Author        string                    `json:"author"`
+	Author        string                    `json:"author"        binding:"required"`
 	Price         int64                     `json:"price"         binding:"required"`
-	PagesCount    int                       `json:"pagesCount"`
-	YearPublished int                       `json:"yearPublished"`
-	Publisher     string                    `json:"publisher"`
+	PagesCount    int                       `json:"pagesCount"    binding:"required"`
+	YearPublished int                       `json:"yearPublished" binding:"required"`
+	Publisher     string                    `json:"publisher"     binding:"required"`
 	Weight        float64                   `json:"weight"`
 	StockQuantity int                       `json:"stockQuantity" binding:"required"`
 	PurchaseCount int                       `json:"purchaseCount" binding:"required"`
 	Rating        float64                   `json:"rating"        binding:"required"`
-	Categories    []BookCategoryResponseDTO `json:"categories"`
-	Media         []BookMediaResponseDTO    `json:"media"`
+	Categories    []BookCategoryResponseDTO `json:"categories"    binding:"required"`
+	Media         []BookMediaResponseDTO    `json:"media"         binding:"required"`
 	CreatedAt     time.Time                 `json:"createdAt"     binding:"required"`
 	UpdatedAt     time.Time                 `json:"updatedAt"     binding:"required"`
 	DeletedAt     *time.Time                `json:"deletedAt"`
