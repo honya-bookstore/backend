@@ -7,7 +7,7 @@ type ListArticleRequestDTO struct {
 }
 
 type ListArticleRequestQueryParams struct {
-	PaginationRequestDto
+	PaginationRequestDTO
 	Search string `json:"search"`
 }
 

@@ -11,7 +11,7 @@ type ListOrderRequestDTO struct {
 }
 
 type ListOrderRequestQueryParams struct {
-	PaginationRequestDto
+	PaginationRequestDTO
 	Status domain.OrderStatus `json:"status" enums:"pending,processing,shipped,delivered,cancelled"`
 }
 

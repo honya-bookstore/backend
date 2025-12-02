@@ -9,15 +9,15 @@ type ListBookRequestDTO struct {
 }
 
 type ListBookRequestQueryParams struct {
-	PaginationRequestDto
-	Search     string    `json:"search"`
-	CategoryID uuid.UUID `json:"category_id"`
-	Publisher  string    `json:"publisher"`
-	Year       int       `json:"year"`
-	MinPrice   int64     `json:"min_price"`
-	MaxPrice   int64     `json:"max_price"`
-	SortRecent string    `json:"sort_recent" enums:"asc,desc"`
-	SortPrice  string    `json:"sort_price"  enums:"asc,desc"`
+	PaginationRequestDTO
+	Search      string      `json:"search"`
+	CategoryIDs []uuid.UUID `json:"category_ids"`
+	Publisher   string      `json:"publisher"`
+	Year        int         `json:"year"`
+	MinPrice    int64       `json:"min_price"`
+	MaxPrice    int64       `json:"max_price"`
+	SortRecent  string      `json:"sort_recent"  enums:"asc,desc"`
+	SortPrice   string      `json:"sort_price"   enums:"asc,desc"`
 }
 
 type CreateBookRequestDTO struct {

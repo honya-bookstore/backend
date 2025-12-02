@@ -65,7 +65,7 @@ func pathToUUID(ctx *gin.Context, key string) (uuid.UUID, bool) {
 	return id, true
 }
 
-func createPaginationRequestDtoFromQuery(ctx *gin.Context) (*PaginationRequestDto, error) {
+func createPaginationRequestDtoFromQuery(ctx *gin.Context) (*PaginationRequestDTO, error) {
 	page := 1
 	limit := 20
 	var err error
@@ -85,7 +85,7 @@ func createPaginationRequestDtoFromQuery(ctx *gin.Context) (*PaginationRequestDt
 			return nil, domain.ErrInvalid
 		}
 	}
-	return &PaginationRequestDto{
+	return &PaginationRequestDTO{
 		Page:  page,
 		Limit: limit,
 	}, nil

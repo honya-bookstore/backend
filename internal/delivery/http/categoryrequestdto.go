@@ -5,7 +5,7 @@ type ListCategoryRequestDTO struct {
 }
 
 type ListCategoryRequestQueryParams struct {
-	PaginationRequestDto
+	PaginationRequestDTO
 }
 
 type GetCategoryRequestDTO struct {

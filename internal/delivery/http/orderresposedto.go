@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type OrderResponseDto struct {
+type OrderResponseDTO struct {
 	ID          uuid.UUID              `json:"id"          binding:"required"`
 	Address     string                 `json:"address"     binding:"required"`
 	Provider    domain.OrderProvider   `json:"provider"    binding:"required"`
@@ -16,19 +16,19 @@ type OrderResponseDto struct {
 	IsPaid      bool                   `json:"isPaid"      binding:"required"`
 	CreatedAt   time.Time              `json:"createdAt"   binding:"required"`
 	UpdatedAt   time.Time              `json:"updatedAt"   binding:"required"`
-	Items       []OrderItemResponseDto `json:"items"       binding:"omitempty,dive"`
+	Items       []OrderItemResponseDTO `json:"items"       binding:"omitempty,dive"`
 	TotalAmount int64                  `json:"totalAmount" binding:"required"`
 	UserID      uuid.UUID              `json:"userId"      binding:"required"`
 }
 
-type OrderItemResponseDto struct {
+type OrderItemResponseDTO struct {
 	ID       uuid.UUID    `json:"id"       binding:"required"`
 	Book     *domain.Book `json:"book"     binding:"required"`
 	Quantity int          `json:"quantity" binding:"required,gt=0"`
 	Price    int64        `json:"price"    binding:"required,gt=0"`
 }
 
-type OrderItemBookResponseDto struct {
+type OrderItemBookResponseDTO struct {
 	ID            uuid.UUID `json:"id"            binding:"required"`
 	Title         string    `json:"title"         binding:"required"`
 	Description   string    `json:"description"`

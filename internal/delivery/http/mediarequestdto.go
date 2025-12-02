@@ -5,7 +5,7 @@ type ListMediaRequestDTO struct {
 }
 
 type ListMediaRequestQueryParams struct {
-	PaginationRequestDto
+	PaginationRequestDTO
 	Search string `json:"search"`
 }
 

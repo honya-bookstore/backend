@@ -20,7 +20,7 @@ func ProvideBookHandler() *BookHandlerImpl {
 //	@Accept			json
 //	@Produce		json
 //	@Param			queryParams	query	ListBookRequestQueryParams	true	"Query parameters"
-//	@Success		200			{object}	PaginationResponseDto[BookResponseDTO]
+//	@Success		200			{object}	PaginationResponseDTO[BookResponseDTO]
 //	@Failure		500			{object}	Error
 //	@Router			/books [get]
 //	@Security		OAuth2AccessCode

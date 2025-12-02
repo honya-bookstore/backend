@@ -20,7 +20,7 @@ func ProvideArticleHandler() *ArticleHandlerImpl {
 //	@Accept			json
 //	@Produce		json
 //	@Param			queryParams	query	ListArticleRequestQueryParams	true	"Query parameters"
-//	@Success		200			{object}	PaginationResponseDto[ArticleResponseDTO]
+//	@Success		200			{object}	PaginationResponseDTO[ArticleResponseDTO]
 //	@Failure		500			{object}	Error
 //	@Router			/articles [get]
 //	@Security		OAuth2AccessCode

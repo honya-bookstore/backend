@@ -20,7 +20,7 @@ func ProvideMediaHandler() *MediaHandlerImpl {
 //	@Accept			json
 //	@Produce		json
 //	@Param			queryParams	query	ListMediaRequestQueryParams	true	"Query parameters"
-//	@Success		200			{object}	PaginationResponseDto[MediaResponseDTO]
+//	@Success		200			{object}	PaginationResponseDTO[MediaResponseDTO]
 //	@Failure		500			{object}	Error
 //	@Router			/media [get]
 //	@Security		OAuth2AccessCode

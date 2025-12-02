@@ -20,7 +20,7 @@ func ProvideCategoryHandler() *CategoryHandlerImpl {
 //	@Accept			json
 //	@Produce		json
 //	@Param			queryParams	query	ListCategoryRequestQueryParams	true	"Query parameters"
-//	@Success		200			{object}	PaginationResponseDto[CategoryResponseDTO]
+//	@Success		200			{object}	PaginationResponseDTO[CategoryResponseDTO]
 //	@Failure		500			{object}	Error
 //	@Router			/categories [get]
 //	@Security		OAuth2AccessCode

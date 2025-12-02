@@ -20,7 +20,7 @@ func ProvideOrderHandler() *OrderHandlerImpl {
 //	@Accept			json
 //	@Produce		json
 //	@Param	queryParams query ListOrderRequestQueryParams true "Query parameters"
-//	@Success		200			{array}		OrderResponseDto
+//	@Success		200			{array}		OrderResponseDTO
 //	@Failure		500			{object}	Error
 //	@Router			/orders [get]
 //	@Security		OAuth2AccessCode
@@ -36,7 +36,7 @@ func (h *OrderHandlerImpl) List(ctx *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			pathParams 	path	GetOrderRequestPathParams	true	"Path parameters"
-//	@Success		200			{object}	OrderResponseDto
+//	@Success		200			{object}	OrderResponseDTO
 //	@Failure		404			{object}	Error
 //	@Failure		500			{object}	Error
 //	@Router			/orders/{order_id} [get]
@@ -53,7 +53,7 @@ func (h *OrderHandlerImpl) Get(ctx *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			order	body		CreateOrderData	true	"Order request"
-//	@Success		201		{object}	OrderResponseDto
+//	@Success		201		{object}	OrderResponseDTO
 //	@Failure		400		{object}	Error
 //	@Failure		409		{object}	Error
 //	@Failure		500		{object}	Error
@@ -72,7 +72,7 @@ func (h *OrderHandlerImpl) Create(ctx *gin.Context) {
 //	@Produce		json
 //	@Param			pathParams	path		UpdateOrderRequestPathParams	true	"Path parameters"
 //	@Param			data body		UpdateOrderData	true	"Update order status request"
-//	@Success		200			{object}	OrderResponseDto
+//	@Success		200			{object}	OrderResponseDTO
 //	@Failure		400			{object}	Error
 //	@Failure		404			{object}	Error
 //	@Failure		409			{object}	Error
