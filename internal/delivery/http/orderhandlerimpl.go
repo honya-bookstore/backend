@@ -39,7 +39,7 @@ func (h *OrderHandlerImpl) List(ctx *gin.Context) {
 //	@Success		200			{object}	OrderResponseDTO
 //	@Failure		404			{object}	Error
 //	@Failure		500			{object}	Error
-//	@Router			/orders/{order_id} [get]
+//	@Router			/orders/{id} [get]
 //	@Security		OAuth2AccessCode
 //	@Security		OAuth2Password
 func (h *OrderHandlerImpl) Get(ctx *gin.Context) {
@@ -77,7 +77,7 @@ func (h *OrderHandlerImpl) Create(ctx *gin.Context) {
 //	@Failure		404			{object}	Error
 //	@Failure		409			{object}	Error
 //	@Failure		500			{object}	Error
-//	@Router			/orders/{order_id} [put]
+//	@Router			/orders/{id} [patch]
 //	@Security		OAuth2AccessCode
 //	@Security		OAuth2Password
 func (h *OrderHandlerImpl) Update(ctx *gin.Context) {
