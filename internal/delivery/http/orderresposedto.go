@@ -10,6 +10,7 @@ import (
 
 type OrderResponseDTO struct {
 	ID          uuid.UUID              `json:"id"          binding:"required"`
+	City        string                 `json:"city"        binding:"required"`
 	Address     string                 `json:"address"     binding:"required"`
 	Provider    domain.OrderProvider   `json:"provider"    binding:"required"`
 	Status      domain.OrderStatus     `json:"status"      binding:"required"`

@@ -9,6 +9,7 @@ import (
 type Order struct {
 	ID          uuid.UUID     `validate:"required"`
 	Address     string        `validate:"required"`
+	City        string        `validate:"required"`
 	Provider    OrderProvider `validate:"required,oneof=COD VNPAY MOMO ZALOPAY"`
 	Status      OrderStatus   `validate:"required,oneof=Pending Processing Shipped Delivered Cancelled"`
 	IsPaid      bool          `validate:"required"`

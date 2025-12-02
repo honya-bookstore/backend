@@ -96,6 +96,7 @@ CREATE TABLE order_providers (
 CREATE TABLE orders (
   id UUID PRIMARY KEY,
   address TEXT NOT NULL,
+  city TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   total_amount DECIMAL(12, 0) NOT NULL,
