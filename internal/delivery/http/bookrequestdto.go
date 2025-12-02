@@ -25,17 +25,22 @@ type CreateBookRequestDTO struct {
 }
 
 type CreateBookRequestData struct {
-	Title         string      `json:"title"         binding:"required"`
-	Description   string      `json:"description"`
-	Author        string      `json:"author"        binding:"required"`
-	Price         int64       `json:"price"         binding:"required"`
-	PagesCount    int         `json:"pagesCount"    binding:"required"`
-	YearPublished int         `json:"yearPublished" binding:"required"`
-	Publisher     string      `json:"publisher"     binding:"required"`
-	Weight        float64     `json:"weight"`
-	StockQuantity int         `json:"stockQuantity" binding:"required"`
-	CategoryIDs   []uuid.UUID `json:"categoryIds"   binding:"required"`
-	Media         []uuid.UUID `json:"media"         binding:"required"`
+	Title         string                `json:"title"         binding:"required"`
+	Description   string                `json:"description"`
+	Author        string                `json:"author"        binding:"required"`
+	Price         int64                 `json:"price"         binding:"required"`
+	PagesCount    int                   `json:"pagesCount"    binding:"required"`
+	YearPublished int                   `json:"yearPublished" binding:"required"`
+	Publisher     string                `json:"publisher"     binding:"required"`
+	Weight        float64               `json:"weight"`
+	StockQuantity int                   `json:"stockQuantity" binding:"required"`
+	CategoryIDs   []uuid.UUID           `json:"categoryIds"   binding:"required"`
+	Media         []CreateBookMediaData `json:"media"         binding:"required"`
+}
+
+type CreateBookMediaData struct {
+	MediaID uuid.UUID `json:"mediaId" binding:"required"`
+	IsCover bool      `json:"isCover" binding:"required"`
 }
 
 type GetBookRequestDTO struct {

@@ -10,7 +10,7 @@ type BookRepository interface {
 	List(
 		ctx context.Context,
 		params BookRepositoryListParam,
-	) (*[]Category, error)
+	) (*[]Book, error)
 
 	Count(
 		ctx context.Context,
@@ -19,11 +19,11 @@ type BookRepository interface {
 	Get(
 		ctx context.Context,
 		params BookRepositoryGetParam,
-	) (*Category, error)
+	) (*Book, error)
 
 	Save(
 		ctx context.Context,
-		params BookCategorySaveParam,
+		params BookRepositorySaveParam,
 	) error
 }
 
@@ -55,6 +55,6 @@ type BookRepositoryGetParam struct {
 	BookID uuid.UUID
 }
 
-type BookCategorySaveParam struct {
+type BookRepositorySaveParam struct {
 	Book Book
 }

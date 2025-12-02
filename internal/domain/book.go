@@ -20,10 +20,15 @@ type Book struct {
 	PurchaseCount int         `validate:"required,gte=0"`
 	Rating        float64     `validate:"required,gte=0,lte=5"`
 	CategoryIDs   []uuid.UUID `validate:"required"`
-	MediaIDs      []uuid.UUID `validate:"required,dive"`
+	Media         []BookMedia `validate:"required,dive"`
 	CreatedAt     time.Time   `validate:"required"`
 	UpdatedAt     time.Time   `validate:"required,gtefield=CreatedAt"`
 	DeletedAt     time.Time   `validate:"omitempty,gtefield=CreatedAt"`
+}
+
+type BookMedia struct {
+	MediaID uuid.UUID `validate:"required"`
+	IsCover bool      `validate:"required"`
 }
 
 func NewBook(
@@ -37,7 +42,7 @@ func NewBook(
 	weight float64,
 	stockQuantity int,
 	categoryID []uuid.UUID,
-	mediaIDs []uuid.UUID,
+	bookMedia []BookMedia,
 ) (*Book, error) {
 	id, err := uuid.NewV7()
 	if err != nil {
@@ -58,10 +63,20 @@ func NewBook(
 		PurchaseCount: 0,
 		Rating:        0,
 		CategoryIDs:   categoryID,
-		MediaIDs:      mediaIDs,
+		Media:         bookMedia,
 		CreatedAt:     now,
 		UpdatedAt:     now,
 	}, err
+}
+
+func NewBookMedia(
+	MediaID uuid.UUID,
+	isCover bool,
+) *BookMedia {
+	return &BookMedia{
+		MediaID: MediaID,
+		IsCover: isCover,
+	}
 }
 
 func (b *Book) Update(
@@ -120,25 +135,6 @@ func (b *Book) Update(
 	if updated {
 		b.UpdatedAt = time.Now()
 	}
-}
-
-func (b *Book) AddMediaIDs(newMediaIDs ...uuid.UUID) {
-	b.MediaIDs = append(b.MediaIDs, newMediaIDs...)
-}
-
-func (b *Book) RemoveMediaIDs(mediaIDsToRemove ...uuid.UUID) {
-	mediaIDMap := make(map[uuid.UUID]struct{})
-	for _, mediaID := range mediaIDsToRemove {
-		mediaIDMap[mediaID] = struct{}{}
-	}
-
-	filteredMediaIDs := make([]uuid.UUID, 0, len(b.MediaIDs)-len(mediaIDsToRemove))
-	for _, mediaID := range b.MediaIDs {
-		if _, found := mediaIDMap[mediaID]; !found {
-			filteredMediaIDs = append(filteredMediaIDs, mediaID)
-		}
-	}
-	b.MediaIDs = filteredMediaIDs
 }
 
 func (b *Book) Remove() {
