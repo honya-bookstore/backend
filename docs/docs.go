@@ -61,7 +61,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.PaginationResponseDto-http_ArticleResponseDTO"
+                            "$ref": "#/definitions/http.PaginationResponseDTO-http_ArticleResponseDTO"
                         }
                     },
                     "500": {
@@ -327,8 +327,12 @@ const docTemplate = `{
                 "summary": "List all books",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "categoryId",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "name": "category_ids",
                         "in": "query"
                     },
                     {
@@ -340,12 +344,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "name": "maxPrice",
+                        "name": "max_price",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "name": "minPrice",
+                        "name": "min_price",
                         "in": "query"
                     },
                     {
@@ -371,7 +375,7 @@ const docTemplate = `{
                             "desc"
                         ],
                         "type": "string",
-                        "name": "sortPrice",
+                        "name": "sort_price",
                         "in": "query"
                     },
                     {
@@ -380,7 +384,7 @@ const docTemplate = `{
                             "desc"
                         ],
                         "type": "string",
-                        "name": "sortRecent",
+                        "name": "sort_recent",
                         "in": "query"
                     },
                     {
@@ -393,7 +397,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.PaginationResponseDto-http_BookResponseDTO"
+                            "$ref": "#/definitions/http.PaginationResponseDTO-http_BookResponseDTO"
                         }
                     },
                     "500": {
@@ -1149,7 +1153,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.PaginationResponseDto-http_CategoryResponseDTO"
+                            "$ref": "#/definitions/http.PaginationResponseDTO-http_CategoryResponseDTO"
                         }
                     },
                     "500": {
@@ -1435,7 +1439,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.PaginationResponseDto-http_MediaResponseDTO"
+                            "$ref": "#/definitions/http.PaginationResponseDTO-http_MediaResponseDTO"
                         }
                     },
                     "500": {
@@ -1666,7 +1670,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/http.OrderResponseDto"
+                                "$ref": "#/definitions/http.OrderResponseDTO"
                             }
                         }
                     },
@@ -1713,7 +1717,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/http.OrderResponseDto"
+                            "$ref": "#/definitions/http.OrderResponseDTO"
                         }
                     },
                     "400": {
@@ -1771,7 +1775,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.OrderResponseDto"
+                            "$ref": "#/definitions/http.OrderResponseDTO"
                         }
                     },
                     "404": {
@@ -1830,7 +1834,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.OrderResponseDto"
+                            "$ref": "#/definitions/http.OrderResponseDTO"
                         }
                     },
                     "400": {
@@ -1865,15 +1869,20 @@ const docTemplate = `{
         "domain.Book": {
             "type": "object",
             "required": [
+                "author",
                 "categoryIDs",
                 "createdAt",
                 "id",
+                "mediaIDs",
+                "pagesCount",
                 "price",
+                "publisher",
                 "purchaseCount",
                 "rating",
                 "stockQuantity",
                 "title",
-                "updatedAt"
+                "updatedAt",
+                "yearPublished"
             ],
             "properties": {
                 "author": {
@@ -2094,14 +2103,20 @@ const docTemplate = `{
         "http.BookResponseDTO": {
             "type": "object",
             "required": [
+                "author",
+                "categories",
                 "createdAt",
                 "id",
+                "media",
+                "pagesCount",
                 "price",
+                "publisher",
                 "purchaseCount",
                 "rating",
                 "stockQuantity",
                 "title",
-                "updatedAt"
+                "updatedAt",
+                "yearPublished"
             ],
             "properties": {
                 "author": {
@@ -2274,14 +2289,12 @@ const docTemplate = `{
             "required": [
                 "author",
                 "categoryIds",
-                "description",
                 "media",
                 "pagesCount",
                 "price",
                 "publisher",
                 "stockQuantity",
                 "title",
-                "weight",
                 "yearPublished"
             ],
             "properties": {
@@ -2398,12 +2411,16 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "address",
+                "city",
                 "items",
                 "provider",
                 "userId"
             ],
             "properties": {
                 "address": {
+                    "type": "string"
+                },
+                "city": {
                     "type": "string"
                 },
                 "items": {
@@ -2474,7 +2491,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.OrderItemResponseDto": {
+        "http.OrderItemResponseDTO": {
             "type": "object",
             "required": [
                 "book",
@@ -2497,10 +2514,11 @@ const docTemplate = `{
                 }
             }
         },
-        "http.OrderResponseDto": {
+        "http.OrderResponseDTO": {
             "type": "object",
             "required": [
                 "address",
+                "city",
                 "createdAt",
                 "id",
                 "isPaid",
@@ -2512,6 +2530,9 @@ const docTemplate = `{
             ],
             "properties": {
                 "address": {
+                    "type": "string"
+                },
+                "city": {
                     "type": "string"
                 },
                 "createdAt": {
@@ -2526,7 +2547,7 @@ const docTemplate = `{
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/http.OrderItemResponseDto"
+                        "$ref": "#/definitions/http.OrderItemResponseDTO"
                     }
                 },
                 "provider": {
@@ -2546,12 +2567,13 @@ const docTemplate = `{
                 }
             }
         },
-        "http.PaginationMetaResponseDto": {
+        "http.PaginationMetaResponseDTO": {
             "type": "object",
             "required": [
                 "currentPage",
                 "itemsPerPage",
-                "totalItems"
+                "totalItems",
+                "totalPages"
             ],
             "properties": {
                 "currentPage": {
@@ -2565,10 +2587,13 @@ const docTemplate = `{
                 },
                 "totalItems": {
                     "type": "integer"
+                },
+                "totalPages": {
+                    "type": "integer"
                 }
             }
         },
-        "http.PaginationResponseDto-http_ArticleResponseDTO": {
+        "http.PaginationResponseDTO-http_ArticleResponseDTO": {
             "type": "object",
             "required": [
                 "data",
@@ -2582,11 +2607,11 @@ const docTemplate = `{
                     }
                 },
                 "meta": {
-                    "$ref": "#/definitions/http.PaginationMetaResponseDto"
+                    "$ref": "#/definitions/http.PaginationMetaResponseDTO"
                 }
             }
         },
-        "http.PaginationResponseDto-http_BookResponseDTO": {
+        "http.PaginationResponseDTO-http_BookResponseDTO": {
             "type": "object",
             "required": [
                 "data",
@@ -2600,11 +2625,11 @@ const docTemplate = `{
                     }
                 },
                 "meta": {
-                    "$ref": "#/definitions/http.PaginationMetaResponseDto"
+                    "$ref": "#/definitions/http.PaginationMetaResponseDTO"
                 }
             }
         },
-        "http.PaginationResponseDto-http_CategoryResponseDTO": {
+        "http.PaginationResponseDTO-http_CategoryResponseDTO": {
             "type": "object",
             "required": [
                 "data",
@@ -2618,11 +2643,11 @@ const docTemplate = `{
                     }
                 },
                 "meta": {
-                    "$ref": "#/definitions/http.PaginationMetaResponseDto"
+                    "$ref": "#/definitions/http.PaginationMetaResponseDTO"
                 }
             }
         },
-        "http.PaginationResponseDto-http_MediaResponseDTO": {
+        "http.PaginationResponseDTO-http_MediaResponseDTO": {
             "type": "object",
             "required": [
                 "data",
@@ -2636,7 +2661,7 @@ const docTemplate = `{
                     }
                 },
                 "meta": {
-                    "$ref": "#/definitions/http.PaginationMetaResponseDto"
+                    "$ref": "#/definitions/http.PaginationMetaResponseDTO"
                 }
             }
         },
