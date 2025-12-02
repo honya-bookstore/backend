@@ -210,6 +210,13 @@ func (b *Book) Update(ctx context.Context, param http.UpdateBookRequestDTO) (*ht
 		}
 	}
 
+	bookMedia := make([]domain.BookMedia, 0, len(param.Data.Media))
+	for _, m := range param.Data.Media {
+		bookMedia = append(bookMedia, domain.BookMedia{
+			MediaID: m.MediaID,
+			IsCover: m.IsCover,
+		})
+	}
 	book.Update(
 		param.Data.Title,
 		param.Data.Description,
@@ -221,6 +228,7 @@ func (b *Book) Update(ctx context.Context, param http.UpdateBookRequestDTO) (*ht
 		param.Data.Weight,
 		param.Data.StockQuantity,
 		param.Data.CategoryIDs,
+		bookMedia,
 	)
 
 	if err := b.bookService.Validate(*book); err != nil {

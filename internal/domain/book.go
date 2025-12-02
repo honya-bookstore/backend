@@ -90,6 +90,7 @@ func (b *Book) Update(
 	weight float64,
 	stockQuantity int,
 	categoryIDs []uuid.UUID,
+	media []BookMedia,
 ) {
 	updated := false
 	if title != "" && title != b.Title {
@@ -130,6 +131,10 @@ func (b *Book) Update(
 	}
 	if categoryIDs != nil {
 		b.CategoryIDs = categoryIDs
+		updated = true
+	}
+	if media != nil {
+		b.Media = media
 		updated = true
 	}
 	if updated {

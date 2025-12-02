@@ -61,16 +61,22 @@ type UpdateBookRequestPathParams struct {
 }
 
 type UpdateBookRequestData struct {
-	Title         string      `json:"title"`
-	Description   string      `json:"description"`
-	Author        string      `json:"author"`
-	Price         int64       `json:"price"`
-	PagesCount    int         `json:"pagesCount"`
-	YearPublished int         `json:"yearPublished"`
-	Publisher     string      `json:"publisher"`
-	Weight        float64     `json:"weight"`
-	StockQuantity int         `json:"stockQuantity"`
-	CategoryIDs   []uuid.UUID `json:"categoryIds"`
+	Title         string                `json:"title"`
+	Description   string                `json:"description"`
+	Author        string                `json:"author"`
+	Price         int64                 `json:"price"`
+	PagesCount    int                   `json:"pagesCount"`
+	YearPublished int                   `json:"yearPublished"`
+	Publisher     string                `json:"publisher"`
+	Weight        float64               `json:"weight"`
+	StockQuantity int                   `json:"stockQuantity"`
+	CategoryIDs   []uuid.UUID           `json:"categoryIds"`
+	Media         []UpdateBookMediaData `json:"media"`
+}
+
+type UpdateBookMediaData struct {
+	MediaID uuid.UUID `json:"mediaId" binding:"required"`
+	IsCover bool      `json:"isCover" binding:"required"`
 }
 
 type DeleteBookRequestDTO struct {
