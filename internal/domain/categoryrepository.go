@@ -29,6 +29,7 @@ type CategoryRepository interface {
 
 type CategoryRepositoryListParam struct {
 	CategoryIDs []uuid.UUID
+	Search      string
 	Limit       int
 	Offset      int
 }

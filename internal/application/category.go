@@ -59,6 +59,7 @@ func (c *Category) List(ctx context.Context, param http.ListCategoryRequestDTO) 
 	categories, err := c.categoryRepo.List(
 		ctx,
 		domain.CategoryRepositoryListParam{
+			Search: queryParams.Search,
 			Limit:  queryParams.Limit,
 			Offset: (queryParams.Page - 1) * queryParams.Limit,
 		},

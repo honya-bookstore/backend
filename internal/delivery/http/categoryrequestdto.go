@@ -6,6 +6,7 @@ type ListCategoryRequestDTO struct {
 
 type ListCategoryRequestQueryParams struct {
 	PaginationRequestDTO
+	Search string `json:"search"`
 }
 
 type GetCategoryRequestDTO struct {
