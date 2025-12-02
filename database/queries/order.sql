@@ -3,6 +3,7 @@ INSERT INTO orders (
   id,
   user_id,
   address,
+  city,
   total_amount,
   is_paid,
   provider_id,
@@ -13,6 +14,7 @@ INSERT INTO orders (
   sqlc.arg('id'),
   sqlc.arg('user_id'),
   sqlc.arg('address'),
+  sqlc.arg('city'),
   sqlc.arg('total_amount'),
   sqlc.arg('is_paid'),
   sqlc.arg('provider_id'),
@@ -23,6 +25,7 @@ INSERT INTO orders (
 ON CONFLICT (id) DO UPDATE SET
   user_id = EXCLUDED.user_id,
   address = EXCLUDED.address,
+  city = EXCLUDED.city,
   total_amount = EXCLUDED.total_amount,
   is_paid = EXCLUDED.is_paid,
   provider_id = EXCLUDED.provider_id,

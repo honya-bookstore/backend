@@ -12,7 +12,6 @@ INSERT INTO books (
   stock_quantity,
   purchase_count,
   rating,
-  category_id,
   created_at,
   updated_at,
   deleted_at
@@ -30,7 +29,6 @@ VALUES (
   sqlc.arg('stock_quantity'),
   sqlc.arg('purchase_count'),
   sqlc.arg('rating'),
-  sqlc.arg('category_id'),
   sqlc.arg('created_at'),
   sqlc.arg('updated_at'),
   NULLIF(sqlc.arg('deleted_at')::timestamptz, '0001-01-01T00:00:00Z'::timestamptz)
@@ -47,7 +45,6 @@ ON CONFLICT (id) DO UPDATE SET
   stock_quantity = EXCLUDED.stock_quantity,
   purchase_count = EXCLUDED.purchase_count,
   rating = EXCLUDED.rating,
-  category_id = EXCLUDED.category_id,
   created_at = EXCLUDED.created_at,
   updated_at = EXCLUDED.updated_at,
   deleted_at = COALESCE(EXCLUDED.deleted_at, books.deleted_at);
@@ -57,6 +54,46 @@ SELECT
   books.*
 FROM
   books
+LEFT JOIN (
+  SELECT
+    categories.id AS category_id,
+    pdb.score(books.id) AS category_score
+  FROM books
+  INNER JOIN books_categories
+    ON books.id = books_categories.book_id
+  INNER JOIN categories
+    ON books_categories.category_id = categories.id
+  WHERE
+    CASE
+      WHEN sqlc.arg('search')::text = '' THEN TRUE
+      ELSE (
+        categories.name ||| sqlc.arg('search')::text
+        AND categories.deleted_at IS NULL
+      )
+    END
+) AS category_scores
+  ON books.id = (SELECT bc.book_id FROM books_categories bc WHERE bc.category_id = category_scores.category_id LIMIT 1)
+LEFT JOIN (
+  SELECT
+    book_id
+  FROM
+    books_categories
+  WHERE
+    CASE
+      WHEN sqlc.arg('category_ids')::uuid[] IS NULL THEN TRUE
+      WHEN cardinality(sqlc.arg('category_ids')::uuid[]) = 0 THEN TRUE
+      ELSE category_id = ANY (sqlc.arg('category_ids')::uuid[])
+    END
+  GROUP BY
+    book_id
+  HAVING
+    COUNT(DISTINCT category_id) >= CASE
+      WHEN sqlc.arg('category_ids')::uuid[] IS NULL THEN 0
+      WHEN cardinality(sqlc.arg('category_ids')::uuid[]) = 0 THEN 0
+      ELSE cardinality(sqlc.arg('category_ids')::uuid[])
+    END
+) AS category_filter
+  ON books.id = category_filter.book_id
 WHERE
   CASE
     WHEN sqlc.arg('ids')::uuid[] IS NULL THEN TRUE
@@ -64,9 +101,15 @@ WHERE
     ELSE books.id = ANY (sqlc.arg('ids')::uuid[])
   END
   AND CASE
+    WHEN sqlc.arg('search')::text = '' THEN TRUE
+    ELSE books.title ||| sqlc.arg('search')::text
+      OR books.author ||| sqlc.arg('search')::text
+      OR books.description ||| sqlc.arg('search')::text
+  END
+  AND CASE
     WHEN sqlc.arg('category_ids')::uuid[] IS NULL THEN TRUE
     WHEN cardinality(sqlc.arg('category_ids')::uuid[]) = 0 THEN TRUE
-    ELSE books.category_id = ANY (sqlc.arg('category_ids')::uuid[])
+    ELSE category_filter.book_id IS NOT NULL
   END
   AND CASE
     WHEN sqlc.arg('min_price')::decimal IS NULL THEN TRUE
@@ -91,6 +134,9 @@ WHERE
   END
 ORDER BY
   CASE WHEN
+    sqlc.arg('search')::text <> '' THEN pdb.score(books.id) + COALESCE(category_scores.category_score, 0)
+  END DESC,
+  CASE WHEN
     sqlc.arg('sort_rating')::text = 'asc' THEN books.rating
   END ASC,
   CASE WHEN
@@ -111,28 +157,52 @@ SELECT
   COUNT(*) AS count
 FROM
   books
+LEFT JOIN (
+  SELECT
+    book_id
+  FROM
+    books_categories
+  WHERE
+    CASE
+      WHEN sqlc.arg('category_ids')::uuid[] IS NULL THEN TRUE
+      WHEN cardinality(sqlc.arg('category_ids')::uuid[]) = 0 THEN TRUE
+      ELSE category_id = ANY (sqlc.arg('category_ids')::uuid[])
+    END
+  GROUP BY
+    book_id
+  HAVING
+    COUNT(DISTINCT category_id) >= CASE
+      WHEN sqlc.arg('category_ids')::uuid[] IS NULL THEN 0
+      WHEN cardinality(sqlc.arg('category_ids')::uuid[]) = 0 THEN 0
+      ELSE cardinality(sqlc.arg('category_ids')::uuid[])
+    END
+) AS category_filter
+  ON books.id = category_filter.book_id
 WHERE
   CASE
-    WHEN sqlc.narg('ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('ids')::uuid[]) = 0 THEN TRUE
-    ELSE books.id = ANY (sqlc.narg('ids')::uuid[])
+    WHEN sqlc.arg('ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('ids')::uuid[]) = 0 THEN TRUE
+    ELSE books.id = ANY (sqlc.arg('ids')::uuid[])
   END
   AND CASE
-    WHEN sqlc.narg('category_ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('category_ids')::uuid[]) = 0 THEN TRUE
-    ELSE books.category_id = ANY (sqlc.narg('category_ids')::uuid[])
+    WHEN sqlc.arg('category_ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('category_ids')::uuid[]) = 0 THEN TRUE
+    ELSE category_filter.book_id IS NOT NULL
   END
   AND CASE
-    WHEN sqlc.narg('min_price')::decimal IS NULL THEN TRUE
-    ELSE books.price >= sqlc.narg('min_price')::decimal
+    WHEN sqlc.arg('min_price')::decimal IS NULL THEN TRUE
+    WHEN sqlc.arg('min_price')::decimal = 0 THEN TRUE
+    ELSE books.price >= sqlc.arg('min_price')::decimal
   END
   AND CASE
-    WHEN sqlc.narg('max_price')::decimal IS NULL THEN TRUE
-    ELSE books.price <= sqlc.narg('max_price')::decimal
+    WHEN sqlc.arg('max_price')::decimal IS NULL THEN TRUE
+    WHEN sqlc.arg('max_price')::decimal = 0 THEN TRUE
+    ELSE books.price <= sqlc.arg('max_price')::decimal
   END
   AND CASE
-    WHEN sqlc.narg('rating')::real IS NULL THEN TRUE
-    ELSE books.rating >= sqlc.narg('rating')::real
+    WHEN sqlc.arg('rating')::real IS NULL THEN TRUE
+    WHEN sqlc.arg('rating')::real = 0 THEN TRUE
+    ELSE books.rating >= sqlc.arg('rating')::real
   END
   AND CASE
     WHEN sqlc.arg('deleted')::text = 'exclude' THEN books.deleted_at IS NULL
@@ -141,96 +211,70 @@ WHERE
     ELSE books.deleted_at IS NULL
   END;
 
--- name: ListMedia :many
+-- name: ListBooksMedia :many
 SELECT
   *
 FROM
-  media
+  books_media
 WHERE
   CASE
-    WHEN sqlc.arg('ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.arg('ids')::uuid[]) = 0 THEN TRUE
-    ELSE id = ANY (sqlc.arg('ids')::uuid[])
-  END
-  AND CASE
     WHEN sqlc.arg('book_ids')::uuid[] IS NULL THEN TRUE
     WHEN cardinality(sqlc.arg('book_ids')::uuid[]) = 0 THEN TRUE
     ELSE book_id = ANY (sqlc.arg('book_ids')::uuid[])
   END
   AND CASE
-    WHEN sqlc.arg('deleted')::text = 'exclude' THEN deleted_at IS NULL
-    WHEN sqlc.arg('deleted')::text = 'only' THEN deleted_at IS NOT NULL
-    WHEN sqlc.arg('deleted')::text = 'all' THEN TRUE
-    ELSE deleted_at IS NULL
+    WHEN sqlc.arg('media_ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('media_ids')::uuid[]) = 0 THEN TRUE
+    ELSE media_id = ANY (sqlc.arg('media_ids')::uuid[])
+  END
+  AND CASE
+    WHEN sqlc.arg('is_cover')::boolean IS NULL THEN TRUE
+    ELSE is_cover = sqlc.arg('is_cover')::boolean
   END
 ORDER BY
   book_id ASC,
-  "order" ASC,
-  id ASC;
+  media_id ASC;
 
--- name: CreateTempTableMedia :exec
-CREATE TEMPORARY TABLE temp_media (
-  id UUID PRIMARY KEY,
-  url TEXT NOT NULL,
-  alt_text TEXT,
-  "order" INTEGER NOT NULL,
-  book_id UUID,
-  created_at TIMESTAMPTZ NOT NULL,
-  deleted_at TIMESTAMPTZ
+-- name: CreateTempTableBooksMedia :exec
+CREATE TABLE temp_books_media (
+  book_id UUID NOT NULL,
+  media_id UUID NOT NULL,
+  is_cover BOOLEAN NOT NULL,
+  PRIMARY KEY (book_id, media_id)
 ) ON COMMIT DROP;
 
--- name: InsertTempTableMedia :copyfrom
-INSERT INTO temp_media (
-  id,
-  url,
-  alt_text,
-  "order",
+-- name: InsertTempTableBooksMedia :copyfrom
+INSERT INTO temp_books_media (
   book_id,
-  created_at,
-  deleted_at
+  media_id,
+  is_cover
 ) VALUES (
-  $1,
-  $2,
-  $3,
-  $4,
-  $5,
-  $6,
-  $7
+  sqlc.arg('book_id'),
+  sqlc.arg('media_id'),
+  sqlc.arg('is_cover')
 );
 
--- name: MergeMediaFromTemp :exec
-MERGE INTO media AS target
-USING temp_media AS source
-  ON target.id = source.id
+-- name: MergeBooksMediaFromTemp :exec
+MERGE INTO books_media AS target
+USING temp_books_media AS source
+  ON target.book_id = source.book_id
+  AND target.media_id = source.media_id
 WHEN MATCHED THEN
   UPDATE SET
-    url = source.url,
-    alt_text = source.alt_text,
-    "order" = source."order",
-    book_id = source.book_id,
-    created_at = source.created_at,
-    deleted_at = COALESCE(NULLIF(source.deleted_at, '0001-01-01T00:00:00Z'::timestamptz), target.deleted_at)
+    is_cover = source.is_cover
 WHEN NOT MATCHED THEN
   INSERT (
-    id,
-    url,
-    alt_text,
-    "order",
     book_id,
-    created_at,
-    deleted_at
+    media_id,
+    is_cover
   )
   VALUES (
-    source.id,
-    source.url,
-    source.alt_text,
-    source."order",
     source.book_id,
-    source.created_at,
-    NULLIF(source.deleted_at, '0001-01-01T00:00:00Z'::timestamptz)
+    source.media_id,
+    source.is_cover
   )
 WHEN NOT MATCHED BY SOURCE
-  AND target.book_id = (SELECT DISTINCT book_id FROM temp_media) THEN
+  AND target.book_id = (SELECT DISTINCT book_id FROM temp_books_media) THEN
   DELETE;
 
 -- name: GetBook :one
@@ -246,3 +290,57 @@ WHERE
     WHEN sqlc.arg('deleted')::text = 'all' THEN TRUE
     ELSE deleted_at IS NULL
   END;
+
+-- name: ListBooksCategories :many
+SELECT
+  *
+FROM
+  books_categories
+WHERE
+  CASE
+    WHEN sqlc.arg('book_ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('book_ids')::uuid[]) = 0 THEN TRUE
+    ELSE book_id = ANY (sqlc.arg('book_ids')::uuid[])
+  END
+  AND CASE
+    WHEN sqlc.arg('category_ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('category_ids')::uuid[]) = 0 THEN TRUE
+    ELSE category_id = ANY (sqlc.arg('category_ids')::uuid[])
+  END
+ORDER BY
+  book_id ASC,
+  category_id ASC;
+
+-- name: CreateTempTableBooksCategories :exec
+CREATE TABLE temp_books_categories (
+  book_id UUID NOT NULL,
+  category_id UUID NOT NULL,
+  PRIMARY KEY (book_id, category_id)
+) ON COMMIT DROP;
+
+-- name: InsertTempTableBooksCategories :copyfrom
+INSERT INTO temp_books_categories (
+  book_id,
+  category_id
+) VALUES (
+  sqlc.arg('book_id'),
+  sqlc.arg('category_id')
+);
+
+-- name: MergeBooksCategoriesFromTemp :exec
+MERGE INTO books_categories AS target
+USING temp_book_categories AS source
+  ON target.book_id = source.book_id
+  AND target.category_id = source.category_id
+WHEN NOT MATCHED THEN
+  INSERT (
+    book_id,
+    category_id
+  )
+  VALUES (
+    source.book_id,
+    source.category_id
+  )
+WHEN NOT MATCHED BY SOURCE
+  AND target.book_id = (SELECT DISTINCT book_id FROM temp_book_categories) THEN
+  DELETE;

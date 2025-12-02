@@ -37,12 +37,22 @@ WHERE
     ELSE id = ANY (sqlc.arg('ids')::uuid[])
   END
   AND CASE
+    WHEN sqlc.arg('search')::text = '' THEN TRUE
+    ELSE (
+      name ||| (sqlc.arg('search')::text)
+      AND description ||| (sqlc.arg('search')::text)
+    )
+  END
+  AND CASE
     WHEN sqlc.arg('deleted')::text = 'exclude' THEN deleted_at IS NULL
     WHEN sqlc.arg('deleted')::text = 'only' THEN deleted_at IS NOT NULL
     WHEN sqlc.arg('deleted')::text = 'all' THEN TRUE
     ELSE deleted_at IS NULL
   END
 ORDER BY
+  CASE WHEN
+    sqlc.arg('search')::text <> '' THEN pdb.score(id)
+  END DESC,
   id DESC
 OFFSET sqlc.arg('offset')::integer
 LIMIT NULLIF(sqlc.arg('limit')::integer, 0);

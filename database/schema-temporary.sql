@@ -1,12 +1,9 @@
--- temp_media
-CREATE TABLE temp_media (
-  id UUID PRIMARY KEY,
-  url TEXT NOT NULL,
-  alt_text TEXT,
-  "order" INTEGER NOT NULL,
-  book_id UUID,
-  created_at TIMESTAMPTZ NOT NULL,
-  deleted_at TIMESTAMPTZ
+-- temp_books_media
+CREATE TABLE temp_books_media (
+  book_id UUID NOT NULL,
+  media_id UUID NOT NULL,
+  is_cover BOOLEAN NOT NULL,
+  PRIMARY KEY (book_id, media_id)
 );
 
 -- temp_cart_items
@@ -24,4 +21,11 @@ CREATE TABLE temp_order_items (
   order_id UUID NOT NULL,
   price DECIMAL(12, 0) NOT NULL,
   book_id UUID NOT NULL
+);
+
+-- temp_books_categories
+CREATE TABLE temp_books_categories (
+  book_id UUID NOT NULL,
+  category_id UUID NOT NULL,
+  PRIMARY KEY (book_id, category_id)
 );

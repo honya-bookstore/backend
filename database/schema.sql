@@ -1,3 +1,13 @@
+CREATE TABLE media (
+  id UUID PRIMARY KEY,
+  url TEXT NOT NULL,
+  alt_text TEXT,
+  "order" INTEGER NOT NULL DEFAULT 0,
+  book_id UUID REFERENCES books (id) ON UPDATE CASCADE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  deleted_at TIMESTAMPTZ
+);
+
 CREATE TABLE categories (
   id UUID PRIMARY KEY,
   slug TEXT NOT NULL UNIQUE,
@@ -21,20 +31,22 @@ CREATE TABLE books (
   stock_quantity INTEGER NOT NULL DEFAULT 0,
   purchase_count INTEGER NOT NULL DEFAULT 0,
   rating REAL NOT NULL DEFAULT 0,
-  category_id UUID NOT NULL REFERENCES categories (id) ON UPDATE CASCADE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   deleted_at TIMESTAMPTZ
 );
 
-CREATE TABLE media (
-  id UUID PRIMARY KEY,
-  url TEXT NOT NULL,
-  alt_text TEXT,
-  "order" INTEGER NOT NULL DEFAULT 0,
-  book_id UUID REFERENCES books (id) ON UPDATE CASCADE,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  deleted_at TIMESTAMPTZ
+CREATE TABLE books_media (
+  book_id UUID NOT NULL REFERENCES books (id) ON UPDATE CASCADE,
+  media_id UUID NOT NULL REFERENCES media (id) ON UPDATE CASCADE,
+  is_cover BOOLEAN NOT NULL,
+  PRIMARY KEY (book_id, media_id)
+);
+
+CREATE TABLE books_categories (
+  book_id UUID NOT NULL REFERENCES books (id) ON UPDATE CASCADE,
+  category_id UUID NOT NULL REFERENCES categories (id) ON UPDATE CASCADE,
+  PRIMARY KEY (book_id, category_id)
 );
 
 CREATE TABLE reviews (
