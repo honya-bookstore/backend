@@ -19,7 +19,7 @@ VALUES (
   sqlc.arg('book_id'),
   sqlc.arg('created_at'),
   sqlc.arg('updated_at'),
-  sqlc.narg('deleted_at')
+  NULLIF(sqlc.arg('deleted_at')::timestamptz, '0001-01-01T00:00:00Z'::timestamptz)
 )
 ON CONFLICT (id) DO UPDATE SET
   rating = EXCLUDED.rating,
@@ -29,7 +29,7 @@ ON CONFLICT (id) DO UPDATE SET
   book_id = EXCLUDED.book_id,
   created_at = EXCLUDED.created_at,
   updated_at = EXCLUDED.updated_at,
-  deleted_at = EXCLUDED.deleted_at;
+  deleted_at = COALESCE(EXCLUDED.deleted_at, reviews.deleted_at);
 
 -- name: ListReviews :many
 SELECT
@@ -38,19 +38,19 @@ FROM
   reviews
 WHERE
   CASE
-    WHEN sqlc.narg('ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('ids')::uuid[]) = 0 THEN TRUE
-    ELSE reviews.id = ANY (sqlc.narg('ids')::uuid[])
+    WHEN sqlc.arg('ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('ids')::uuid[]) = 0 THEN TRUE
+    ELSE reviews.id = ANY (sqlc.arg('ids')::uuid[])
   END
   AND CASE
-    WHEN sqlc.narg('book_ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('book_ids')::uuid[]) = 0 THEN TRUE
-    ELSE reviews.book_id = ANY (sqlc.narg('book_ids')::uuid[])
+    WHEN sqlc.arg('book_ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('book_ids')::uuid[]) = 0 THEN TRUE
+    ELSE reviews.book_id = ANY (sqlc.arg('book_ids')::uuid[])
   END
   AND CASE
-    WHEN sqlc.narg('user_ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('user_ids')::uuid[]) = 0 THEN TRUE
-    ELSE reviews.user_id = ANY (sqlc.narg('user_ids')::uuid[])
+    WHEN sqlc.arg('user_ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('user_ids')::uuid[]) = 0 THEN TRUE
+    ELSE reviews.user_id = ANY (sqlc.arg('user_ids')::uuid[])
   END
   AND CASE
     WHEN sqlc.arg('deleted')::text = 'exclude' THEN reviews.deleted_at IS NULL
@@ -70,19 +70,19 @@ FROM
   reviews
 WHERE
   CASE
-    WHEN sqlc.narg('ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('ids')::uuid[]) = 0 THEN TRUE
-    ELSE reviews.id = ANY (sqlc.narg('ids')::uuid[])
+    WHEN sqlc.arg('ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('ids')::uuid[]) = 0 THEN TRUE
+    ELSE reviews.id = ANY (sqlc.arg('ids')::uuid[])
   END
   AND CASE
-    WHEN sqlc.narg('book_ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('book_ids')::uuid[]) = 0 THEN TRUE
-    ELSE reviews.book_id = ANY (sqlc.narg('book_ids')::uuid[])
+    WHEN sqlc.arg('book_ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('book_ids')::uuid[]) = 0 THEN TRUE
+    ELSE reviews.book_id = ANY (sqlc.arg('book_ids')::uuid[])
   END
   AND CASE
-    WHEN sqlc.narg('user_ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('user_ids')::uuid[]) = 0 THEN TRUE
-    ELSE reviews.user_id = ANY (sqlc.narg('user_ids')::uuid[])
+    WHEN sqlc.arg('user_ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('user_ids')::uuid[]) = 0 THEN TRUE
+    ELSE reviews.user_id = ANY (sqlc.arg('user_ids')::uuid[])
   END
   AND CASE
     WHEN sqlc.arg('deleted')::text = 'exclude' THEN reviews.deleted_at IS NULL
@@ -133,14 +133,14 @@ FROM
   review_votes
 WHERE
   CASE
-    WHEN sqlc.narg('review_ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('review_ids')::uuid[]) = 0 THEN TRUE
-    ELSE review_id = ANY (sqlc.narg('review_ids')::uuid[])
+    WHEN sqlc.arg('review_ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('review_ids')::uuid[]) = 0 THEN TRUE
+    ELSE review_id = ANY (sqlc.arg('review_ids')::uuid[])
   END
   AND CASE
-    WHEN sqlc.narg('user_ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('user_ids')::uuid[]) = 0 THEN TRUE
-    ELSE user_id = ANY (sqlc.narg('user_ids')::uuid[])
+    WHEN sqlc.arg('user_ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('user_ids')::uuid[]) = 0 THEN TRUE
+    ELSE user_id = ANY (sqlc.arg('user_ids')::uuid[])
   END
 ORDER BY
   created_at DESC;

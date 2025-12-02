@@ -33,7 +33,7 @@ VALUES (
   sqlc.arg('category_id'),
   sqlc.arg('created_at'),
   sqlc.arg('updated_at'),
-  sqlc.narg('deleted_at')
+  NULLIF(sqlc.arg('deleted_at')::timestamptz, '0001-01-01T00:00:00Z'::timestamptz)
 )
 ON CONFLICT (id) DO UPDATE SET
   title = EXCLUDED.title,
@@ -50,7 +50,7 @@ ON CONFLICT (id) DO UPDATE SET
   category_id = EXCLUDED.category_id,
   created_at = EXCLUDED.created_at,
   updated_at = EXCLUDED.updated_at,
-  deleted_at = EXCLUDED.deleted_at;
+  deleted_at = COALESCE(EXCLUDED.deleted_at, books.deleted_at);
 
 -- name: ListBooks :many
 SELECT
@@ -59,26 +59,29 @@ FROM
   books
 WHERE
   CASE
-    WHEN sqlc.narg('ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('ids')::uuid[]) = 0 THEN TRUE
-    ELSE books.id = ANY (sqlc.narg('ids')::uuid[])
+    WHEN sqlc.arg('ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('ids')::uuid[]) = 0 THEN TRUE
+    ELSE books.id = ANY (sqlc.arg('ids')::uuid[])
   END
   AND CASE
-    WHEN sqlc.narg('category_ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('category_ids')::uuid[]) = 0 THEN TRUE
-    ELSE books.category_id = ANY (sqlc.narg('category_ids')::uuid[])
+    WHEN sqlc.arg('category_ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('category_ids')::uuid[]) = 0 THEN TRUE
+    ELSE books.category_id = ANY (sqlc.arg('category_ids')::uuid[])
   END
   AND CASE
-    WHEN sqlc.narg('min_price')::decimal IS NULL THEN TRUE
-    ELSE books.price >= sqlc.narg('min_price')::decimal
+    WHEN sqlc.arg('min_price')::decimal IS NULL THEN TRUE
+    WHEN sqlc.arg('min_price')::decimal = 0 THEN TRUE
+    ELSE books.price >= sqlc.arg('min_price')::decimal
   END
   AND CASE
-    WHEN sqlc.narg('max_price')::decimal IS NULL THEN TRUE
-    ELSE books.price <= sqlc.narg('max_price')::decimal
+    WHEN sqlc.arg('max_price')::decimal IS NULL THEN TRUE
+    WHEN sqlc.arg('max_price')::decimal = 0 THEN TRUE
+    ELSE books.price <= sqlc.arg('max_price')::decimal
   END
   AND CASE
-    WHEN sqlc.narg('rating')::real IS NULL THEN TRUE
-    ELSE books.rating >= sqlc.narg('rating')::real
+    WHEN sqlc.arg('rating')::real IS NULL THEN TRUE
+    WHEN sqlc.arg('rating')::real = 0 THEN TRUE
+    ELSE books.rating >= sqlc.arg('rating')::real
   END
   AND CASE
     WHEN sqlc.arg('deleted')::text = 'exclude' THEN books.deleted_at IS NULL
@@ -88,16 +91,16 @@ WHERE
   END
 ORDER BY
   CASE WHEN
-    sqlc.narg('sort_rating')::text = 'asc' THEN books.rating
+    sqlc.arg('sort_rating')::text = 'asc' THEN books.rating
   END ASC,
   CASE WHEN
-    sqlc.narg('sort_rating')::text = 'desc' THEN books.rating
+    sqlc.arg('sort_rating')::text = 'desc' THEN books.rating
   END DESC,
   CASE WHEN
-    sqlc.narg('sort_price')::text = 'asc' THEN books.price
+    sqlc.arg('sort_price')::text = 'asc' THEN books.price
   END ASC,
   CASE WHEN
-    sqlc.narg('sort_price')::text = 'desc' THEN books.price
+    sqlc.arg('sort_price')::text = 'desc' THEN books.price
   END DESC,
   books.id DESC
 OFFSET sqlc.arg('offset')::integer
@@ -145,14 +148,14 @@ FROM
   media
 WHERE
   CASE
-    WHEN sqlc.narg('ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('ids')::uuid[]) = 0 THEN TRUE
-    ELSE id = ANY (sqlc.narg('ids')::uuid[])
+    WHEN sqlc.arg('ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('ids')::uuid[]) = 0 THEN TRUE
+    ELSE id = ANY (sqlc.arg('ids')::uuid[])
   END
   AND CASE
-    WHEN sqlc.narg('book_ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('book_ids')::uuid[]) = 0 THEN TRUE
-    ELSE book_id = ANY (sqlc.narg('book_ids')::uuid[])
+    WHEN sqlc.arg('book_ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('book_ids')::uuid[]) = 0 THEN TRUE
+    ELSE book_id = ANY (sqlc.arg('book_ids')::uuid[])
   END
   AND CASE
     WHEN sqlc.arg('deleted')::text = 'exclude' THEN deleted_at IS NULL
@@ -164,20 +167,6 @@ ORDER BY
   book_id ASC,
   "order" ASC,
   id ASC;
-
--- name: GetMedia :one
-SELECT
-  *
-FROM
-  media
-WHERE
-  id = sqlc.arg('id')
-  AND CASE
-    WHEN sqlc.arg('deleted')::text = 'exclude' THEN deleted_at IS NULL
-    WHEN sqlc.arg('deleted')::text = 'only' THEN deleted_at IS NOT NULL
-    WHEN sqlc.arg('deleted')::text = 'all' THEN TRUE
-    ELSE deleted_at IS NULL
-  END;
 
 -- name: CreateTempTableMedia :exec
 CREATE TEMPORARY TABLE temp_media (
@@ -200,13 +189,13 @@ INSERT INTO temp_media (
   created_at,
   deleted_at
 ) VALUES (
-  @id,
-  @url,
-  @alt_text,
-  @order,
-  @book_id,
-  @created_at,
-  @deleted_at
+  $1,
+  $2,
+  $3,
+  $4,
+  $5,
+  $6,
+  $7
 );
 
 -- name: MergeMediaFromTemp :exec
@@ -220,7 +209,7 @@ WHEN MATCHED THEN
     "order" = source."order",
     book_id = source.book_id,
     created_at = source.created_at,
-    deleted_at = source.deleted_at
+    deleted_at = COALESCE(NULLIF(source.deleted_at, '0001-01-01T00:00:00Z'::timestamptz), target.deleted_at)
 WHEN NOT MATCHED THEN
   INSERT (
     id,
@@ -238,10 +227,10 @@ WHEN NOT MATCHED THEN
     source."order",
     source.book_id,
     source.created_at,
-    source.deleted_at
+    NULLIF(source.deleted_at, '0001-01-01T00:00:00Z'::timestamptz)
   )
 WHEN NOT MATCHED BY SOURCE
-  AND target.book_id = (SELECT DISTINCT book_id FROM source) THEN
+  AND target.book_id = (SELECT DISTINCT book_id FROM temp_media) THEN
   DELETE;
 
 -- name: GetBook :one

@@ -15,13 +15,13 @@ VALUES (
   sqlc.arg('id'),
   sqlc.arg('slug'),
   sqlc.arg('title'),
-  sqlc.narg('thumbnail_id'),
+  sqlc.arg('thumbnail_id'),
   sqlc.arg('content'),
   sqlc.arg('tags'),
   sqlc.arg('user_id'),
   sqlc.arg('created_at'),
   sqlc.arg('updated_at'),
-  sqlc.narg('deleted_at')
+  NULLIF(sqlc.arg('deleted_at')::timestamptz, '0001-01-01T00:00:00Z'::timestamptz)
 )
 ON CONFLICT (id) DO UPDATE SET
   slug = EXCLUDED.slug,
@@ -32,7 +32,7 @@ ON CONFLICT (id) DO UPDATE SET
   user_id = EXCLUDED.user_id,
   created_at = EXCLUDED.created_at,
   updated_at = EXCLUDED.updated_at,
-  deleted_at = EXCLUDED.deleted_at;
+  deleted_at = COALESCE(EXCLUDED.deleted_at, articles.deleted_at);
 
 -- name: ListArticles :many
 SELECT
@@ -41,19 +41,19 @@ FROM
   articles
 WHERE
   CASE
-    WHEN sqlc.narg('ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('ids')::uuid[]) = 0 THEN TRUE
-    ELSE id = ANY (sqlc.narg('ids')::uuid[])
+    WHEN sqlc.arg('ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('ids')::uuid[]) = 0 THEN TRUE
+    ELSE id = ANY (sqlc.arg('ids')::uuid[])
   END
   AND CASE
-    WHEN sqlc.narg('user_ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('user_ids')::uuid[]) = 0 THEN TRUE
-    ELSE user_id = ANY (sqlc.narg('user_ids')::uuid[])
+    WHEN sqlc.arg('user_ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('user_ids')::uuid[]) = 0 THEN TRUE
+    ELSE user_id = ANY (sqlc.arg('user_ids')::uuid[])
   END
   AND CASE
-    WHEN sqlc.narg('tags')::text[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('tags')::text[]) = 0 THEN TRUE
-    ELSE tags && sqlc.narg('tags')::text[]
+    WHEN sqlc.arg('tags')::text[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('tags')::text[]) = 0 THEN TRUE
+    ELSE tags && sqlc.arg('tags')::text[]
   END
   AND CASE
     WHEN sqlc.arg('deleted')::text = 'exclude' THEN deleted_at IS NULL
@@ -101,12 +101,14 @@ FROM
   articles
 WHERE
   CASE
-    WHEN sqlc.narg('id')::uuid IS NULL THEN TRUE
-    ELSE id = sqlc.narg('id')::uuid
+    WHEN sqlc.arg('id')::uuid IS NULL THEN TRUE
+    WHEN sqlc.arg('id')::uuid = '00000000-0000-0000-0000-000000000000'::uuid THEN TRUE
+    ELSE id = sqlc.arg('id')::uuid
   END
   AND CASE
-    WHEN sqlc.narg('slug')::text IS NULL THEN TRUE
-    ELSE slug = sqlc.narg('slug')::text
+    WHEN sqlc.arg('slug')::text IS NULL THEN TRUE
+    WHEN sqlc.arg('slug')::text = '' THEN TRUE
+    ELSE slug = sqlc.arg('slug')::text
   END
   AND CASE
     WHEN sqlc.arg('deleted')::text = 'exclude' THEN deleted_at IS NULL

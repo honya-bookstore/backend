@@ -19,12 +19,14 @@ FROM
   carts
 WHERE
   CASE
-    WHEN sqlc.narg('id')::uuid IS NULL THEN TRUE
-    ELSE id = sqlc.narg('id')::uuid
+    WHEN sqlc.arg('id')::uuid IS NULL THEN TRUE
+    WHEN sqlc.arg('id')::uuid = '00000000-0000-0000-0000-000000000000'::uuid THEN TRUE
+    ELSE id = sqlc.arg('id')::uuid
   END
   AND CASE
-    WHEN sqlc.narg('user_id')::uuid IS NULL THEN TRUE
-    ELSE user_id = sqlc.narg('user_id')::uuid
+    WHEN sqlc.arg('user_id')::uuid IS NULL THEN TRUE
+    WHEN sqlc.arg('user_id')::uuid = '00000000-0000-0000-0000-000000000000'::uuid THEN TRUE
+    ELSE user_id = sqlc.arg('user_id')::uuid
   END;
 
 -- name: ListCartItems :many
@@ -34,8 +36,9 @@ FROM
   cart_items
 WHERE
   CASE
-    WHEN sqlc.narg('cart_id')::uuid IS NULL THEN TRUE
-    ELSE cart_id = sqlc.narg('cart_id')::uuid
+    WHEN sqlc.arg('cart_id')::uuid IS NULL THEN TRUE
+    WHEN sqlc.arg('cart_id')::uuid = '00000000-0000-0000-0000-000000000000'::uuid THEN TRUE
+    ELSE cart_id = sqlc.arg('cart_id')::uuid
   END;
 
 -- name: CreateTempTableCartItems :exec
@@ -82,5 +85,5 @@ WHEN NOT MATCHED THEN
     source.book_id
   )
 WHEN NOT MATCHED BY SOURCE
-  AND target.cart_id IN (SELECT DISTINCT cart_id FROM source) THEN
+  AND target.cart_id IN (SELECT DISTINCT cart_id FROM temp_cart_items) THEN
   DELETE;

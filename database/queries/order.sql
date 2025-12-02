@@ -37,19 +37,19 @@ FROM
   orders
 WHERE
   CASE
-    WHEN sqlc.narg('ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('ids')::uuid[]) = 0 THEN TRUE
-    ELSE id = ANY (sqlc.narg('ids')::uuid[])
+    WHEN sqlc.arg('ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('ids')::uuid[]) = 0 THEN TRUE
+    ELSE id = ANY (sqlc.arg('ids')::uuid[])
   END
   AND CASE
-    WHEN sqlc.narg('user_ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('user_ids')::uuid[]) = 0 THEN TRUE
-    ELSE user_id = ANY (sqlc.narg('user_ids')::uuid[])
+    WHEN sqlc.arg('user_ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('user_ids')::uuid[]) = 0 THEN TRUE
+    ELSE user_id = ANY (sqlc.arg('user_ids')::uuid[])
   END
   AND CASE
-    WHEN sqlc.narg('status_ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('status_ids')::uuid[]) = 0 THEN TRUE
-    ELSE status_id = ANY (sqlc.narg('status_ids')::uuid[])
+    WHEN sqlc.arg('status_ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('status_ids')::uuid[]) = 0 THEN TRUE
+    ELSE status_id = ANY (sqlc.arg('status_ids')::uuid[])
   END
 ORDER BY
   id ASC
@@ -63,19 +63,19 @@ FROM
   orders
 WHERE
   CASE
-    WHEN sqlc.narg('ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('ids')::uuid[]) = 0 THEN TRUE
-    ELSE id = ANY (sqlc.narg('ids')::uuid[])
+    WHEN sqlc.arg('ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('ids')::uuid[]) = 0 THEN TRUE
+    ELSE id = ANY (sqlc.arg('ids')::uuid[])
   END
   AND CASE
-    WHEN sqlc.narg('user_ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('user_ids')::uuid[]) = 0 THEN TRUE
-    ELSE user_id = ANY (sqlc.narg('user_ids')::uuid[])
+    WHEN sqlc.arg('user_ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('user_ids')::uuid[]) = 0 THEN TRUE
+    ELSE user_id = ANY (sqlc.arg('user_ids')::uuid[])
   END
   AND CASE
-    WHEN sqlc.narg('status_ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('status_ids')::uuid[]) = 0 THEN TRUE
-    ELSE status_id = ANY (sqlc.narg('status_ids')::uuid[])
+    WHEN sqlc.arg('status_ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('status_ids')::uuid[]) = 0 THEN TRUE
+    ELSE status_id = ANY (sqlc.arg('status_ids')::uuid[])
   END;
 
 -- name: GetOrder :one
@@ -93,14 +93,14 @@ FROM
   order_items
 WHERE
   CASE
-    WHEN sqlc.narg('ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('ids')::uuid[]) = 0 THEN TRUE
-    ELSE id = ANY (sqlc.narg('ids')::uuid[])
+    WHEN sqlc.arg('ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('ids')::uuid[]) = 0 THEN TRUE
+    ELSE id = ANY (sqlc.arg('ids')::uuid[])
   END
   AND CASE
-    WHEN sqlc.narg('order_ids')::uuid[] IS NULL THEN TRUE
-    WHEN cardinality(sqlc.narg('order_ids')::uuid[]) = 0 THEN TRUE
-    ELSE order_id = ANY (sqlc.narg('order_ids')::uuid[])
+    WHEN sqlc.arg('order_ids')::uuid[] IS NULL THEN TRUE
+    WHEN cardinality(sqlc.arg('order_ids')::uuid[]) = 0 THEN TRUE
+    ELSE order_id = ANY (sqlc.arg('order_ids')::uuid[])
   END
 ORDER BY
   id;
@@ -134,12 +134,14 @@ FROM
   order_statuses
 WHERE
   CASE
-    WHEN sqlc.narg('id')::uuid IS NULL THEN TRUE
-    ELSE id = sqlc.narg('id')::uuid
+    WHEN sqlc.arg('id')::uuid IS NULL THEN TRUE
+    WHEN sqlc.arg('id')::uuid = '00000000-0000-0000-0000-000000000000'::uuid THEN TRUE
+    ELSE id = sqlc.arg('id')::uuid
   END
   AND CASE
-    WHEN sqlc.narg('name')::text IS NULL THEN TRUE
-    ELSE name = sqlc.narg('name')::text
+    WHEN sqlc.arg('name')::text IS NULL THEN TRUE
+    WHEN sqlc.arg('name')::text = '' THEN TRUE
+    ELSE name = sqlc.arg('name')::text
   END;
 
 -- name: GetOrderProvider :one
@@ -149,12 +151,14 @@ FROM
   order_providers
 WHERE
   CASE
-    WHEN sqlc.narg('id')::uuid IS NULL THEN TRUE
-    ELSE id = sqlc.narg('id')::uuid
+    WHEN sqlc.arg('id')::uuid IS NULL THEN TRUE
+    WHEN sqlc.arg('id')::uuid = '00000000-0000-0000-0000-000000000000'::uuid THEN TRUE
+    ELSE id = sqlc.arg('id')::uuid
   END
   AND CASE
-    WHEN sqlc.narg('name')::text IS NULL THEN TRUE
-    ELSE name = sqlc.narg('name')::text
+    WHEN sqlc.arg('name')::text IS NULL THEN TRUE
+    WHEN sqlc.arg('name')::text = '' THEN TRUE
+    ELSE name = sqlc.arg('name')::text
   END;
 
 -- name: CreateTempTableOrderItems :exec
@@ -207,5 +211,5 @@ WHEN NOT MATCHED THEN
     source.book_id
   )
 WHEN NOT MATCHED BY SOURCE
-  AND target.order_id IN (SELECT DISTINCT order_id FROM source) THEN
+  AND target.order_id IN (SELECT DISTINCT order_id FROM temp_order_items) THEN
   DELETE;
