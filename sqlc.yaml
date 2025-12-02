@@ -1,0 +1,58 @@
+version: "2"
+sql:
+  - engine: postgresql
+    queries:
+      - database/queries
+    schema:
+      - database/schema.sql
+      - database/schema-temporary.sql
+    # database:
+    #   uri: postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}?sslmode=disable
+    rules:
+      - sqlc/db-prepare
+      - postgresql-query-too-costly
+      - postgresql-no-seq-scan
+      # - debug
+    gen:
+      go:
+        out: internal/infrastructure/repositorypostgres/sqlc
+        sql_package: pgx/v5
+        query_parameter_limit: 0
+        overrides:
+          - db_type: uuid
+            nullable: false
+            go_type:
+              import: github.com/google/uuid
+              type: UUID
+        emit_pointers_for_null_types: true
+        emit_interface: true
+        emit_result_struct_pointers: false
+        initialisms:
+          - id
+          - url
+          - sku
+        rename:
+          ids: IDs
+          urls: URLs
+          skus: SKUs
+          image_urls: ImageURLs
+          product_ids: ProductIDs
+          product_variant_ids: ProductVariantIDs
+          variant_ids: VariantIDs
+          options_ids: OptionsIDs
+          option_value_ids: OptionValueIDs
+          attribute_ids: AttributeIDs
+          attribute_value_ids: AttributeValueIDs
+          category_ids: CategoryIDs
+          cart_ids: CartIDs
+          cart_items_ids: CartItemIDs
+          order_ids: OrderIDs
+rules:
+  - name: postgresql-query-too-costly
+    message: "Query cost estimate is too high"
+    rule: "postgresql.explain.plan.total_cost > 1.0"
+  - name: postgresql-no-seq-scan
+    message: "Query plan results in a sequential scan"
+    rule: "postgresql.explain.plan.node_type == 'Seq Scan'"
+  - name: debug
+    rule: "!has(postgresql.explain)"
