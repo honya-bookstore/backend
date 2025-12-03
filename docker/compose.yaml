@@ -1,0 +1,114 @@
+name: honyabookstore-backend
+
+services:
+  db:
+    image: paradedb/paradedb:17-v0.20.0
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-honyabookstore}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-honyabookstore}
+      POSTGRES_DB: ${DB_DATABASE:-postgres}
+      PGDATA: /data/postgres
+    ports:
+      - ${DB_PORT:-5432}:5432
+    volumes:
+      - db:/data/postgres
+      - ./volume/schema.sql:/docker-entrypoint-initdb.d/10-schema.sql
+      # - ./volume/seed.sql:/docker-entrypoint-initdb.d/20-seed.sql
+      - ./volume/paradedb-index.sql:/docker-entrypoint-initdb.d/30-paradedb-index.sql
+    healthcheck:
+      test:
+        [CMD, pg_isready, -U, "${DB_USERNAME:-honyabookstore}", -h, localhost]
+    restart: unless-stopped
+    profiles:
+      - all
+      - dev
+
+  keycloak-db:
+    image: postgres:18.0-alpine3.22
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      PGDATA: /data/postgres
+    ports:
+      - 5433:5432
+    volumes:
+      - keycloak-db:/data/postgres
+    healthcheck:
+      test: [CMD, pg_isready, -U, postgres, -h, localhost]
+    restart: unless-stopped
+    profiles:
+      - services
+      - all
+
+  keycloak:
+    image: keycloak/keycloak:26.4.4
+    command: start-dev
+    environment:
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: false
+      KC_HTTP_PORT: ${KC_HTTP_PORT:-8081}
+      KC_HTTP_MANAGEMENT_PORT: ${KC_HTTP_MANAGEMENT_PORT:-8082}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_ADMIN:-honyabookstore}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD:-honyabookstore}
+      KC_DB: postgres
+      KC_DB_URL_HOST: keycloak-db
+      KC_DB_URL_DATABASE: postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+    ports:
+      - ${KC_HTTP_PORT:-8081}:${KC_HTTP_PORT:-8081}
+      - ${KC_HTTP_MANAGEMENT_PORT:-8082}:${KC_HTTP_MANAGEMENT_PORT:-8082}
+    depends_on:
+      - keycloak-db
+    restart: unless-stopped
+    profiles:
+      - services
+      - all
+
+  minio:
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    ports:
+      - 9000:9000
+      - 9001:9001
+    command:
+      - server
+      - /data
+      - --console-address=:9001
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY:-honyabookstore}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-honyabookstore}
+    volumes:
+      - minio:/data
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:9000/minio/health/live
+      start_period: 5s
+    profiles:
+      - services
+      - all
+
+  redis:
+    image: redis:8.2.2-alpine3.22
+    command:
+      - redis-server
+      - --save
+      - "60"
+      - "1"
+    volumes:
+      - redis:/data
+    ports:
+      - 6379:6379
+    restart: unless-stopped
+    profiles:
+      - all
+
+volumes:
+  db:
+  minio:
+  redis:
+  keycloak-db:

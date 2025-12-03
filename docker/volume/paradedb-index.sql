@@ -1,0 +1,1 @@
+../../database/paradedb-index.sql
