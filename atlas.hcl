@@ -11,9 +11,7 @@ variable "db_url" {
 locals {
   migration_path = "file://migration"
   schema_urls = [
-    "file://database/init.sql",
     "file://database/schema.sql",
-    "file://database/seed.sql",
   ]
 }
 
