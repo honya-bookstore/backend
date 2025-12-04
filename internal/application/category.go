@@ -83,7 +83,7 @@ func (c *Category) List(ctx context.Context, param http.ListCategoryRequestDTO) 
 	return pagination, nil
 }
 
-func (c *Category) GetBySlug(ctx context.Context, param http.GetCategoryRequestDTO) (*http.CategoryResponseDTO, error) {
+func (c *Category) GetBySlug(ctx context.Context, param http.GetCategoryBySlugRequestDTO) (*http.CategoryResponseDTO, error) {
 	category, err := c.categoryRepo.Get(ctx, domain.CategoryRepositoryGetParam{
 		CategorySlug: param.PathParams.Slug,
 	})
