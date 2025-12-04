@@ -23,7 +23,7 @@ CREATE TABLE books (
   author TEXT NOT NULL,
   price DECIMAL(12, 0) NOT NULL,
   pages_count INTEGER NOT NULL,
-  year_published INTEGER NOT NULL,
+  year INTEGER NOT NULL,
   publisher TEXT NOT NULL,
   weight DECIMAL,
   stock_quantity INTEGER NOT NULL DEFAULT 0,
@@ -37,6 +37,7 @@ CREATE TABLE books (
 CREATE TABLE books_medium (
   book_id UUID NOT NULL REFERENCES books (id) ON UPDATE CASCADE,
   media_id UUID NOT NULL REFERENCES medium (id) ON UPDATE CASCADE,
+  "order" INTEGER NOT NULL DEFAULT 0,
   is_cover BOOLEAN NOT NULL,
   PRIMARY KEY (book_id, media_id)
 );

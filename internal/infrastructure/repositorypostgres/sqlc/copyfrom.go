@@ -42,13 +42,13 @@ func (q *Queries) InsertTempTableBooksCategories(ctx context.Context, arg []Inse
 	return q.db.CopyFrom(ctx, []string{"temp_books_categories"}, []string{"book_id", "category_id"}, &iteratorForInsertTempTableBooksCategories{rows: arg})
 }
 
-// iteratorForInsertTempTableBooksMedia implements pgx.CopyFromSource.
-type iteratorForInsertTempTableBooksMedia struct {
-	rows                 []InsertTempTableBooksMediaParams
+// iteratorForInsertTempTableBooksMedium implements pgx.CopyFromSource.
+type iteratorForInsertTempTableBooksMedium struct {
+	rows                 []InsertTempTableBooksMediumParams
 	skippedFirstNextCall bool
 }
 
-func (r *iteratorForInsertTempTableBooksMedia) Next() bool {
+func (r *iteratorForInsertTempTableBooksMedium) Next() bool {
 	if len(r.rows) == 0 {
 		return false
 	}
@@ -60,20 +60,21 @@ func (r *iteratorForInsertTempTableBooksMedia) Next() bool {
 	return len(r.rows) > 0
 }
 
-func (r iteratorForInsertTempTableBooksMedia) Values() ([]interface{}, error) {
+func (r iteratorForInsertTempTableBooksMedium) Values() ([]interface{}, error) {
 	return []interface{}{
 		r.rows[0].BookID,
 		r.rows[0].MediaID,
+		r.rows[0].Order,
 		r.rows[0].IsCover,
 	}, nil
 }
 
-func (r iteratorForInsertTempTableBooksMedia) Err() error {
+func (r iteratorForInsertTempTableBooksMedium) Err() error {
 	return nil
 }
 
-func (q *Queries) InsertTempTableBooksMedia(ctx context.Context, arg []InsertTempTableBooksMediaParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"temp_books_media"}, []string{"book_id", "media_id", "is_cover"}, &iteratorForInsertTempTableBooksMedia{rows: arg})
+func (q *Queries) InsertTempTableBooksMedium(ctx context.Context, arg []InsertTempTableBooksMediumParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"temp_books_medium"}, []string{"book_id", "media_id", "order", "is_cover"}, &iteratorForInsertTempTableBooksMedium{rows: arg})
 }
 
 // iteratorForInsertTempTableCartItems implements pgx.CopyFromSource.

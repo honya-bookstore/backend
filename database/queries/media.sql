@@ -1,5 +1,5 @@
 -- name: UpsertMedia :exec
-INSERT INTO media (
+INSERT INTO medium (
   id,
   url,
   alt_text,
@@ -23,7 +23,7 @@ ON CONFLICT (id) DO UPDATE SET
 SELECT
   *
 FROM
-  media
+  medium
 WHERE
   CASE
     WHEN sqlc.arg('ids')::uuid[] IS NULL THEN TRUE
@@ -45,7 +45,7 @@ LIMIT NULLIF(sqlc.arg('limit')::integer, 0);
 SELECT
   COUNT(*)
 FROM
-  media
+  medium
 WHERE
   CASE
     WHEN sqlc.arg('ids')::uuid[] IS NULL THEN TRUE
@@ -63,7 +63,7 @@ WHERE
 SELECT
   *
 FROM
-  media
+  medium
 WHERE
   id = sqlc.arg('id')
   AND CASE

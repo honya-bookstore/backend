@@ -16,7 +16,7 @@ type Querier interface {
 	CountOrders(ctx context.Context, arg CountOrdersParams) (int64, error)
 	CountReviews(ctx context.Context, arg CountReviewsParams) (int64, error)
 	CreateTempTableBooksCategories(ctx context.Context) error
-	CreateTempTableBooksMedia(ctx context.Context) error
+	CreateTempTableBooksMedium(ctx context.Context) error
 	CreateTempTableCartItems(ctx context.Context) error
 	CreateTempTableOrderItems(ctx context.Context) error
 	GetArticle(ctx context.Context, arg GetArticleParams) (Article, error)
@@ -30,13 +30,13 @@ type Querier interface {
 	GetOrderStatus(ctx context.Context, arg GetOrderStatusParams) (OrderStatus, error)
 	GetReview(ctx context.Context, arg GetReviewParams) (Review, error)
 	InsertTempTableBooksCategories(ctx context.Context, arg []InsertTempTableBooksCategoriesParams) (int64, error)
-	InsertTempTableBooksMedia(ctx context.Context, arg []InsertTempTableBooksMediaParams) (int64, error)
+	InsertTempTableBooksMedium(ctx context.Context, arg []InsertTempTableBooksMediumParams) (int64, error)
 	InsertTempTableCartItems(ctx context.Context, arg []InsertTempTableCartItemsParams) (int64, error)
 	InsertTempTableOrderItems(ctx context.Context, arg []InsertTempTableOrderItemsParams) (int64, error)
 	ListArticles(ctx context.Context, arg ListArticlesParams) ([]Article, error)
 	ListBooks(ctx context.Context, arg ListBooksParams) ([]Book, error)
 	ListBooksCategories(ctx context.Context, arg ListBooksCategoriesParams) ([]BooksCategory, error)
-	ListBooksMedia(ctx context.Context, arg ListBooksMediaParams) ([]BooksMedium, error)
+	ListBooksMedium(ctx context.Context, arg ListBooksMediumParams) ([]BooksMedium, error)
 	ListCartItems(ctx context.Context, arg ListCartItemsParams) ([]CartItem, error)
 	ListCategories(ctx context.Context, arg ListCategoriesParams) ([]Category, error)
 	ListMedium(ctx context.Context, arg ListMediumParams) ([]Medium, error)
@@ -46,7 +46,7 @@ type Querier interface {
 	ListReviewVotes(ctx context.Context, arg ListReviewVotesParams) ([]ReviewVote, error)
 	ListReviews(ctx context.Context, arg ListReviewsParams) ([]Review, error)
 	MergeBooksCategoriesFromTemp(ctx context.Context) error
-	MergeBooksMediaFromTemp(ctx context.Context) error
+	MergeBooksMediumFromTemp(ctx context.Context) error
 	MergeCartItemsFromTemp(ctx context.Context) error
 	MergeOrderItemsFromTemp(ctx context.Context) error
 	UpsertArticle(ctx context.Context, arg UpsertArticleParams) error

@@ -29,7 +29,7 @@ type Book struct {
 	Author        string
 	Price         pgtype.Numeric
 	PagesCount    int32
-	YearPublished int32
+	Year          int32
 	Publisher     string
 	Weight        pgtype.Numeric
 	StockQuantity int32
@@ -48,6 +48,7 @@ type BooksCategory struct {
 type BooksMedium struct {
 	BookID  uuid.UUID
 	MediaID uuid.UUID
+	Order   int32
 	IsCover bool
 }
 
@@ -141,6 +142,7 @@ type TempBooksCategory struct {
 type TempBooksMedium struct {
 	BookID  uuid.UUID
 	MediaID uuid.UUID
+	Order   int32
 	IsCover bool
 }
 

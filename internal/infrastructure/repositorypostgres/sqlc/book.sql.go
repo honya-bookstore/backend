@@ -108,23 +108,24 @@ func (q *Queries) CreateTempTableBooksCategories(ctx context.Context) error {
 	return err
 }
 
-const createTempTableBooksMedia = `-- name: CreateTempTableBooksMedia :exec
-CREATE TABLE temp_books_media (
+const createTempTableBooksMedium = `-- name: CreateTempTableBooksMedium :exec
+CREATE TABLE temp_books_medium (
   book_id UUID NOT NULL,
   media_id UUID NOT NULL,
+  "order" INTEGER NOT NULL,
   is_cover BOOLEAN NOT NULL,
   PRIMARY KEY (book_id, media_id)
 ) ON COMMIT DROP
 `
 
-func (q *Queries) CreateTempTableBooksMedia(ctx context.Context) error {
-	_, err := q.db.Exec(ctx, createTempTableBooksMedia)
+func (q *Queries) CreateTempTableBooksMedium(ctx context.Context) error {
+	_, err := q.db.Exec(ctx, createTempTableBooksMedium)
 	return err
 }
 
 const getBook = `-- name: GetBook :one
 SELECT
-  id, title, description, author, price, pages_count, year_published, publisher, weight, stock_quantity, purchase_count, rating, created_at, updated_at, deleted_at
+  id, title, description, author, price, pages_count, year, publisher, weight, stock_quantity, purchase_count, rating, created_at, updated_at, deleted_at
 FROM
   books
 WHERE
@@ -152,7 +153,7 @@ func (q *Queries) GetBook(ctx context.Context, arg GetBookParams) (Book, error) 
 		&i.Author,
 		&i.Price,
 		&i.PagesCount,
-		&i.YearPublished,
+		&i.Year,
 		&i.Publisher,
 		&i.Weight,
 		&i.StockQuantity,
@@ -170,15 +171,16 @@ type InsertTempTableBooksCategoriesParams struct {
 	CategoryID uuid.UUID
 }
 
-type InsertTempTableBooksMediaParams struct {
+type InsertTempTableBooksMediumParams struct {
 	BookID  uuid.UUID
 	MediaID uuid.UUID
+	Order   int32
 	IsCover bool
 }
 
 const listBooks = `-- name: ListBooks :many
 SELECT
-  books.id, books.title, books.description, books.author, books.price, books.pages_count, books.year_published, books.publisher, books.weight, books.stock_quantity, books.purchase_count, books.rating, books.created_at, books.updated_at, books.deleted_at
+  books.id, books.title, books.description, books.author, books.price, books.pages_count, books.year, books.publisher, books.weight, books.stock_quantity, books.purchase_count, books.rating, books.created_at, books.updated_at, books.deleted_at
 FROM
   books
 LEFT JOIN (
@@ -216,7 +218,6 @@ LEFT JOIN (
   HAVING
     COUNT(DISTINCT category_id) >= CASE
       WHEN $2::uuid[] IS NULL THEN 0
-      WHEN cardinality($2::uuid[]) = 0 THEN 0
       ELSE cardinality($2::uuid[])
     END
 ) AS category_filter
@@ -254,9 +255,18 @@ WHERE
     ELSE books.rating >= $6::real
   END
   AND CASE
-    WHEN $7::text = 'exclude' THEN books.deleted_at IS NULL
-    WHEN $7::text = 'only' THEN books.deleted_at IS NOT NULL
-    WHEN $7::text = 'all' THEN TRUE
+    WHEN $7::text = '' THEN TRUE
+    ELSE books.publisher ||| $7::text
+  END
+  AND CASE
+    WHEN $8::integer IS NULL THEN TRUE
+    WHEN $8::integer = 0 THEN TRUE
+    ELSE books.year = $8::integer
+  END
+  AND CASE
+    WHEN $9::text = 'exclude' THEN books.deleted_at IS NULL
+    WHEN $9::text = 'only' THEN books.deleted_at IS NOT NULL
+    WHEN $9::text = 'all' THEN TRUE
     ELSE books.deleted_at IS NULL
   END
 ORDER BY
@@ -264,20 +274,26 @@ ORDER BY
     $1::text <> '' THEN pdb.score(books.id) + COALESCE(category_scores.category_score, 0)
   END DESC,
   CASE WHEN
-    $8::text = 'asc' THEN books.rating
+    $10::text = 'asc' THEN books.rating
   END ASC,
   CASE WHEN
-    $8::text = 'desc' THEN books.rating
+    $10::text = 'desc' THEN books.rating
   END DESC,
   CASE WHEN
-    $9::text = 'asc' THEN books.price
+    $11::text = 'asc' THEN books.price
   END ASC,
   CASE WHEN
-    $9::text = 'desc' THEN books.price
+    $11::text = 'desc' THEN books.price
+  END DESC,
+  CASE WHEN
+    $12::text = 'asc' THEN books.created_at
+  END ASC,
+  CASE WHEN
+    $12::text = 'desc' THEN books.created_at
   END DESC,
   books.id DESC
-OFFSET $10::integer
-LIMIT NULLIF($11::integer, 0)
+OFFSET $13::integer
+LIMIT NULLIF($14::integer, 0)
 `
 
 type ListBooksParams struct {
@@ -287,9 +303,12 @@ type ListBooksParams struct {
 	MinPrice    pgtype.Numeric
 	MaxPrice    pgtype.Numeric
 	Rating      float32
+	Publisher   string
+	Year        int32
 	Deleted     string
 	SortRating  string
 	SortPrice   string
+	SortRecent  string
 	Offset      int32
 	Limit       int32
 }
@@ -302,9 +321,12 @@ func (q *Queries) ListBooks(ctx context.Context, arg ListBooksParams) ([]Book, e
 		arg.MinPrice,
 		arg.MaxPrice,
 		arg.Rating,
+		arg.Publisher,
+		arg.Year,
 		arg.Deleted,
 		arg.SortRating,
 		arg.SortPrice,
+		arg.SortRecent,
 		arg.Offset,
 		arg.Limit,
 	)
@@ -322,7 +344,7 @@ func (q *Queries) ListBooks(ctx context.Context, arg ListBooksParams) ([]Book, e
 			&i.Author,
 			&i.Price,
 			&i.PagesCount,
-			&i.YearPublished,
+			&i.Year,
 			&i.Publisher,
 			&i.Weight,
 			&i.StockQuantity,
@@ -388,11 +410,11 @@ func (q *Queries) ListBooksCategories(ctx context.Context, arg ListBooksCategori
 	return items, nil
 }
 
-const listBooksMedia = `-- name: ListBooksMedia :many
+const listBooksMedium = `-- name: ListBooksMedium :many
 SELECT
-  book_id, media_id, is_cover
+  book_id, media_id, "order", is_cover
 FROM
-  books_media
+  books_medium
 WHERE
   CASE
     WHEN $1::uuid[] IS NULL THEN TRUE
@@ -413,14 +435,14 @@ ORDER BY
   media_id ASC
 `
 
-type ListBooksMediaParams struct {
+type ListBooksMediumParams struct {
 	BookIDs  []uuid.UUID
 	MediaIds []uuid.UUID
 	IsCover  bool
 }
 
-func (q *Queries) ListBooksMedia(ctx context.Context, arg ListBooksMediaParams) ([]BooksMedium, error) {
-	rows, err := q.db.Query(ctx, listBooksMedia, arg.BookIDs, arg.MediaIds, arg.IsCover)
+func (q *Queries) ListBooksMedium(ctx context.Context, arg ListBooksMediumParams) ([]BooksMedium, error) {
+	rows, err := q.db.Query(ctx, listBooksMedium, arg.BookIDs, arg.MediaIds, arg.IsCover)
 	if err != nil {
 		return nil, err
 	}
@@ -428,7 +450,12 @@ func (q *Queries) ListBooksMedia(ctx context.Context, arg ListBooksMediaParams) 
 	var items []BooksMedium
 	for rows.Next() {
 		var i BooksMedium
-		if err := rows.Scan(&i.BookID, &i.MediaID, &i.IsCover); err != nil {
+		if err := rows.Scan(
+			&i.BookID,
+			&i.MediaID,
+			&i.Order,
+			&i.IsCover,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -463,23 +490,26 @@ func (q *Queries) MergeBooksCategoriesFromTemp(ctx context.Context) error {
 	return err
 }
 
-const mergeBooksMediaFromTemp = `-- name: MergeBooksMediaFromTemp :exec
-MERGE INTO books_media AS target
-USING temp_books_media AS source
+const mergeBooksMediumFromTemp = `-- name: MergeBooksMediumFromTemp :exec
+MERGE INTO books_medium AS target
+USING temp_books_medium AS source
   ON target.book_id = source.book_id
   AND target.media_id = source.media_id
 WHEN MATCHED THEN
   UPDATE SET
+    "order" = source."order",
     is_cover = source.is_cover
 WHEN NOT MATCHED THEN
   INSERT (
     book_id,
     media_id,
+    "order",
     is_cover
   )
   VALUES (
     source.book_id,
     source.media_id,
+    source."order",
     source.is_cover
   )
 WHEN NOT MATCHED BY SOURCE
@@ -487,8 +517,8 @@ WHEN NOT MATCHED BY SOURCE
   DELETE
 `
 
-func (q *Queries) MergeBooksMediaFromTemp(ctx context.Context) error {
-	_, err := q.db.Exec(ctx, mergeBooksMediaFromTemp)
+func (q *Queries) MergeBooksMediumFromTemp(ctx context.Context) error {
+	_, err := q.db.Exec(ctx, mergeBooksMediumFromTemp)
 	return err
 }
 
@@ -500,7 +530,7 @@ INSERT INTO books (
   author,
   price,
   pages_count,
-  year_published,
+  year,
   publisher,
   weight,
   stock_quantity,
@@ -533,7 +563,7 @@ ON CONFLICT (id) DO UPDATE SET
   author = EXCLUDED.author,
   price = EXCLUDED.price,
   pages_count = EXCLUDED.pages_count,
-  year_published = EXCLUDED.year_published,
+  year = EXCLUDED.year,
   publisher = EXCLUDED.publisher,
   weight = EXCLUDED.weight,
   stock_quantity = EXCLUDED.stock_quantity,
@@ -551,7 +581,7 @@ type UpsertBookParams struct {
 	Author        string
 	Price         pgtype.Numeric
 	PagesCount    int32
-	YearPublished int32
+	Year          int32
 	Publisher     string
 	Weight        pgtype.Numeric
 	StockQuantity int32
@@ -570,7 +600,7 @@ func (q *Queries) UpsertBook(ctx context.Context, arg UpsertBookParams) error {
 		arg.Author,
 		arg.Price,
 		arg.PagesCount,
-		arg.YearPublished,
+		arg.Year,
 		arg.Publisher,
 		arg.Weight,
 		arg.StockQuantity,

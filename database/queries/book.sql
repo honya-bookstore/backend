@@ -6,7 +6,7 @@ INSERT INTO books (
   author,
   price,
   pages_count,
-  year_published,
+  year,
   publisher,
   weight,
   stock_quantity,
@@ -23,7 +23,7 @@ VALUES (
   sqlc.arg('author'),
   sqlc.arg('price'),
   sqlc.arg('pages_count'),
-  sqlc.arg('year_published'),
+  sqlc.arg('year'),
   sqlc.arg('publisher'),
   sqlc.arg('weight'),
   sqlc.arg('stock_quantity'),
@@ -39,7 +39,7 @@ ON CONFLICT (id) DO UPDATE SET
   author = EXCLUDED.author,
   price = EXCLUDED.price,
   pages_count = EXCLUDED.pages_count,
-  year_published = EXCLUDED.year_published,
+  year = EXCLUDED.year,
   publisher = EXCLUDED.publisher,
   weight = EXCLUDED.weight,
   stock_quantity = EXCLUDED.stock_quantity,
@@ -89,7 +89,6 @@ LEFT JOIN (
   HAVING
     COUNT(DISTINCT category_id) >= CASE
       WHEN sqlc.arg('category_ids')::uuid[] IS NULL THEN 0
-      WHEN cardinality(sqlc.arg('category_ids')::uuid[]) = 0 THEN 0
       ELSE cardinality(sqlc.arg('category_ids')::uuid[])
     END
 ) AS category_filter
@@ -127,6 +126,15 @@ WHERE
     ELSE books.rating >= sqlc.arg('rating')::real
   END
   AND CASE
+    WHEN sqlc.arg('publisher')::text = '' THEN TRUE
+    ELSE books.publisher ||| sqlc.arg('publisher')::text
+  END
+  AND CASE
+    WHEN sqlc.arg('year')::integer IS NULL THEN TRUE
+    WHEN sqlc.arg('year')::integer = 0 THEN TRUE
+    ELSE books.year = sqlc.arg('year')::integer
+  END
+  AND CASE
     WHEN sqlc.arg('deleted')::text = 'exclude' THEN books.deleted_at IS NULL
     WHEN sqlc.arg('deleted')::text = 'only' THEN books.deleted_at IS NOT NULL
     WHEN sqlc.arg('deleted')::text = 'all' THEN TRUE
@@ -147,6 +155,12 @@ ORDER BY
   END ASC,
   CASE WHEN
     sqlc.arg('sort_price')::text = 'desc' THEN books.price
+  END DESC,
+  CASE WHEN
+    sqlc.arg('sort_recent')::text = 'asc' THEN books.created_at
+  END ASC,
+  CASE WHEN
+    sqlc.arg('sort_recent')::text = 'desc' THEN books.created_at
   END DESC,
   books.id DESC
 OFFSET sqlc.arg('offset')::integer
@@ -264,7 +278,7 @@ USING temp_books_medium AS source
   AND target.media_id = source.media_id
 WHEN MATCHED THEN
   UPDATE SET
-    order = source."order",
+    "order" = source."order",
     is_cover = source.is_cover
 WHEN NOT MATCHED THEN
   INSERT (

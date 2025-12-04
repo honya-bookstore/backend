@@ -16,7 +16,7 @@ const countMedium = `-- name: CountMedium :one
 SELECT
   COUNT(*)
 FROM
-  media
+  medium
 WHERE
   CASE
     WHEN $1::uuid[] IS NULL THEN TRUE
@@ -47,7 +47,7 @@ const getMedia = `-- name: GetMedia :one
 SELECT
   id, url, alt_text, created_at, deleted_at
 FROM
-  media
+  medium
 WHERE
   id = $1
   AND CASE
@@ -80,7 +80,7 @@ const listMedium = `-- name: ListMedium :many
 SELECT
   id, url, alt_text, created_at, deleted_at
 FROM
-  media
+  medium
 WHERE
   CASE
     WHEN $1::uuid[] IS NULL THEN TRUE
@@ -138,7 +138,7 @@ func (q *Queries) ListMedium(ctx context.Context, arg ListMediumParams) ([]Mediu
 }
 
 const upsertMedia = `-- name: UpsertMedia :exec
-INSERT INTO media (
+INSERT INTO medium (
   id,
   url,
   alt_text,
