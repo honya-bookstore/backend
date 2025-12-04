@@ -60,8 +60,7 @@ func (r *RouterImpl) RegisterRoutes(
 			cart.GET("/user/:id", r.cartHandler.GetByUser)
 			cart.GET("/me", r.cartHandler.GetMine)
 			cart.POST("", r.cartHandler.Create)
-			cart.PATCH("/:id", r.cartHandler.Update)
-			cart.POST("/:id/items/:item_id", r.cartHandler.AddItem)
+			cart.POST("/:id/items", r.cartHandler.CreateItem)
 			cart.PATCH("/:id/items/:item_id", r.cartHandler.UpdateItem)
 			cart.DELETE("/:id/items/:item_id", r.cartHandler.DeleteItem)
 		}

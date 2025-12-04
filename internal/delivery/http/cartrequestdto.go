@@ -27,13 +27,17 @@ type CreateCartData struct {
 }
 
 type CreateCartItemRequestDTO struct {
-	Data *CreateCartItemData
+	PathParams *CreateCartItemRequestPathParams
+	Data       *CreateCartItemData
+}
+
+type CreateCartItemRequestPathParams struct {
+	CartID uuid.UUID `json:"id" binding:"required" format:"uuid"`
 }
 
 type CreateCartItemData struct {
 	BookID   uuid.UUID `json:"bookId"   binding:"required"`
 	Quantity int       `json:"quantity" binding:"required,gt=0"`
-	UserID   uuid.UUID `json:"userId"   binding:"required"`
 }
 
 type UpdateCartItemRequestDTO struct {

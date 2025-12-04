@@ -7,7 +7,7 @@ type CartApplication interface {
 	GetByUser(ctx context.Context, param GetCartByUserRequestDTO) (*CartResponseDTO, error)
 	Create(ctx context.Context, param CreateCartRequestDTO) (*CartResponseDTO, error)
 	Update(ctx context.Context, param UpdateCartItemRequestDTO) (*CartResponseDTO, error)
-	AddItem(ctx context.Context, param CreateCartItemRequestDTO) (*CartResponseDTO, error)
+	CreateItem(ctx context.Context, param CreateCartItemRequestDTO) (*CartResponseDTO, error)
 	UpdateItem(ctx context.Context, param UpdateCartItemRequestDTO) (*CartResponseDTO, error)
 	DeleteItem(ctx context.Context, param DeleteCartItemRequestDTO) error
 }

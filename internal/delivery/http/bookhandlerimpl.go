@@ -35,7 +35,7 @@ func (h *BookHandlerImpl) List(ctx *gin.Context) {
 //	@Tags			Book
 //	@Accept			json
 //	@Produce		json
-//	@Param			id			path		string	true	"Book ID"	format(uuid)
+//	@Param			pathParams	path		GetBookRequestPathParams	true	"Path parameters"
 //	@Success		200			{object}	BookResponseDTO
 //	@Failure		404			{object}	Error
 //	@Failure		500			{object}	Error
@@ -70,7 +70,7 @@ func (h *BookHandlerImpl) Create(ctx *gin.Context) {
 //	@Tags			Book
 //	@Accept			json
 //	@Produce		json
-//	@Param			id		path		string					true	"Book ID"	format(uuid)
+//	@Param			pathParams	path		UpdateBookRequestPathParams	true	"Path parameters"
 //	@Param			data	body		UpdateBookRequestData	true	"Update book request"
 //	@Success		200		{object}	BookResponseDTO
 //	@Failure		400		{object}	Error
@@ -90,7 +90,7 @@ func (h *BookHandlerImpl) Update(ctx *gin.Context) {
 //	@Tags			Book
 //	@Accept			json
 //	@Produce		json
-//	@Param			id		path		string	true	"Book ID"	format(uuid)
+//	@Param			pathParams	path		DeleteBookRequestPathParams	true	"Path parameters"
 //	@Success		204
 //	@Failure		404		{object}	Error
 //	@Failure		500		{object}	Error

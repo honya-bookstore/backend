@@ -79,7 +79,7 @@ func (b *Book) List(ctx context.Context, param http.ListBookRequestDTO) (*http.P
 			for _, catID := range book.CategoryIDs {
 				categoryIDsMap[catID.String()] = struct{}{}
 			}
-			for _, bookMedia := range book.Media {
+			for _, bookMedia := range book.Medium {
 				mediaIDsMap[bookMedia.MediaID.String()] = struct{}{}
 			}
 		}
@@ -174,7 +174,7 @@ func (b *Book) Get(ctx context.Context, param http.GetBookRequestDTO) (*http.Boo
 
 	// Fetch media
 	mediaIDsMap := make(map[string]struct{})
-	for _, bookMedia := range book.Media {
+	for _, bookMedia := range book.Medium {
 		mediaIDsMap[bookMedia.MediaID.String()] = struct{}{}
 	}
 
@@ -253,13 +253,14 @@ func (b *Book) Create(ctx context.Context, param http.CreateBookRequestDTO) (*ht
 		return nil, domain.ErrNotFound
 	}
 
-	// Convert request DTOs to domain BookMedia
-	bookMedia := make([]domain.BookMedia, 0, len(param.Data.Media))
-	for _, m := range param.Data.Media {
-		bookMedia = append(bookMedia, domain.BookMedia{
-			MediaID: m.MediaID,
-			IsCover: m.IsCover,
-		})
+	bookMedium := make([]domain.BookMedia, 0, len(param.Data.Media))
+	for i, m := range param.Data.Media {
+		bookMedia := domain.NewBookMedia(
+			m.MediaID,
+			m.IsCover,
+			i+1,
+		)
+		bookMedium = append(bookMedium, *bookMedia)
 	}
 
 	book, err := domain.NewBook(
@@ -273,7 +274,7 @@ func (b *Book) Create(ctx context.Context, param http.CreateBookRequestDTO) (*ht
 		param.Data.Weight,
 		param.Data.StockQuantity,
 		param.Data.CategoryIDs,
-		bookMedia,
+		bookMedium,
 	)
 	if err != nil {
 		return nil, err
@@ -340,12 +341,14 @@ func (b *Book) Update(ctx context.Context, param http.UpdateBookRequestDTO) (*ht
 		}
 	}
 
-	bookMedia := make([]domain.BookMedia, 0, len(param.Data.Media))
-	for _, m := range param.Data.Media {
-		bookMedia = append(bookMedia, domain.BookMedia{
-			MediaID: m.MediaID,
-			IsCover: m.IsCover,
-		})
+	bookMedium := make([]domain.BookMedia, 0, len(param.Data.Media))
+	for i, m := range param.Data.Media {
+		bookMedia := domain.NewBookMedia(
+			m.MediaID,
+			m.IsCover,
+			i+1,
+		)
+		bookMedium = append(bookMedium, *bookMedia)
 	}
 	book.Update(
 		param.Data.Title,
@@ -358,7 +361,7 @@ func (b *Book) Update(ctx context.Context, param http.UpdateBookRequestDTO) (*ht
 		param.Data.Weight,
 		param.Data.StockQuantity,
 		param.Data.CategoryIDs,
-		bookMedia,
+		bookMedium,
 	)
 
 	if err := b.bookService.Validate(*book); err != nil {
@@ -391,7 +394,7 @@ func (b *Book) Update(ctx context.Context, param http.UpdateBookRequestDTO) (*ht
 
 	// Fetch media for DTO
 	mediaIDsMap := make(map[string]struct{})
-	for _, bookMedia := range book.Media {
+	for _, bookMedia := range book.Medium {
 		mediaIDsMap[bookMedia.MediaID.String()] = struct{}{}
 	}
 

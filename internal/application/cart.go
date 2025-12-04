@@ -101,20 +101,14 @@ func (c *Cart) Update(ctx context.Context, param http.UpdateCartItemRequestDTO) 
 	return c.enrichCart(ctx, cart)
 }
 
-func (c *Cart) AddItem(ctx context.Context, param http.CreateCartItemRequestDTO) (*http.CartResponseDTO, error) {
-	// Get or create cart for user
+func (c *Cart) CreateItem(ctx context.Context, param http.CreateCartItemRequestDTO) (*http.CartResponseDTO, error) {
 	cart, err := c.cartRepo.Get(ctx, domain.CartRepositoryGetParam{
-		UserID: param.Data.UserID,
+		CartID: param.PathParams.CartID,
 	})
 	if err != nil {
-		// If cart doesn't exist, create new one
-		cart, err = domain.NewCart(param.Data.UserID)
-		if err != nil {
-			return nil, err
-		}
+		return nil, err
 	}
 
-	// Validate book exists
 	book, err := c.bookRepo.Get(ctx, domain.BookRepositoryGetParam{
 		BookID: param.Data.BookID,
 	})
@@ -122,7 +116,6 @@ func (c *Cart) AddItem(ctx context.Context, param http.CreateCartItemRequestDTO)
 		return nil, err
 	}
 
-	// Check stock availability
 	if book.StockQuantity < param.Data.Quantity {
 		return nil, domain.ErrInvalid
 	}

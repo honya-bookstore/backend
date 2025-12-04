@@ -35,7 +35,7 @@ func (h *MediaHandlerImpl) List(ctx *gin.Context) {
 //	@Tags			Media
 //	@Accept			json
 //	@Produce		json
-//	@Param			id			path		string	true	"Media ID"
+//	@Param			pathParams	path		GetMediaRequestPathParams	true	"Path parameters"
 //	@Success		200			{object}	MediaResponseDTO
 //	@Failure		404			{object}	Error
 //	@Failure		500			{object}	Error
@@ -70,7 +70,7 @@ func (h *MediaHandlerImpl) Create(ctx *gin.Context) {
 //	@Tags			Media
 //	@Accept			json
 //	@Produce		json
-//	@Param			id		path		string	true	"Media ID"
+//	@Param			pathParams	path		DeleteMediaRequestPathParams	true	"Path parameters"
 //	@Success		204
 //	@Failure		404		{object}	Error
 //	@Failure		500		{object}	Error

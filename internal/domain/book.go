@@ -20,7 +20,7 @@ type Book struct {
 	PurchaseCount int         `validate:"required,gte=0"`
 	Rating        float64     `validate:"required,gte=0,lte=5"`
 	CategoryIDs   []uuid.UUID `validate:"required"`
-	Media         []BookMedia `validate:"required,dive"`
+	Medium        []BookMedia `validate:"required,dive"`
 	CreatedAt     time.Time   `validate:"required"`
 	UpdatedAt     time.Time   `validate:"required,gtefield=CreatedAt"`
 	DeletedAt     time.Time   `validate:"omitempty,gtefield=CreatedAt"`
@@ -29,6 +29,7 @@ type Book struct {
 type BookMedia struct {
 	MediaID uuid.UUID `validate:"required"`
 	IsCover bool      `validate:"required"`
+	Order   int       `validate:"required,gte=0"`
 }
 
 func NewBook(
@@ -42,7 +43,7 @@ func NewBook(
 	weight float64,
 	stockQuantity int,
 	categoryID []uuid.UUID,
-	bookMedia []BookMedia,
+	bookMedium []BookMedia,
 ) (*Book, error) {
 	id, err := uuid.NewV7()
 	if err != nil {
@@ -63,7 +64,7 @@ func NewBook(
 		PurchaseCount: 0,
 		Rating:        0,
 		CategoryIDs:   categoryID,
-		Media:         bookMedia,
+		Medium:        bookMedium,
 		CreatedAt:     now,
 		UpdatedAt:     now,
 	}, err
@@ -72,10 +73,12 @@ func NewBook(
 func NewBookMedia(
 	MediaID uuid.UUID,
 	isCover bool,
+	Order int,
 ) *BookMedia {
 	return &BookMedia{
 		MediaID: MediaID,
 		IsCover: isCover,
+		Order:   Order,
 	}
 }
 
@@ -134,7 +137,7 @@ func (b *Book) Update(
 		updated = true
 	}
 	if media != nil {
-		b.Media = media
+		b.Medium = media
 		updated = true
 	}
 	if updated {

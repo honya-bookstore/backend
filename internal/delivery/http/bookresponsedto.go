@@ -22,7 +22,7 @@ type BookResponseDTO struct {
 	PurchaseCount int                       `json:"purchaseCount" binding:"required"`
 	Rating        float64                   `json:"rating"        binding:"required"`
 	Categories    []BookCategoryResponseDTO `json:"categories"    binding:"required"`
-	Media         []BookMediaResponseDTO    `json:"media"         binding:"required"`
+	Medium        []BookMediaResponseDTO    `json:"media"         binding:"required"`
 	CreatedAt     time.Time                 `json:"createdAt"     binding:"required"`
 	UpdatedAt     time.Time                 `json:"updatedAt"     binding:"required"`
 	DeletedAt     *time.Time                `json:"deletedAt"`
@@ -31,6 +31,7 @@ type BookResponseDTO struct {
 type BookMediaResponseDTO struct {
 	ID       uuid.UUID `json:"id"       binding:"required"`
 	IsCover  bool      `json:"isCover"  binding:"required"`
+	Order    int       `json:"order"`
 	FileName string    `json:"fileName" binding:"required"`
 	FileURL  string    `json:"fileUrl"  binding:"required"`
 	AltText  string    `json:"altText"`
@@ -43,7 +44,11 @@ type BookCategoryResponseDTO struct {
 	Description string    `json:"description"`
 }
 
-func ToBookResponseDTO(book *domain.Book, categories []*domain.Category, mediaMap map[string]*domain.Media) *BookResponseDTO {
+func ToBookResponseDTO(
+	book *domain.Book,
+	categories []*domain.Category,
+	mediaMap map[string]*domain.Media,
+) *BookResponseDTO {
 	if book == nil {
 		return nil
 	}
@@ -60,12 +65,13 @@ func ToBookResponseDTO(book *domain.Book, categories []*domain.Category, mediaMa
 		}
 	}
 
-	mediaDtos := make([]BookMediaResponseDTO, 0, len(book.Media))
-	for _, bookMedia := range book.Media {
+	mediaDtos := make([]BookMediaResponseDTO, 0, len(book.Medium))
+	for _, bookMedia := range book.Medium {
 		if m, exists := mediaMap[bookMedia.MediaID.String()]; exists && m != nil {
 			mediaDtos = append(mediaDtos, BookMediaResponseDTO{
 				ID:       m.ID,
 				IsCover:  bookMedia.IsCover,
+				Order:    bookMedia.Order,
 				FileName: m.AltText,
 				FileURL:  m.URL,
 				AltText:  m.AltText,
@@ -92,7 +98,7 @@ func ToBookResponseDTO(book *domain.Book, categories []*domain.Category, mediaMa
 		PurchaseCount: book.PurchaseCount,
 		Rating:        book.Rating,
 		Categories:    categoryDtos,
-		Media:         mediaDtos,
+		Medium:        mediaDtos,
 		CreatedAt:     book.CreatedAt,
 		UpdatedAt:     book.UpdatedAt,
 		DeletedAt:     deletedAt,

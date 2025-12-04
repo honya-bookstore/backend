@@ -35,7 +35,7 @@ func (h *CategoryHandlerImpl) List(ctx *gin.Context) {
 //	@Tags			Category
 //	@Accept			json
 //	@Produce		json
-//	@Param			id			path		string	true	"Category ID"
+//	@Param			pathParams	path		GetCategoryRequestPathParams	true	"Path parameters"
 //	@Success		200			{object}	CategoryResponseDTO
 //	@Failure		404			{object}	Error
 //	@Failure		500			{object}	Error
@@ -70,7 +70,7 @@ func (h *CategoryHandlerImpl) Create(ctx *gin.Context) {
 //	@Tags			Category
 //	@Accept			json
 //	@Produce		json
-//	@Param			id		path		string							true	"Category ID"
+//	@Param			pathParams	path		UpdateCategoryRequestPathParams	true	"Path parameters"
 //	@Param			data	body		UpdateCategoryRequestData	true	"Update category request"
 //	@Success		200		{object}	CategoryResponseDTO
 //	@Failure		400		{object}	Error
@@ -90,7 +90,7 @@ func (h *CategoryHandlerImpl) Update(ctx *gin.Context) {
 //	@Tags			Category
 //	@Accept			json
 //	@Produce		json
-//	@Param			id		path		string	true	"Category ID"
+//	@Param			pathParams	path		DeleteCategoryRequestPathParams	true	"Path parameters"
 //	@Success		204
 //	@Failure		404		{object}	Error
 //	@Failure		500		{object}	Error
