@@ -38,11 +38,11 @@ WHERE
 type CountOrdersParams struct {
 	IDs       []uuid.UUID
 	UserIDs   []uuid.UUID
-	StatusIds []uuid.UUID
+	StatusIDs []uuid.UUID
 }
 
 func (q *Queries) CountOrders(ctx context.Context, arg CountOrdersParams) (int64, error) {
-	row := q.db.QueryRow(ctx, countOrders, arg.IDs, arg.UserIDs, arg.StatusIds)
+	row := q.db.QueryRow(ctx, countOrders, arg.IDs, arg.UserIDs, arg.StatusIDs)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -200,9 +200,14 @@ WHERE
     ELSE id = ANY ($1::uuid[])
   END
   AND CASE
-    WHEN $2::uuid[] IS NULL THEN TRUE
-    WHEN cardinality($2::uuid[]) = 0 THEN TRUE
-    ELSE order_id = ANY ($2::uuid[])
+    WHEN $2::uuid IS NULL THEN TRUE
+    WHEN $2::uuid = '00000000-0000-0000-0000-000000000000'::uuid THEN TRUE
+    ELSE order_id = $2::uuid
+  END
+  AND CASE
+    WHEN $3::uuid[] IS NULL THEN TRUE
+    WHEN cardinality($3::uuid[]) = 0 THEN TRUE
+    ELSE order_id = ANY ($3::uuid[])
   END
 ORDER BY
   id
@@ -210,11 +215,12 @@ ORDER BY
 
 type ListOrderItemsParams struct {
 	IDs      []uuid.UUID
+	OrderID  uuid.UUID
 	OrderIDs []uuid.UUID
 }
 
 func (q *Queries) ListOrderItems(ctx context.Context, arg ListOrderItemsParams) ([]OrderItem, error) {
-	rows, err := q.db.Query(ctx, listOrderItems, arg.IDs, arg.OrderIDs)
+	rows, err := q.db.Query(ctx, listOrderItems, arg.IDs, arg.OrderID, arg.OrderIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -290,25 +296,37 @@ WHERE
     ELSE id = ANY ($1::uuid[])
   END
   AND CASE
-    WHEN $2::uuid[] IS NULL THEN TRUE
-    WHEN cardinality($2::uuid[]) = 0 THEN TRUE
-    ELSE user_id = ANY ($2::uuid[])
+    WHEN $2::uuid IS NULL THEN TRUE
+    WHEN $2::uuid = '00000000-0000-0000-0000-000000000000'::uuid THEN TRUE
+    ELSE user_id = $2::uuid
   END
   AND CASE
     WHEN $3::uuid[] IS NULL THEN TRUE
     WHEN cardinality($3::uuid[]) = 0 THEN TRUE
-    ELSE status_id = ANY ($3::uuid[])
+    ELSE user_id = ANY ($3::uuid[])
+  END
+  AND CASE
+    WHEN $4::uuid IS NULL THEN TRUE
+    WHEN $4::uuid = '00000000-0000-0000-0000-000000000000'::uuid THEN TRUE
+    ELSE status_id = $4::uuid
+  END
+  AND CASE
+    WHEN $5::uuid[] IS NULL THEN TRUE
+    WHEN cardinality($5::uuid[]) = 0 THEN TRUE
+    ELSE status_id = ANY ($5::uuid[])
   END
 ORDER BY
   id ASC
-OFFSET $4::integer
-LIMIT NULLIF($5::integer, 0)
+OFFSET $6::integer
+LIMIT NULLIF($7::integer, 0)
 `
 
 type ListOrdersParams struct {
 	IDs       []uuid.UUID
+	UserID    uuid.UUID
 	UserIDs   []uuid.UUID
-	StatusIds []uuid.UUID
+	StatusID  uuid.UUID
+	StatusIDs []uuid.UUID
 	Offset    int32
 	Limit     int32
 }
@@ -316,8 +334,10 @@ type ListOrdersParams struct {
 func (q *Queries) ListOrders(ctx context.Context, arg ListOrdersParams) ([]Order, error) {
 	rows, err := q.db.Query(ctx, listOrders,
 		arg.IDs,
+		arg.UserID,
 		arg.UserIDs,
-		arg.StatusIds,
+		arg.StatusID,
+		arg.StatusIDs,
 		arg.Offset,
 		arg.Limit,
 	)
