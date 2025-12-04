@@ -29,11 +29,13 @@ type OrderItem struct {
 
 type OrderProvider string
 
+type OrderProviderOnline OrderProvider
+
 const (
-	PaymentProviderCOD     OrderProvider = "COD"
-	PaymentProviderVNPAY   OrderProvider = "VNPAY"
-	PaymentProviderMOMO    OrderProvider = "MOMO"
-	PaymentProviderZALOPAY OrderProvider = "ZALOPAY"
+	PaymentProviderCOD     OrderProvider       = "COD"
+	PaymentProviderVNPAY   OrderProviderOnline = "VNPAY"
+	PaymentProviderMOMO    OrderProviderOnline = "MOMO"
+	PaymentProviderZALOPAY OrderProviderOnline = "ZALOPAY"
 )
 
 type OrderStatus string

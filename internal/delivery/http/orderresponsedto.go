@@ -9,17 +9,18 @@ import (
 )
 
 type OrderResponseDTO struct {
-	ID          uuid.UUID              `json:"id"          binding:"required"`
-	Address     string                 `json:"address"     binding:"required"`
-	City        string                 `json:"city"        binding:"required"`
-	Provider    domain.OrderProvider   `json:"provider"    binding:"required"`
-	Status      domain.OrderStatus     `json:"status"      binding:"required"`
-	IsPaid      bool                   `json:"isPaid"      binding:"required"`
-	CreatedAt   time.Time              `json:"createdAt"   binding:"required"`
-	UpdatedAt   time.Time              `json:"updatedAt"   binding:"required"`
-	Items       []OrderItemResponseDTO `json:"items"       binding:"required"`
-	TotalAmount int64                  `json:"totalAmount" binding:"required"`
-	UserID      uuid.UUID              `json:"userId"      binding:"required"`
+	ID          uuid.UUID              `json:"id"                  binding:"required"`
+	Address     string                 `json:"address"             binding:"required"`
+	City        string                 `json:"city"                binding:"required"`
+	Provider    domain.OrderProvider   `json:"provider"            binding:"required"`
+	Status      domain.OrderStatus     `json:"status"              binding:"required"`
+	IsPaid      bool                   `json:"isPaid"              binding:"required"`
+	CreatedAt   time.Time              `json:"createdAt"           binding:"required"`
+	UpdatedAt   time.Time              `json:"updatedAt"           binding:"required"`
+	Items       []OrderItemResponseDTO `json:"items"               binding:"required"`
+	TotalAmount int64                  `json:"totalAmount"         binding:"required"`
+	UserID      uuid.UUID              `json:"userId"              binding:"required"`
+	ReturnURL   string                 `json:"returnUrl,omitempty"`
 }
 
 type OrderItemResponseDTO struct {
@@ -38,7 +39,7 @@ type OrderItemBookResponseDTO struct {
 	Rating        float64   `json:"rating"        binding:"required"`
 }
 
-func ToOrderResponseDTO(order *domain.Order, bookMap map[uuid.UUID]*domain.Book) *OrderResponseDTO {
+func ToOrderResponseDTO(order *domain.Order, bookMap map[uuid.UUID]*domain.Book, returnURL string) *OrderResponseDTO {
 	if order == nil {
 		return nil
 	}
@@ -78,5 +79,6 @@ func ToOrderResponseDTO(order *domain.Order, bookMap map[uuid.UUID]*domain.Book)
 		Items:       items,
 		TotalAmount: order.TotalAmount,
 		UserID:      order.UserID,
+		ReturnURL:   returnURL,
 	}
 }

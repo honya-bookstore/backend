@@ -10,10 +10,11 @@ import (
 )
 
 type Order struct {
-	orderRepo    domain.OrderRepository
-	orderService domain.OrderService
-	bookRepo     domain.BookRepository
-	bookService  domain.BookService
+	orderRepo           domain.OrderRepository
+	orderService        domain.OrderService
+	bookRepo            domain.BookRepository
+	bookService         domain.BookService
+	orderPaymentService OrderPaymentService
 }
 
 func ProvideOrder(
@@ -21,12 +22,14 @@ func ProvideOrder(
 	orderService domain.OrderService,
 	bookRepo domain.BookRepository,
 	bookService domain.BookService,
+	orderPaymentService OrderPaymentService,
 ) *Order {
 	return &Order{
-		orderRepo:    orderRepo,
-		orderService: orderService,
-		bookRepo:     bookRepo,
-		bookService:  bookService,
+		orderRepo:           orderRepo,
+		orderService:        orderService,
+		bookRepo:            bookRepo,
+		bookService:         bookService,
+		orderPaymentService: orderPaymentService,
 	}
 }
 
@@ -53,7 +56,7 @@ func (o *Order) List(ctx context.Context, param http.ListOrderRequestDTO) ([]htt
 	orderDtos := make([]http.OrderResponseDTO, 0, len(*orders))
 	for i := range *orders {
 		order := &(*orders)[i]
-		orderDto, err := o.enrichOrder(ctx, order)
+		orderDto, err := o.enrichOrder(ctx, order, "")
 		if err != nil {
 			return nil, err
 		}
@@ -71,7 +74,7 @@ func (o *Order) Get(ctx context.Context, param http.GetOrderRequestDTO) (*http.O
 		return nil, err
 	}
 
-	return o.enrichOrder(ctx, order)
+	return o.enrichOrder(ctx, order, "")
 }
 
 func (o *Order) Create(ctx context.Context, param http.CreateOrderRequestDTO) (*http.OrderResponseDTO, error) {
@@ -134,8 +137,24 @@ func (o *Order) Create(ctx context.Context, param http.CreateOrderRequestDTO) (*
 	if err != nil {
 		return nil, err
 	}
+	var paymentURL string
+	var paymentServiceErr error
+	switch param.Data.Provider {
+	case domain.OrderProvider(domain.PaymentProviderCOD):
+		paymentURL = ""
+	case domain.OrderProvider(domain.PaymentProviderVNPAY):
+		paymentURL, paymentServiceErr = o.orderPaymentService.GetPaymentURL(ctx, GetPaymentURLParam{
+			Order:     order,
+			ReturnURL: param.Data.ReturnURL,
+		})
+	default:
+		paymentServiceErr = domain.ErrInvalid
+	}
 
-	return o.enrichOrder(ctx, order)
+	if paymentServiceErr != nil {
+		return nil, paymentServiceErr
+	}
+	return o.enrichOrder(ctx, order, paymentURL)
 }
 
 func (o *Order) Update(ctx context.Context, param http.UpdateOrderRequestDTO) (*http.OrderResponseDTO, error) {
@@ -163,12 +182,12 @@ func (o *Order) Update(ctx context.Context, param http.UpdateOrderRequestDTO) (*
 		return nil, err
 	}
 
-	return o.enrichOrder(ctx, order)
+	return o.enrichOrder(ctx, order, "")
 }
 
-func (o *Order) enrichOrder(ctx context.Context, order *domain.Order) (*http.OrderResponseDTO, error) {
+func (o *Order) enrichOrder(ctx context.Context, order *domain.Order, returnURL string) (*http.OrderResponseDTO, error) {
 	if len(order.Items) == 0 {
-		return http.ToOrderResponseDTO(order, nil), nil
+		return http.ToOrderResponseDTO(order, nil, returnURL), nil
 	}
 
 	bookIDs := make([]uuid.UUID, 0, len(order.Items))
@@ -191,5 +210,5 @@ func (o *Order) enrichOrder(ctx context.Context, order *domain.Order) (*http.Ord
 		bookMap[(*books)[i].ID] = &(*books)[i]
 	}
 
-	return http.ToOrderResponseDTO(order, bookMap), nil
+	return http.ToOrderResponseDTO(order, bookMap, returnURL), nil
 }

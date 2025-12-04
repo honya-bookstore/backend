@@ -28,11 +28,12 @@ type CreateOrderRequestDTO struct {
 }
 
 type CreateOrderData struct {
-	Address  string                `json:"address"  binding:"required"`
-	City     string                `json:"city"     binding:"required"`
-	Provider domain.OrderProvider  `json:"provider" binding:"required"`
-	Items    []CreateOrderItemData `json:"items"    binding:"required,dive"`
-	UserID   uuid.UUID             `json:"userId"   binding:"required"`
+	Address   string                `json:"address"   binding:"required"`
+	City      string                `json:"city"      binding:"required"`
+	Provider  domain.OrderProvider  `json:"provider"  binding:"required"`
+	Items     []CreateOrderItemData `json:"items"     binding:"required,dive"`
+	UserID    uuid.UUID             `json:"userId"    binding:"required"`
+	ReturnURL string                `json:"returnUrl"`
 }
 
 type CreateOrderItemData struct {

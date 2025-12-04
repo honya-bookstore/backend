@@ -30,6 +30,9 @@ const (
 	TimeZone            = "TIMEZONE"
 	SwaggerEnv          = "SWAGGER_ENV"
 	PublicKeycloakURL   = "PUBLIC_KEYCLOAK_URL"
+	VNPPaymentURL       = "VNP_PAYMENT_URL"
+	VNPSecureSecret     = "VNP_SECURE_SECRET"
+	VNPHashAlgo         = "VNP_HASH_ALGO"
 )
 
 type Server struct {
@@ -56,6 +59,9 @@ type Server struct {
 	TimeZone            string
 	SwaggerEnv          string
 	PublicKeycloakURL   string
+	VNPPaymentURL       string
+	VNPSecureSecret     string
+	VNPHashAlgo         string
 }
 
 func NewServer() *Server {
@@ -94,5 +100,8 @@ func NewServer() *Server {
 		TimeZone:            viper.GetString(TimeZone),
 		SwaggerEnv:          viper.GetString(SwaggerEnv),
 		PublicKeycloakURL:   viper.GetString(PublicKeycloakURL),
+		VNPPaymentURL:       viper.GetString(VNPPaymentURL),
+		VNPSecureSecret:     viper.GetString(VNPSecureSecret),
+		VNPHashAlgo:         viper.GetString(VNPHashAlgo),
 	}
 }
