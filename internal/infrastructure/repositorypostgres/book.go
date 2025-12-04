@@ -101,7 +101,13 @@ func (r *Book) Save(
 	ctx context.Context,
 	params domain.BookRepositorySaveParam,
 ) error {
-	err := r.queries.UpsertBook(ctx, sqlc.UpsertBookParams{
+	tx, err := r.conn.Begin(ctx)
+	if err != nil {
+		return toDomainError(err)
+	}
+	defer func() { _ = tx.Rollback(ctx) }()
+	qtx := r.queries.WithTx(tx)
+	err = qtx.UpsertBook(ctx, sqlc.UpsertBookParams{
 		ID:            params.Book.ID,
 		Title:         params.Book.Title,
 		Description:   &params.Book.Description,
@@ -130,12 +136,15 @@ func (r *Book) Save(
 	if err != nil {
 		return toDomainError(err)
 	}
-	err = r.mergeCategories(ctx, r.queries, &params.Book)
+	err = r.mergeCategories(ctx, qtx, &params.Book)
 	if err != nil {
 		return toDomainError(err)
 	}
-	err = r.mergeMedium(ctx, r.queries, &params.Book)
+	err = r.mergeMedium(ctx, qtx, &params.Book)
 	if err != nil {
+		return toDomainError(err)
+	}
+	if err := tx.Commit(ctx); err != nil {
 		return toDomainError(err)
 	}
 	return nil
