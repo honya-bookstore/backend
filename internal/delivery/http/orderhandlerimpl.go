@@ -1,15 +1,27 @@
 package http
 
 import (
+	"net/http"
+
+	"backend/internal/domain"
+
 	"github.com/gin-gonic/gin"
 )
 
-type OrderHandlerImpl struct{}
+type OrderHandlerImpl struct {
+	orderApp           OrderApplication
+	ErrRequiredOrderID string
+	ErrInvalidOrderID  string
+}
 
 var _ OrderHandler = &OrderHandlerImpl{}
 
-func ProvideOrderHandler() *OrderHandlerImpl {
-	return &OrderHandlerImpl{}
+func ProvideOrderHandler(orderApp OrderApplication) *OrderHandlerImpl {
+	return &OrderHandlerImpl{
+		orderApp:           orderApp,
+		ErrRequiredOrderID: "order_id is required",
+		ErrInvalidOrderID:  "invalid order_id",
+	}
 }
 
 // ListOrders godoc
@@ -26,6 +38,24 @@ func ProvideOrderHandler() *OrderHandlerImpl {
 //	@Security		OAuth2AccessCode
 //	@Security		OAuth2Password
 func (h *OrderHandlerImpl) List(ctx *gin.Context) {
+	paginateDto, err := createPaginationRequestDtoFromQuery(ctx)
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	statusQuery := ctx.Query("status")
+	status := domain.OrderStatus(statusQuery)
+	orders, err := h.orderApp.List(ctx.Request.Context(), ListOrderRequestDTO{
+		QueryParams: &ListOrderRequestQueryParams{
+			PaginationRequestDTO: *paginateDto,
+			Status:               status,
+		},
+	})
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, orders)
 }
 
 // GetOrder godoc
@@ -43,6 +73,21 @@ func (h *OrderHandlerImpl) List(ctx *gin.Context) {
 //	@Security		OAuth2AccessCode
 //	@Security		OAuth2Password
 func (h *OrderHandlerImpl) Get(ctx *gin.Context) {
+	orderID, ok := pathToUUID(ctx, "id")
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, NewError(h.ErrInvalidOrderID))
+		return
+	}
+	order, err := h.orderApp.Get(ctx.Request.Context(), GetOrderRequestDTO{
+		PathParams: &GetOrderRequestPathParams{
+			OrderID: orderID,
+		},
+	})
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, order)
 }
 
 // CreateOrder godoc
@@ -61,6 +106,20 @@ func (h *OrderHandlerImpl) Get(ctx *gin.Context) {
 //	@Security		OAuth2AccessCode
 //	@Security		OAuth2Password
 func (h *OrderHandlerImpl) Create(ctx *gin.Context) {
+	var data CreateOrderData
+	if err := ctx.ShouldBindJSON(&data); err != nil {
+		ctx.JSON(http.StatusBadRequest, NewError(err.Error()))
+		return
+	}
+
+	order, err := h.orderApp.Create(ctx, CreateOrderRequestDTO{
+		Data: &data,
+	})
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusCreated, order)
 }
 
 // UpdateOrder godoc
@@ -81,4 +140,25 @@ func (h *OrderHandlerImpl) Create(ctx *gin.Context) {
 //	@Security		OAuth2AccessCode
 //	@Security		OAuth2Password
 func (h *OrderHandlerImpl) Update(ctx *gin.Context) {
+	orderID, ok := pathToUUID(ctx, "id")
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, NewError(h.ErrInvalidOrderID))
+		return
+	}
+	var data UpdateOrderData
+	if err := ctx.ShouldBindJSON(&data); err != nil {
+		ctx.JSON(http.StatusBadRequest, NewError(err.Error()))
+		return
+	}
+	order, err := h.orderApp.Update(ctx.Request.Context(), UpdateOrderRequestDTO{
+		PathParams: &UpdateOrderRequestPathParams{
+			OrderID: orderID,
+		},
+		Data: data,
+	})
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, order)
 }

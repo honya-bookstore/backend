@@ -21,10 +21,10 @@ type ListBookRequestQueryParams struct {
 }
 
 type CreateBookRequestDTO struct {
-	Data *CreateBookRequestData
+	Data *CreateBookData
 }
 
-type CreateBookRequestData struct {
+type CreateBookData struct {
 	Title         string                `json:"title"         binding:"required"`
 	Description   string                `json:"description"`
 	Author        string                `json:"author"        binding:"required"`
@@ -53,14 +53,14 @@ type GetBookRequestPathParams struct {
 
 type UpdateBookRequestDTO struct {
 	PathParams *UpdateBookRequestPathParams
-	Data       *UpdateBookRequestData
+	Data       *UpdateBookData
 }
 
 type UpdateBookRequestPathParams struct {
 	BookID uuid.UUID `json:"id" binding:"required" format:"uuid"`
 }
 
-type UpdateBookRequestData struct {
+type UpdateBookData struct {
 	Title         string                `json:"title"`
 	Description   string                `json:"description"`
 	Author        string                `json:"author"`

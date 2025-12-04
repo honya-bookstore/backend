@@ -1,15 +1,25 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
-type MediaHandlerImpl struct{}
+type MediaHandlerImpl struct {
+	mediaApp           MediaApplication
+	ErrRequiredMediaID string
+	ErrInvalidMediaID  string
+}
 
 var _ MediaHandler = &MediaHandlerImpl{}
 
-func ProvideMediaHandler() *MediaHandlerImpl {
-	return &MediaHandlerImpl{}
+func ProvideMediaHandler(mediaApp MediaApplication) *MediaHandlerImpl {
+	return &MediaHandlerImpl{
+		mediaApp:           mediaApp,
+		ErrRequiredMediaID: "media_id is required",
+		ErrInvalidMediaID:  "invalid media_id",
+	}
 }
 
 // ListMedia godoc
@@ -26,6 +36,23 @@ func ProvideMediaHandler() *MediaHandlerImpl {
 //	@Security		OAuth2AccessCode
 //	@Security		OAuth2Password
 func (h *MediaHandlerImpl) List(ctx *gin.Context) {
+	paginate, err := createPaginationRequestDtoFromQuery(ctx)
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	search, _ := ctx.GetQuery("search")
+	media, err := h.mediaApp.List(ctx.Request.Context(), ListMediaRequestDTO{
+		QueryParams: &ListMediaRequestQueryParams{
+			PaginationRequestDTO: *paginate,
+			Search:               search,
+		},
+	})
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, media)
 }
 
 // GetMedia godoc
@@ -43,6 +70,22 @@ func (h *MediaHandlerImpl) List(ctx *gin.Context) {
 //	@Security		OAuth2AccessCode
 //	@Security		OAuth2Password
 func (h *MediaHandlerImpl) Get(ctx *gin.Context) {
+	mediaID, ok := pathToUUID(ctx, "id")
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, NewError(h.ErrInvalidMediaID))
+		return
+	}
+
+	media, err := h.mediaApp.Get(ctx.Request.Context(), GetMediaRequestDTO{
+		PathParams: &GetMediaRequestPathParams{
+			MediaID: mediaID,
+		},
+	})
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, media)
 }
 
 // CreateMedia godoc
@@ -61,6 +104,20 @@ func (h *MediaHandlerImpl) Get(ctx *gin.Context) {
 //	@Security		OAuth2AccessCode
 //	@Security		OAuth2Password
 func (h *MediaHandlerImpl) Create(ctx *gin.Context) {
+	var data CreateMediaRequestData
+	if err := ctx.ShouldBindJSON(&data); err != nil {
+		ctx.JSON(http.StatusBadRequest, NewError(err.Error()))
+		return
+	}
+
+	media, err := h.mediaApp.Create(ctx.Request.Context(), CreateMediaRequestDTO{
+		Data: &data,
+	})
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusCreated, media)
 }
 
 // DeleteMedia godoc
@@ -78,4 +135,20 @@ func (h *MediaHandlerImpl) Create(ctx *gin.Context) {
 //	@Security		OAuth2AccessCode
 //	@Security		OAuth2Password
 func (h *MediaHandlerImpl) Delete(ctx *gin.Context) {
+	mediaID, ok := pathToUUID(ctx, "id")
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, NewError(h.ErrInvalidMediaID))
+		return
+	}
+
+	err := h.mediaApp.Delete(ctx.Request.Context(), DeleteMediaRequestDTO{
+		PathParams: &DeleteMediaRequestPathParams{
+			MediaID: mediaID,
+		},
+	})
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	ctx.Status(http.StatusNoContent)
 }

@@ -1,5 +1,7 @@
 package http
 
+import "github.com/google/uuid"
+
 type ListCategoryRequestDTO struct {
 	QueryParams *ListCategoryRequestQueryParams
 }
@@ -14,7 +16,7 @@ type GetCategoryRequestDTO struct {
 }
 
 type GetCategoryRequestPathParams struct {
-	CategoryID string `json:"id" binding:"required"`
+	CategoryID uuid.UUID `json:"id" binding:"required"`
 }
 
 type CreateCategoryRequestDTO struct {
@@ -33,7 +35,7 @@ type UpdateCategoryRequestDTO struct {
 }
 
 type UpdateCategoryRequestPathParams struct {
-	CategoryID string `json:"id" binding:"required"`
+	CategoryID uuid.UUID `json:"id" binding:"required"`
 }
 
 type UpdateCategoryRequestData struct {
@@ -47,5 +49,5 @@ type DeleteCategoryRequestDTO struct {
 }
 
 type DeleteCategoryRequestPathParams struct {
-	CategoryID string `json:"id" binding:"required"`
+	CategoryID uuid.UUID `json:"id" binding:"required"`
 }

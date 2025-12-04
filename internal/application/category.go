@@ -5,8 +5,6 @@ import (
 
 	"backend/internal/delivery/http"
 	"backend/internal/domain"
-
-	"github.com/google/uuid"
 )
 
 type Category struct {
@@ -86,13 +84,8 @@ func (c *Category) List(ctx context.Context, param http.ListCategoryRequestDTO) 
 }
 
 func (c *Category) Get(ctx context.Context, param http.GetCategoryRequestDTO) (*http.CategoryResponseDTO, error) {
-	categoryID, err := uuid.Parse(param.PathParams.CategoryID)
-	if err != nil {
-		return nil, domain.ErrInvalid
-	}
-
 	category, err := c.categoryRepo.Get(ctx, domain.CategoryRepositoryGetParam{
-		CategoryID: categoryID,
+		CategoryID: param.PathParams.CategoryID,
 	})
 	if err != nil {
 		return nil, err
@@ -102,13 +95,8 @@ func (c *Category) Get(ctx context.Context, param http.GetCategoryRequestDTO) (*
 }
 
 func (c *Category) Update(ctx context.Context, param http.UpdateCategoryRequestDTO) (*http.CategoryResponseDTO, error) {
-	categoryID, err := uuid.Parse(param.PathParams.CategoryID)
-	if err != nil {
-		return nil, domain.ErrInvalid
-	}
-
 	category, err := c.categoryRepo.Get(ctx, domain.CategoryRepositoryGetParam{
-		CategoryID: categoryID,
+		CategoryID: param.PathParams.CategoryID,
 	})
 	if err != nil {
 		return nil, err
@@ -135,13 +123,8 @@ func (c *Category) Update(ctx context.Context, param http.UpdateCategoryRequestD
 }
 
 func (c *Category) Delete(ctx context.Context, param http.DeleteCategoryRequestDTO) error {
-	categoryID, err := uuid.Parse(param.PathParams.CategoryID)
-	if err != nil {
-		return domain.ErrInvalid
-	}
-
 	category, err := c.categoryRepo.Get(ctx, domain.CategoryRepositoryGetParam{
-		CategoryID: categoryID,
+		CategoryID: param.PathParams.CategoryID,
 	})
 	if err != nil {
 		return err

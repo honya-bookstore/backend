@@ -435,7 +435,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.CreateBookRequestData"
+                            "$ref": "#/definitions/http.CreateBookData"
                         }
                     }
                 ],
@@ -599,7 +599,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateBookRequestData"
+                            "$ref": "#/definitions/http.UpdateBookData"
                         }
                     }
                 ],
@@ -2177,22 +2177,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CreateBookMediaData": {
-            "type": "object",
-            "required": [
-                "isCover",
-                "mediaId"
-            ],
-            "properties": {
-                "isCover": {
-                    "type": "boolean"
-                },
-                "mediaId": {
-                    "type": "string"
-                }
-            }
-        },
-        "http.CreateBookRequestData": {
+        "http.CreateBookData": {
             "type": "object",
             "required": [
                 "author",
@@ -2244,6 +2229,21 @@ const docTemplate = `{
                 },
                 "yearPublished": {
                     "type": "integer"
+                }
+            }
+        },
+        "http.CreateBookMediaData": {
+            "type": "object",
+            "required": [
+                "isCover",
+                "mediaId"
+            ],
+            "properties": {
+                "isCover": {
+                    "type": "boolean"
+                },
+                "mediaId": {
+                    "type": "string"
                 }
             }
         },
@@ -2618,22 +2618,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.UpdateBookMediaData": {
-            "type": "object",
-            "required": [
-                "isCover",
-                "mediaId"
-            ],
-            "properties": {
-                "isCover": {
-                    "type": "boolean"
-                },
-                "mediaId": {
-                    "type": "string"
-                }
-            }
-        },
-        "http.UpdateBookRequestData": {
+        "http.UpdateBookData": {
             "type": "object",
             "properties": {
                 "author": {
@@ -2674,6 +2659,21 @@ const docTemplate = `{
                 },
                 "yearPublished": {
                     "type": "integer"
+                }
+            }
+        },
+        "http.UpdateBookMediaData": {
+            "type": "object",
+            "required": [
+                "isCover",
+                "mediaId"
+            ],
+            "properties": {
+                "isCover": {
+                    "type": "boolean"
+                },
+                "mediaId": {
+                    "type": "string"
                 }
             }
         },

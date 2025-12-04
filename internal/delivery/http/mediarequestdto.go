@@ -1,5 +1,7 @@
 package http
 
+import "github.com/google/uuid"
+
 type ListMediaRequestDTO struct {
 	QueryParams *ListMediaRequestQueryParams
 }
@@ -14,7 +16,7 @@ type GetMediaRequestDTO struct {
 }
 
 type GetMediaRequestPathParams struct {
-	MediaID string `json:"id" binding:"required"`
+	MediaID uuid.UUID `json:"id" binding:"required"`
 }
 
 type CreateMediaRequestDTO struct {
@@ -32,5 +34,5 @@ type DeleteMediaRequestDTO struct {
 }
 
 type DeleteMediaRequestPathParams struct {
-	MediaID string `json:"id" binding:"required"`
+	MediaID uuid.UUID `json:"id" binding:"required"`
 }

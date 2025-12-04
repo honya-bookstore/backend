@@ -5,8 +5,6 @@ import (
 
 	"backend/internal/delivery/http"
 	"backend/internal/domain"
-
-	"github.com/google/uuid"
 )
 
 type Media struct {
@@ -62,13 +60,8 @@ func (m *Media) List(ctx context.Context, param http.ListMediaRequestDTO) (*http
 }
 
 func (m *Media) Get(ctx context.Context, param http.GetMediaRequestDTO) (*http.MediaResponseDTO, error) {
-	mediaID, err := uuid.Parse(param.PathParams.MediaID)
-	if err != nil {
-		return nil, domain.ErrInvalid
-	}
-
 	media, err := m.mediaRepo.Get(ctx, domain.MediaRepositoryGetParam{
-		MediaID: mediaID,
+		MediaID: param.PathParams.MediaID,
 	})
 	if err != nil {
 		return nil, err
@@ -101,13 +94,8 @@ func (m *Media) Create(ctx context.Context, param http.CreateMediaRequestDTO) (*
 }
 
 func (m *Media) Delete(ctx context.Context, param http.DeleteMediaRequestDTO) error {
-	mediaID, err := uuid.Parse(param.PathParams.MediaID)
-	if err != nil {
-		return domain.ErrInvalid
-	}
-
 	media, err := m.mediaRepo.Get(ctx, domain.MediaRepositoryGetParam{
-		MediaID: mediaID,
+		MediaID: param.PathParams.MediaID,
 	})
 	if err != nil {
 		return err

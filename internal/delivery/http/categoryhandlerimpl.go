@@ -1,15 +1,25 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
-type CategoryHandlerImpl struct{}
+type CategoryHandlerImpl struct {
+	categoryApp           CategoryApplication
+	ErrRequiredCategoryID string
+	ErrInvalidCategoryID  string
+}
 
 var _ CategoryHandler = &CategoryHandlerImpl{}
 
-func ProvideCategoryHandler() *CategoryHandlerImpl {
-	return &CategoryHandlerImpl{}
+func ProvideCategoryHandler(categoryApp CategoryApplication) *CategoryHandlerImpl {
+	return &CategoryHandlerImpl{
+		categoryApp:           categoryApp,
+		ErrRequiredCategoryID: "category_id is required",
+		ErrInvalidCategoryID:  "invalid category_id",
+	}
 }
 
 // ListCategories godoc
@@ -26,6 +36,23 @@ func ProvideCategoryHandler() *CategoryHandlerImpl {
 //	@Security		OAuth2AccessCode
 //	@Security		OAuth2Password
 func (h *CategoryHandlerImpl) List(ctx *gin.Context) {
+	paginate, err := createPaginationRequestDtoFromQuery(ctx)
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	search, _ := ctx.GetQuery("search")
+	categories, err := h.categoryApp.List(ctx.Request.Context(), ListCategoryRequestDTO{
+		QueryParams: &ListCategoryRequestQueryParams{
+			PaginationRequestDTO: *paginate,
+			Search:               search,
+		},
+	})
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, categories)
 }
 
 // GetCategory godoc
@@ -43,6 +70,21 @@ func (h *CategoryHandlerImpl) List(ctx *gin.Context) {
 //	@Security		OAuth2AccessCode
 //	@Security		OAuth2Password
 func (h *CategoryHandlerImpl) Get(ctx *gin.Context) {
+	categoryID, ok := pathToUUID(ctx, "id")
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, NewError(h.ErrInvalidCategoryID))
+		return
+	}
+	category, err := h.categoryApp.Get(ctx.Request.Context(), GetCategoryRequestDTO{
+		PathParams: &GetCategoryRequestPathParams{
+			CategoryID: categoryID,
+		},
+	})
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, category)
 }
 
 // CreateCategory godoc
@@ -61,6 +103,20 @@ func (h *CategoryHandlerImpl) Get(ctx *gin.Context) {
 //	@Security		OAuth2AccessCode
 //	@Security		OAuth2Password
 func (h *CategoryHandlerImpl) Create(ctx *gin.Context) {
+	var data CreateCategoryRequestData
+	if err := ctx.ShouldBindJSON(&data); err != nil {
+		ctx.JSON(http.StatusBadRequest, NewError(err.Error()))
+		return
+	}
+
+	category, err := h.categoryApp.Create(ctx.Request.Context(), CreateCategoryRequestDTO{
+		Data: &data,
+	})
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusCreated, category)
 }
 
 // UpdateCategory godoc
@@ -81,6 +137,28 @@ func (h *CategoryHandlerImpl) Create(ctx *gin.Context) {
 //	@Security		OAuth2AccessCode
 //	@Security		OAuth2Password
 func (h *CategoryHandlerImpl) Update(ctx *gin.Context) {
+	categoryID, ok := pathToUUID(ctx, "id")
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, NewError(h.ErrInvalidCategoryID))
+		return
+	}
+
+	var data UpdateCategoryRequestData
+	if err := ctx.ShouldBindJSON(&data); err != nil {
+		ctx.JSON(http.StatusBadRequest, NewError(err.Error()))
+		return
+	}
+	updatedCategory, err := h.categoryApp.Update(ctx.Request.Context(), UpdateCategoryRequestDTO{
+		PathParams: &UpdateCategoryRequestPathParams{
+			CategoryID: categoryID,
+		},
+		Data: &data,
+	})
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, updatedCategory)
 }
 
 // DeleteCategory godoc
@@ -98,4 +176,20 @@ func (h *CategoryHandlerImpl) Update(ctx *gin.Context) {
 //	@Security		OAuth2AccessCode
 //	@Security		OAuth2Password
 func (h *CategoryHandlerImpl) Delete(ctx *gin.Context) {
+	categoryID, ok := pathToUUID(ctx, "id")
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, NewError(h.ErrInvalidCategoryID))
+		return
+	}
+
+	err := h.categoryApp.Delete(ctx.Request.Context(), DeleteCategoryRequestDTO{
+		PathParams: &DeleteCategoryRequestPathParams{
+			CategoryID: categoryID,
+		},
+	})
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	ctx.Status(http.StatusNoContent)
 }
