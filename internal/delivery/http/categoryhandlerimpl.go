@@ -9,6 +9,7 @@ import (
 type CategoryHandlerImpl struct {
 	categoryApp           CategoryApplication
 	ErrRequiredCategoryID string
+	ErrRequiredSlug       string
 	ErrInvalidCategoryID  string
 }
 
@@ -18,6 +19,7 @@ func ProvideCategoryHandler(categoryApp CategoryApplication) *CategoryHandlerImp
 	return &CategoryHandlerImpl{
 		categoryApp:           categoryApp,
 		ErrRequiredCategoryID: "category_id is required",
+		ErrRequiredSlug:       "slug is required",
 		ErrInvalidCategoryID:  "invalid category_id",
 	}
 }
@@ -55,29 +57,30 @@ func (h *CategoryHandlerImpl) List(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, categories)
 }
 
-// GetCategory godoc
+// GetCategoryBySlug godoc
 //
-//	@Summary		Get category by ID
-//	@Description	Get category details by ID
+//	@Summary		GetBySlug category by Slug
+//	@Description	GetBySlug category details by Slug
 //	@Tags			Category
 //	@Accept			json
 //	@Produce		json
-//	@Param			pathParams	path		GetCategoryRequestPathParams	true	"Path parameters"
+//	@Param			pathParams	path		GetCategoryBySlugRequestPathParams	true	"Path parameters"
 //	@Success		200			{object}	CategoryResponseDTO
 //	@Failure		404			{object}	Error
 //	@Failure		500			{object}	Error
-//	@Router			/categories/{id} [get]
+//	@Router			/categories/{slug} [get]
 //	@Security		OAuth2AccessCode
 //	@Security		OAuth2Password
-func (h *CategoryHandlerImpl) Get(ctx *gin.Context) {
-	categoryID, ok := pathToUUID(ctx, "id")
-	if !ok {
-		ctx.JSON(http.StatusBadRequest, NewError(h.ErrInvalidCategoryID))
+func (h *CategoryHandlerImpl) GetBySlug(ctx *gin.Context) {
+	slug := ctx.Param("slug")
+	if slug == "" {
+		ctx.JSON(http.StatusBadRequest, NewError(h.ErrRequiredSlug))
 		return
 	}
-	category, err := h.categoryApp.Get(ctx.Request.Context(), GetCategoryRequestDTO{
-		PathParams: &GetCategoryRequestPathParams{
-			CategoryID: categoryID,
+
+	category, err := h.categoryApp.GetBySlug(ctx.Request.Context(), GetCategoryBySlugRequestDTO{
+		PathParams: &GetCategoryBySlugRequestPathParams{
+			Slug: slug,
 		},
 	})
 	if err != nil {

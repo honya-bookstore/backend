@@ -67,7 +67,7 @@ func (r *RouterImpl) RegisterRoutes(
 		categories := api.Group("/categories")
 		{
 			categories.GET("", r.categoryHandler.List)
-			categories.GET("/:id", r.categoryHandler.Get)
+			categories.GET("/:slug", r.categoryHandler.GetBySlug)
 			categories.POST("", r.categoryHandler.Create)
 			categories.PATCH("/:id", r.categoryHandler.Update)
 			categories.DELETE("/:id", r.categoryHandler.Delete)

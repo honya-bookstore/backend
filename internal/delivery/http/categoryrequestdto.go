@@ -11,12 +11,12 @@ type ListCategoryRequestQueryParams struct {
 	Search string `json:"search"`
 }
 
-type GetCategoryRequestDTO struct {
-	PathParams *GetCategoryRequestPathParams
+type GetCategoryBySlugRequestDTO struct {
+	PathParams *GetCategoryBySlugRequestPathParams
 }
 
-type GetCategoryRequestPathParams struct {
-	CategoryID uuid.UUID `json:"id" binding:"required"`
+type GetCategoryBySlugRequestPathParams struct {
+	Slug string `json:"slug" binding:"required"`
 }
 
 type CreateCategoryRequestDTO struct {
