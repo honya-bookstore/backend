@@ -55,7 +55,7 @@ func (c *Category) Update(name string, description string, slug string) {
 	}
 }
 
-func (c *Category) Delete() {
+func (c *Category) Remove() {
 	now := time.Now()
 	c.DeletedAt = now
 	c.UpdatedAt = now

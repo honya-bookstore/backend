@@ -130,7 +130,7 @@ func (c *Category) Delete(ctx context.Context, param http.DeleteCategoryRequestD
 		return err
 	}
 
-	category.Delete()
+	category.Remove()
 
 	if err := c.categoryService.Validate(*category); err != nil {
 		return err
