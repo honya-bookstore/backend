@@ -29,7 +29,6 @@ func ToMediaResponseDTO(media *domain.Media) *MediaResponseDTO {
 		ID:        media.ID.String(),
 		URL:       media.URL,
 		AltText:   media.AltText,
-		Order:     media.Order,
 		CreatedAt: media.CreatedAt,
 		DeletedAt: deletedAt,
 	}

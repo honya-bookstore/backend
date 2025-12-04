@@ -204,7 +204,6 @@ func (b *Book) Get(ctx context.Context, param http.GetBookRequestDTO) (*http.Boo
 		}
 	}
 
-	// Convert to DTO
 	bookCategories := make([]*domain.Category, 0, len(book.CategoryIDs))
 	for _, catID := range book.CategoryIDs {
 		if cat, exists := categoryMap[catID.String()]; exists {
@@ -221,7 +220,6 @@ func (b *Book) Get(ctx context.Context, param http.GetBookRequestDTO) (*http.Boo
 }
 
 func (b *Book) Create(ctx context.Context, param http.CreateBookRequestDTO) (*http.BookResponseDTO, error) {
-	// Validate categories exist
 	categories, err := b.categoryRepo.List(
 		ctx,
 		domain.CategoryRepositoryListParam{

@@ -81,7 +81,6 @@ func (m *Media) Create(ctx context.Context, param http.CreateMediaRequestDTO) (*
 	media, err := domain.NewMedia(
 		param.Data.URL,
 		param.Data.AltText,
-		param.Data.Order,
 	)
 	if err != nil {
 		return nil, err

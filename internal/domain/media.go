@@ -10,7 +10,6 @@ type Media struct {
 	ID        uuid.UUID `validate:"required"`
 	URL       string    `validate:"required,url"`
 	AltText   string    `validate:"omitempty,lte=200"`
-	Order     int       `validate:"required,gte=0"`
 	CreatedAt time.Time `validate:"required"`
 	DeletedAt time.Time `validate:"omitempty,gtefield=CreatedAt"`
 }
@@ -18,7 +17,6 @@ type Media struct {
 func NewMedia(
 	url string,
 	altText string,
-	order int,
 ) (*Media, error) {
 	id, err := uuid.NewV7()
 	if err != nil {
@@ -29,7 +27,6 @@ func NewMedia(
 		ID:        id,
 		URL:       url,
 		AltText:   altText,
-		Order:     order,
 		CreatedAt: now,
 	}, nil
 }
