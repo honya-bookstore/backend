@@ -12,6 +12,7 @@ type Querier interface {
 	CountArticles(ctx context.Context, arg CountArticlesParams) (int64, error)
 	CountBooks(ctx context.Context, arg CountBooksParams) (int64, error)
 	CountCategories(ctx context.Context, arg CountCategoriesParams) (int64, error)
+	CountMedium(ctx context.Context, arg CountMediumParams) (int64, error)
 	CountOrders(ctx context.Context, arg CountOrdersParams) (int64, error)
 	CountReviews(ctx context.Context, arg CountReviewsParams) (int64, error)
 	CreateTempTableBooksCategories(ctx context.Context) error
@@ -38,7 +39,7 @@ type Querier interface {
 	ListBooksMedia(ctx context.Context, arg ListBooksMediaParams) ([]BooksMedium, error)
 	ListCartItems(ctx context.Context, arg ListCartItemsParams) ([]CartItem, error)
 	ListCategories(ctx context.Context, arg ListCategoriesParams) ([]Category, error)
-	ListMedia(ctx context.Context, arg ListMediaParams) ([]Medium, error)
+	ListMedium(ctx context.Context, arg ListMediumParams) ([]Medium, error)
 	ListOrderItems(ctx context.Context, arg ListOrderItemsParams) ([]OrderItem, error)
 	ListOrderStatuses(ctx context.Context, arg ListOrderStatusesParams) ([]OrderStatus, error)
 	ListOrders(ctx context.Context, arg ListOrdersParams) ([]Order, error)

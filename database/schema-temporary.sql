@@ -1,7 +1,8 @@
--- temp_books_media
-CREATE TABLE temp_books_media (
+-- temp_books_medium
+CREATE TABLE temp_books_medium (
   book_id UUID NOT NULL,
   media_id UUID NOT NULL,
+  "order" INTEGER NOT NULL,
   is_cover BOOLEAN NOT NULL,
   PRIMARY KEY (book_id, media_id)
 );

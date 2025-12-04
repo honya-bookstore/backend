@@ -36,13 +36,8 @@ sql:
           urls: URLs
           skus: SKUs
           image_urls: ImageURLs
-          product_ids: ProductIDs
-          product_variant_ids: ProductVariantIDs
-          variant_ids: VariantIDs
-          options_ids: OptionsIDs
-          option_value_ids: OptionValueIDs
-          attribute_ids: AttributeIDs
-          attribute_value_ids: AttributeValueIDs
+          book_ids: BookIDs
+          user_ids: UserIDs
           category_ids: CategoryIDs
           cart_ids: CartIDs
           cart_items_ids: CartItemIDs

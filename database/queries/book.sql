@@ -211,11 +211,11 @@ WHERE
     ELSE books.deleted_at IS NULL
   END;
 
--- name: ListBooksMedia :many
+-- name: ListBooksMedium :many
 SELECT
   *
 FROM
-  books_media
+  books_medium
 WHERE
   CASE
     WHEN sqlc.arg('book_ids')::uuid[] IS NULL THEN TRUE
@@ -235,42 +235,48 @@ ORDER BY
   book_id ASC,
   media_id ASC;
 
--- name: CreateTempTableBooksMedia :exec
-CREATE TABLE temp_books_media (
+-- name: CreateTempTableBooksMedium :exec
+CREATE TABLE temp_books_medium (
   book_id UUID NOT NULL,
   media_id UUID NOT NULL,
+  "order" INTEGER NOT NULL,
   is_cover BOOLEAN NOT NULL,
   PRIMARY KEY (book_id, media_id)
 ) ON COMMIT DROP;
 
--- name: InsertTempTableBooksMedia :copyfrom
-INSERT INTO temp_books_media (
+-- name: InsertTempTableBooksMedium :copyfrom
+INSERT INTO temp_books_medium (
   book_id,
   media_id,
+  "order",
   is_cover
 ) VALUES (
-  sqlc.arg('book_id'),
-  sqlc.arg('media_id'),
-  sqlc.arg('is_cover')
+  $1,
+  $2,
+  $3,
+  $4
 );
 
--- name: MergeBooksMediaFromTemp :exec
-MERGE INTO books_media AS target
-USING temp_books_media AS source
+-- name: MergeBooksMediumFromTemp :exec
+MERGE INTO books_medium AS target
+USING temp_books_medium AS source
   ON target.book_id = source.book_id
   AND target.media_id = source.media_id
 WHEN MATCHED THEN
   UPDATE SET
+    order = source."order",
     is_cover = source.is_cover
 WHEN NOT MATCHED THEN
   INSERT (
     book_id,
     media_id,
+    "order",
     is_cover
   )
   VALUES (
     source.book_id,
     source.media_id,
+    source."order",
     source.is_cover
   )
 WHEN NOT MATCHED BY SOURCE

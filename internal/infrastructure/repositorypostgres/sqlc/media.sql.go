@@ -12,9 +12,40 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const countMedium = `-- name: CountMedium :one
+SELECT
+  COUNT(*)
+FROM
+  media
+WHERE
+  CASE
+    WHEN $1::uuid[] IS NULL THEN TRUE
+    WHEN cardinality($1::uuid[]) = 0 THEN TRUE
+    ELSE id = ANY ($1::uuid[])
+  END
+  AND CASE
+    WHEN $2::text = 'exclude' THEN deleted_at IS NULL
+    WHEN $2::text = 'only' THEN deleted_at IS NOT NULL
+    WHEN $2::text = 'all' THEN TRUE
+    ELSE deleted_at IS NULL
+  END
+`
+
+type CountMediumParams struct {
+	IDs     []uuid.UUID
+	Deleted string
+}
+
+func (q *Queries) CountMedium(ctx context.Context, arg CountMediumParams) (int64, error) {
+	row := q.db.QueryRow(ctx, countMedium, arg.IDs, arg.Deleted)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getMedia = `-- name: GetMedia :one
 SELECT
-  id, url, alt_text, "order", book_id, created_at, deleted_at
+  id, url, alt_text, created_at, deleted_at
 FROM
   media
 WHERE
@@ -39,17 +70,15 @@ func (q *Queries) GetMedia(ctx context.Context, arg GetMediaParams) (Medium, err
 		&i.ID,
 		&i.URL,
 		&i.AltText,
-		&i.Order,
-		&i.BookID,
 		&i.CreatedAt,
 		&i.DeletedAt,
 	)
 	return i, err
 }
 
-const listMedia = `-- name: ListMedia :many
+const listMedium = `-- name: ListMedium :many
 SELECT
-  id, url, alt_text, "order", book_id, created_at, deleted_at
+  id, url, alt_text, created_at, deleted_at
 FROM
   media
 WHERE
@@ -59,30 +88,31 @@ WHERE
     ELSE id = ANY ($1::uuid[])
   END
   AND CASE
-    WHEN $2::uuid[] IS NULL THEN TRUE
-    WHEN cardinality($2::uuid[]) = 0 THEN TRUE
-    ELSE book_id = ANY ($2::uuid[])
-  END
-  AND CASE
-    WHEN $3::text = 'exclude' THEN deleted_at IS NULL
-    WHEN $3::text = 'only' THEN deleted_at IS NOT NULL
-    WHEN $3::text = 'all' THEN TRUE
+    WHEN $2::text = 'exclude' THEN deleted_at IS NULL
+    WHEN $2::text = 'only' THEN deleted_at IS NOT NULL
+    WHEN $2::text = 'all' THEN TRUE
     ELSE deleted_at IS NULL
   END
 ORDER BY
-  book_id ASC,
-  "order" ASC,
   id ASC
+OFFSET $3::integer
+LIMIT NULLIF($4::integer, 0)
 `
 
-type ListMediaParams struct {
+type ListMediumParams struct {
 	IDs     []uuid.UUID
-	BookIds []uuid.UUID
 	Deleted string
+	Offset  int32
+	Limit   int32
 }
 
-func (q *Queries) ListMedia(ctx context.Context, arg ListMediaParams) ([]Medium, error) {
-	rows, err := q.db.Query(ctx, listMedia, arg.IDs, arg.BookIds, arg.Deleted)
+func (q *Queries) ListMedium(ctx context.Context, arg ListMediumParams) ([]Medium, error) {
+	rows, err := q.db.Query(ctx, listMedium,
+		arg.IDs,
+		arg.Deleted,
+		arg.Offset,
+		arg.Limit,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -94,8 +124,6 @@ func (q *Queries) ListMedia(ctx context.Context, arg ListMediaParams) ([]Medium,
 			&i.ID,
 			&i.URL,
 			&i.AltText,
-			&i.Order,
-			&i.BookID,
 			&i.CreatedAt,
 			&i.DeletedAt,
 		); err != nil {
@@ -114,25 +142,19 @@ INSERT INTO media (
   id,
   url,
   alt_text,
-  "order",
-  book_id,
   created_at,
   deleted_at
 )
 VALUES (
   $1,
   $2,
-  $3,
+  NULLIF($3::text, ''),
   $4,
-  $5,
-  $6,
-  NULLIF($7::timestamptz, '0001-01-01T00:00:00Z'::timestamptz)
+  NULLIF($5::timestamptz, '0001-01-01T00:00:00Z'::timestamptz)
 )
 ON CONFLICT (id) DO UPDATE SET
   url = EXCLUDED.url,
   alt_text = EXCLUDED.alt_text,
-  "order" = EXCLUDED."order",
-  book_id = EXCLUDED.book_id,
   created_at = EXCLUDED.created_at,
   deleted_at = COALESCE(EXCLUDED.deleted_at, media.deleted_at)
 `
@@ -140,9 +162,7 @@ ON CONFLICT (id) DO UPDATE SET
 type UpsertMediaParams struct {
 	ID        uuid.UUID
 	URL       string
-	AltText   *string
-	Order     int32
-	BookID    pgtype.UUID
+	AltText   string
 	CreatedAt pgtype.Timestamptz
 	DeletedAt pgtype.Timestamptz
 }
@@ -152,8 +172,6 @@ func (q *Queries) UpsertMedia(ctx context.Context, arg UpsertMediaParams) error 
 		arg.ID,
 		arg.URL,
 		arg.AltText,
-		arg.Order,
-		arg.BookID,
 		arg.CreatedAt,
 		arg.DeletedAt,
 	)

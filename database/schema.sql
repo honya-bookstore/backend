@@ -1,9 +1,7 @@
-CREATE TABLE media (
+CREATE TABLE medium (
   id UUID PRIMARY KEY,
   url TEXT NOT NULL,
   alt_text TEXT,
-  "order" INTEGER NOT NULL DEFAULT 0,
-  book_id UUID REFERENCES books (id) ON UPDATE CASCADE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   deleted_at TIMESTAMPTZ
 );
@@ -36,9 +34,9 @@ CREATE TABLE books (
   deleted_at TIMESTAMPTZ
 );
 
-CREATE TABLE books_media (
+CREATE TABLE books_medium (
   book_id UUID NOT NULL REFERENCES books (id) ON UPDATE CASCADE,
-  media_id UUID NOT NULL REFERENCES media (id) ON UPDATE CASCADE,
+  media_id UUID NOT NULL REFERENCES medium (id) ON UPDATE CASCADE,
   is_cover BOOLEAN NOT NULL,
   PRIMARY KEY (book_id, media_id)
 );
@@ -73,7 +71,7 @@ CREATE TABLE articles (
   id UUID PRIMARY KEY,
   slug TEXT NOT NULL UNIQUE,
   title TEXT NOT NULL,
-  thumbnail_id UUID REFERENCES media (id) ON UPDATE CASCADE,
+  thumbnail_id UUID REFERENCES medium (id) ON UPDATE CASCADE,
   content TEXT NOT NULL,
   tags TEXT[],
   user_id UUID NOT NULL,

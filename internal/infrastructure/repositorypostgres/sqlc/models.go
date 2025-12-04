@@ -78,8 +78,6 @@ type Medium struct {
 	ID        uuid.UUID
 	URL       string
 	AltText   *string
-	Order     int32
-	BookID    pgtype.UUID
 	CreatedAt pgtype.Timestamptz
 	DeletedAt pgtype.Timestamptz
 }

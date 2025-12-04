@@ -43,16 +43,16 @@ WHERE
 
 type CountReviewsParams struct {
 	IDs     []uuid.UUID
-	BookIds []uuid.UUID
-	UserIds []uuid.UUID
+	BookIDs []uuid.UUID
+	UserIDs []uuid.UUID
 	Deleted string
 }
 
 func (q *Queries) CountReviews(ctx context.Context, arg CountReviewsParams) (int64, error) {
 	row := q.db.QueryRow(ctx, countReviews,
 		arg.IDs,
-		arg.BookIds,
-		arg.UserIds,
+		arg.BookIDs,
+		arg.UserIDs,
 		arg.Deleted,
 	)
 	var count int64
@@ -119,11 +119,11 @@ ORDER BY
 
 type ListReviewVotesParams struct {
 	ReviewIds []uuid.UUID
-	UserIds   []uuid.UUID
+	UserIDs   []uuid.UUID
 }
 
 func (q *Queries) ListReviewVotes(ctx context.Context, arg ListReviewVotesParams) ([]ReviewVote, error) {
-	rows, err := q.db.Query(ctx, listReviewVotes, arg.ReviewIds, arg.UserIds)
+	rows, err := q.db.Query(ctx, listReviewVotes, arg.ReviewIds, arg.UserIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -183,8 +183,8 @@ LIMIT NULLIF($6::integer, 0)
 
 type ListReviewsParams struct {
 	IDs     []uuid.UUID
-	BookIds []uuid.UUID
-	UserIds []uuid.UUID
+	BookIDs []uuid.UUID
+	UserIDs []uuid.UUID
 	Deleted string
 	Offset  int32
 	Limit   int32
@@ -193,8 +193,8 @@ type ListReviewsParams struct {
 func (q *Queries) ListReviews(ctx context.Context, arg ListReviewsParams) ([]Review, error) {
 	rows, err := q.db.Query(ctx, listReviews,
 		arg.IDs,
-		arg.BookIds,
-		arg.UserIds,
+		arg.BookIDs,
+		arg.UserIDs,
 		arg.Deleted,
 		arg.Offset,
 		arg.Limit,

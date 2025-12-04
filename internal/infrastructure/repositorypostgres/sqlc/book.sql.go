@@ -364,12 +364,12 @@ ORDER BY
 `
 
 type ListBooksCategoriesParams struct {
-	BookIds     []uuid.UUID
+	BookIDs     []uuid.UUID
 	CategoryIDs []uuid.UUID
 }
 
 func (q *Queries) ListBooksCategories(ctx context.Context, arg ListBooksCategoriesParams) ([]BooksCategory, error) {
-	rows, err := q.db.Query(ctx, listBooksCategories, arg.BookIds, arg.CategoryIDs)
+	rows, err := q.db.Query(ctx, listBooksCategories, arg.BookIDs, arg.CategoryIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -414,13 +414,13 @@ ORDER BY
 `
 
 type ListBooksMediaParams struct {
-	BookIds  []uuid.UUID
+	BookIDs  []uuid.UUID
 	MediaIds []uuid.UUID
 	IsCover  bool
 }
 
 func (q *Queries) ListBooksMedia(ctx context.Context, arg ListBooksMediaParams) ([]BooksMedium, error) {
-	rows, err := q.db.Query(ctx, listBooksMedia, arg.BookIds, arg.MediaIds, arg.IsCover)
+	rows, err := q.db.Query(ctx, listBooksMedia, arg.BookIDs, arg.MediaIds, arg.IsCover)
 	if err != nil {
 		return nil, err
 	}

@@ -37,12 +37,12 @@ WHERE
 
 type CountOrdersParams struct {
 	IDs       []uuid.UUID
-	UserIds   []uuid.UUID
+	UserIDs   []uuid.UUID
 	StatusIds []uuid.UUID
 }
 
 func (q *Queries) CountOrders(ctx context.Context, arg CountOrdersParams) (int64, error) {
-	row := q.db.QueryRow(ctx, countOrders, arg.IDs, arg.UserIds, arg.StatusIds)
+	row := q.db.QueryRow(ctx, countOrders, arg.IDs, arg.UserIDs, arg.StatusIds)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -307,7 +307,7 @@ LIMIT NULLIF($5::integer, 0)
 
 type ListOrdersParams struct {
 	IDs       []uuid.UUID
-	UserIds   []uuid.UUID
+	UserIDs   []uuid.UUID
 	StatusIds []uuid.UUID
 	Offset    int32
 	Limit     int32
@@ -316,7 +316,7 @@ type ListOrdersParams struct {
 func (q *Queries) ListOrders(ctx context.Context, arg ListOrdersParams) ([]Order, error) {
 	rows, err := q.db.Query(ctx, listOrders,
 		arg.IDs,
-		arg.UserIds,
+		arg.UserIDs,
 		arg.StatusIds,
 		arg.Offset,
 		arg.Limit,

@@ -43,7 +43,7 @@ WHERE
 
 type CountArticlesParams struct {
 	IDs     []uuid.UUID
-	UserIds []uuid.UUID
+	UserIDs []uuid.UUID
 	Tags    []string
 	Deleted string
 }
@@ -51,7 +51,7 @@ type CountArticlesParams struct {
 func (q *Queries) CountArticles(ctx context.Context, arg CountArticlesParams) (int64, error) {
 	row := q.db.QueryRow(ctx, countArticles,
 		arg.IDs,
-		arg.UserIds,
+		arg.UserIDs,
 		arg.Tags,
 		arg.Deleted,
 	)
@@ -143,7 +143,7 @@ LIMIT NULLIF($6::integer, 0)
 
 type ListArticlesParams struct {
 	IDs     []uuid.UUID
-	UserIds []uuid.UUID
+	UserIDs []uuid.UUID
 	Tags    []string
 	Deleted string
 	Offset  int32
@@ -153,7 +153,7 @@ type ListArticlesParams struct {
 func (q *Queries) ListArticles(ctx context.Context, arg ListArticlesParams) ([]Article, error) {
 	rows, err := q.db.Query(ctx, listArticles,
 		arg.IDs,
-		arg.UserIds,
+		arg.UserIDs,
 		arg.Tags,
 		arg.Deleted,
 		arg.Offset,

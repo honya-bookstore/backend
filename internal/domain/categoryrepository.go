@@ -39,7 +39,8 @@ type CategoryRepositoryCountParam struct {
 }
 
 type CategoryRepositoryGetParam struct {
-	CategoryID uuid.UUID
+	CategoryID   uuid.UUID
+	CategorySlug string
 }
 
 type CategoryRepositorySaveParam struct {
