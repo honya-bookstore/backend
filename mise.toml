@@ -7,11 +7,11 @@
 DB_USERNAME = "honyabookstore"
 DB_PASSWORD = "honyabookstore"
 DB_DATABASE = "honyabookstore"
-DB_PORT = 5432                                                                                   # optional
+DB_PORT = 5432                                                                                      # optional
 DB_HOST = "localhost"
 DB_URL = "postgresql://honyabookstore:honyabookstore@localhost:5432/honyabookstore?sslmode=disable"
-PORT = 8080                                                                                      # optional
-TIMEZONE = "Asia/Ho_Chi_Minh"                                                                    # optional
+PORT = 8080                                                                                         # optional
+TIMEZONE = "Asia/Ho_Chi_Minh"                                                                       # optional
 
 # Keycloak
 KC_CLIENT_ID = "backend"
@@ -32,6 +32,10 @@ PUBLIC_KEYCLOAK_URL = ""
 
 # Redis / Redis Compatible
 REDIS_ADDRESS = "localhost:6379"
+
+# VNPay
+VNP_HASH_ALGO = "SHA256"
+VNP_SECURE_SECRET = ""
 
 [tools]
 air = "latest"
