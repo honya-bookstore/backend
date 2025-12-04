@@ -34,8 +34,10 @@ PUBLIC_KEYCLOAK_URL = ""
 REDIS_ADDRESS = "localhost:6379"
 
 # VNPay
+VNP_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
 VNP_HASH_ALGO = "SHA256"
-VNP_SECURE_SECRET = ""
+VNP_SECURE_SECRET = ""                                         # vnp_HashSecret
+VNP_TMN_CODE = ""                                              # vnp_TmnCode
 
 [tools]
 air = "latest"
