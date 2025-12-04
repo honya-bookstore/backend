@@ -492,7 +492,6 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "uuid",
-                        "description": "Book ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -543,7 +542,6 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "uuid",
-                        "description": "Book ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -591,7 +589,6 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "uuid",
-                        "description": "Book ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -768,8 +765,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "uuid",
-                        "description": "User ID",
-                        "name": "id",
+                        "name": "user_id",
                         "in": "path",
                         "required": true
                     }
@@ -821,7 +817,6 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "uuid",
-                        "description": "Cart ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -832,63 +827,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/http.CartResponseDTO"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/http.Error"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/http.Error"
-                        }
-                    }
-                }
-            },
-            "patch": {
-                "security": [
-                    {
-                        "OAuth2AccessCode": []
-                    },
-                    {
-                        "OAuth2Password": []
-                    }
-                ],
-                "description": "Update cart details",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Cart"
-                ],
-                "summary": "Update cart",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "Cart ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/http.CartResponseDTO"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/http.Error"
                         }
                     },
                     "404": {
@@ -906,7 +844,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/cart/{id}/items/{item_id}": {
+        "/cart/{id}/items/": {
             "post": {
                 "security": [
                     {
@@ -931,16 +869,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "uuid",
-                        "description": "Cart ID",
                         "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "Item ID",
-                        "name": "item_id",
                         "in": "path",
                         "required": true
                     },
@@ -980,7 +909,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/cart/{id}/items/{item_id}": {
             "delete": {
                 "security": [
                     {
@@ -1005,7 +936,6 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "uuid",
-                        "description": "Cart ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1013,7 +943,6 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "uuid",
-                        "description": "Item ID",
                         "name": "item_id",
                         "in": "path",
                         "required": true
@@ -1061,7 +990,6 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "uuid",
-                        "description": "Cart ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1069,7 +997,6 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "format": "uuid",
-                        "description": "Item ID",
                         "name": "item_id",
                         "in": "path",
                         "required": true
@@ -1146,6 +1073,11 @@ const docTemplate = `{
                         "minimum": 1,
                         "type": "integer",
                         "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
                         "in": "query"
                     }
                 ],
@@ -1247,7 +1179,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Category ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1297,7 +1228,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Category ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1344,7 +1274,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Category ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1533,7 +1462,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Media ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1583,7 +1511,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Media ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1741,7 +1668,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/orders/{order_id}": {
+        "/orders/{id}": {
             "get": {
                 "security": [
                     {
@@ -1792,7 +1719,7 @@ const docTemplate = `{
                     }
                 }
             },
-            "put": {
+            "patch": {
                 "security": [
                     {
                         "OAuth2AccessCode": []
@@ -1866,96 +1793,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "domain.Book": {
-            "type": "object",
-            "required": [
-                "author",
-                "categoryIDs",
-                "createdAt",
-                "id",
-                "mediaIDs",
-                "pagesCount",
-                "price",
-                "publisher",
-                "purchaseCount",
-                "rating",
-                "stockQuantity",
-                "title",
-                "updatedAt",
-                "yearPublished"
-            ],
-            "properties": {
-                "author": {
-                    "type": "string",
-                    "maxLength": 200
-                },
-                "categoryIDs": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string",
-                    "maxLength": 2000
-                },
-                "id": {
-                    "type": "string"
-                },
-                "mediaIDs": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "pagesCount": {
-                    "type": "integer",
-                    "maximum": 10000
-                },
-                "price": {
-                    "type": "integer"
-                },
-                "publisher": {
-                    "type": "string",
-                    "maxLength": 200
-                },
-                "purchaseCount": {
-                    "type": "integer",
-                    "minimum": 0
-                },
-                "rating": {
-                    "type": "number",
-                    "maximum": 5,
-                    "minimum": 0
-                },
-                "stockQuantity": {
-                    "type": "integer",
-                    "minimum": 0
-                },
-                "title": {
-                    "type": "string",
-                    "maxLength": 200,
-                    "minLength": 1
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "weight": {
-                    "type": "number"
-                },
-                "yearPublished": {
-                    "type": "integer",
-                    "maximum": 9999,
-                    "minimum": 1000
-                }
-            }
-        },
         "domain.OrderProvider": {
             "type": "string",
             "enum": [
@@ -2083,7 +1920,8 @@ const docTemplate = `{
             "required": [
                 "fileName",
                 "fileUrl",
-                "id"
+                "id",
+                "isCover"
             ],
             "properties": {
                 "altText": {
@@ -2097,6 +1935,12 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "isCover": {
+                    "type": "boolean"
+                },
+                "order": {
+                    "type": "integer"
                 }
             }
         },
@@ -2178,6 +2022,55 @@ const docTemplate = `{
                 }
             }
         },
+        "http.CartItemBookResponseDTO": {
+            "type": "object",
+            "required": [
+                "id",
+                "price",
+                "purchaseCount",
+                "rating",
+                "stockQuantity",
+                "title"
+            ],
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "pagesCount": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "publisher": {
+                    "type": "string"
+                },
+                "purchaseCount": {
+                    "type": "integer"
+                },
+                "rating": {
+                    "type": "number"
+                },
+                "stockQuantity": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "number"
+                },
+                "yearPublished": {
+                    "type": "integer"
+                }
+            }
+        },
         "http.CartItemResponseDTO": {
             "type": "object",
             "required": [
@@ -2187,7 +2080,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "book": {
-                    "$ref": "#/definitions/domain.Book"
+                    "$ref": "#/definitions/http.CartItemBookResponseDTO"
                 },
                 "id": {
                     "type": "string"
@@ -2284,6 +2177,21 @@ const docTemplate = `{
                 }
             }
         },
+        "http.CreateBookMediaData": {
+            "type": "object",
+            "required": [
+                "isCover",
+                "mediaId"
+            ],
+            "properties": {
+                "isCover": {
+                    "type": "boolean"
+                },
+                "mediaId": {
+                    "type": "string"
+                }
+            }
+        },
         "http.CreateBookRequestData": {
             "type": "object",
             "required": [
@@ -2313,7 +2221,7 @@ const docTemplate = `{
                 "media": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/http.CreateBookMediaData"
                     }
                 },
                 "pagesCount": {
@@ -2354,8 +2262,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "bookId",
-                "quantity",
-                "userId"
+                "quantity"
             ],
             "properties": {
                 "bookId": {
@@ -2363,9 +2270,6 @@ const docTemplate = `{
                 },
                 "quantity": {
                     "type": "integer"
-                },
-                "userId": {
-                    "type": "string"
                 }
             }
         },
@@ -2491,6 +2395,37 @@ const docTemplate = `{
                 }
             }
         },
+        "http.OrderItemBookResponseDTO": {
+            "type": "object",
+            "required": [
+                "author",
+                "id",
+                "price",
+                "rating",
+                "stockQuantity",
+                "title"
+            ],
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "rating": {
+                    "type": "number"
+                },
+                "stockQuantity": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "http.OrderItemResponseDTO": {
             "type": "object",
             "required": [
@@ -2501,7 +2436,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "book": {
-                    "$ref": "#/definitions/domain.Book"
+                    "$ref": "#/definitions/http.OrderItemBookResponseDTO"
                 },
                 "id": {
                     "type": "string"
@@ -2522,6 +2457,7 @@ const docTemplate = `{
                 "createdAt",
                 "id",
                 "isPaid",
+                "items",
                 "provider",
                 "status",
                 "totalAmount",
@@ -2682,6 +2618,21 @@ const docTemplate = `{
                 }
             }
         },
+        "http.UpdateBookMediaData": {
+            "type": "object",
+            "required": [
+                "isCover",
+                "mediaId"
+            ],
+            "properties": {
+                "isCover": {
+                    "type": "boolean"
+                },
+                "mediaId": {
+                    "type": "string"
+                }
+            }
+        },
         "http.UpdateBookRequestData": {
             "type": "object",
             "properties": {
@@ -2696,6 +2647,12 @@ const docTemplate = `{
                 },
                 "description": {
                     "type": "string"
+                },
+                "media": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/http.UpdateBookMediaData"
+                    }
                 },
                 "pagesCount": {
                     "type": "integer"

@@ -11,7 +11,7 @@ type ListBookRequestDTO struct {
 type ListBookRequestQueryParams struct {
 	PaginationRequestDTO
 	Search      string      `json:"search"`
-	CategoryIDs []uuid.UUID `json:"category_ids"`
+	CategoryIDs []uuid.UUID `json:"category_ids" collectionFormat:"csv"`
 	Publisher   string      `json:"publisher"`
 	Year        int         `json:"year"`
 	MinPrice    int64       `json:"min_price"`

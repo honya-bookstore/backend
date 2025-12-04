@@ -167,7 +167,7 @@ func (h *CartHandlerImpl) Create(ctx *gin.Context) {
 //	@Tags			Cart
 //	@Accept			json
 //	@Produce		json
-//	@Param			pathParams	path		CreateCartItemPathParams	true	"Path parameters"
+//	@Param			pathParams	path		CreateCartItemRequestPathParams	true	"Path parameters"
 //	@Param			item		body		CreateCartItemData	true	"Cart item request"
 //	@Success		201			{object}	CartResponseDTO
 //	@Failure		400			{object}	Error
