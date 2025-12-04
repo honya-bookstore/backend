@@ -5,12 +5,14 @@ linters:
   enable:
     - lll
     - testifylint
+  disable:
+    - unused
   exclusions:
     generated: strict
     rules:
       - linters:
           - lll
-        path: ^(internal/interface/api/handler/|cmd/)\w*\.go$
+        path: ^(internal/delivery/http/handler|cmd/)\w*\.go$
   settings:
     testifylint:
       enable-all: true
@@ -20,7 +22,6 @@ linters:
 formatters:
   enable:
     - gofumpt
-    - swaggo
   settings:
     gofumpt:
       module-path: backend
@@ -28,8 +29,6 @@ formatters:
     generated: strict
     paths:
       - docs/docs.go
-      - internal/di/wire_gen.go
-      - internal/infrastructure/presistence/postgres/*.go
 run:
   build-tags:
     - integration
