@@ -1798,16 +1798,10 @@ const docTemplate = `{
         "domain.OrderProvider": {
             "type": "string",
             "enum": [
-                "COD",
-                "VNPAY",
-                "MOMO",
-                "ZALOPAY"
+                "COD"
             ],
             "x-enum-varnames": [
-                "PaymentProviderCOD",
-                "PaymentProviderVNPAY",
-                "PaymentProviderMOMO",
-                "PaymentProviderZALOPAY"
+                "PaymentProviderCOD"
             ]
         },
         "domain.OrderStatus": {
@@ -2318,7 +2312,10 @@ const docTemplate = `{
             "required": [
                 "address",
                 "city",
+                "email",
+                "firstName",
                 "items",
+                "lastName",
                 "provider",
                 "userId"
             ],
@@ -2329,14 +2326,26 @@ const docTemplate = `{
                 "city": {
                     "type": "string"
                 },
+                "email": {
+                    "type": "string"
+                },
+                "firstName": {
+                    "type": "string"
+                },
                 "items": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/http.CreateOrderItemData"
                     }
                 },
+                "lastName": {
+                    "type": "string"
+                },
                 "provider": {
                     "$ref": "#/definitions/domain.OrderProvider"
+                },
+                "returnUrl": {
+                    "type": "string"
                 },
                 "userId": {
                     "type": "string"
@@ -2457,9 +2466,12 @@ const docTemplate = `{
                 "address",
                 "city",
                 "createdAt",
+                "email",
+                "firstName",
                 "id",
                 "isPaid",
                 "items",
+                "lastName",
                 "provider",
                 "status",
                 "totalAmount",
@@ -2476,6 +2488,12 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
+                "email": {
+                    "type": "string"
+                },
+                "firstName": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -2488,8 +2506,14 @@ const docTemplate = `{
                         "$ref": "#/definitions/http.OrderItemResponseDTO"
                     }
                 },
+                "lastName": {
+                    "type": "string"
+                },
                 "provider": {
                     "$ref": "#/definitions/domain.OrderProvider"
+                },
+                "returnUrl": {
+                    "type": "string"
                 },
                 "status": {
                     "$ref": "#/definitions/domain.OrderStatus"

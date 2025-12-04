@@ -10,6 +10,9 @@ import (
 
 type OrderResponseDTO struct {
 	ID          uuid.UUID              `json:"id"                  binding:"required"`
+	Email       string                 `json:"email"               binding:"required"`
+	FirstName   string                 `json:"firstName"           binding:"required"`
+	LastName    string                 `json:"lastName"            binding:"required"`
 	Address     string                 `json:"address"             binding:"required"`
 	City        string                 `json:"city"                binding:"required"`
 	Provider    domain.OrderProvider   `json:"provider"            binding:"required"`
@@ -69,6 +72,9 @@ func ToOrderResponseDTO(order *domain.Order, bookMap map[uuid.UUID]*domain.Book,
 
 	return &OrderResponseDTO{
 		ID:          order.ID,
+		Email:       order.Email,
+		FirstName:   order.FirstName,
+		LastName:    order.LastName,
 		Address:     order.Address,
 		City:        order.City,
 		Provider:    order.Provider,

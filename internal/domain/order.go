@@ -8,6 +8,9 @@ import (
 
 type Order struct {
 	ID          uuid.UUID     `validate:"required"`
+	Email       string        `validate:"required"`
+	FirstName   string        `validate:"required"`
+	LastName    string        `validate:"required"`
 	Address     string        `validate:"required"`
 	City        string        `validate:"required"`
 	Provider    OrderProvider `validate:"required,oneof=COD VNPAY MOMO ZALOPAY"`
@@ -50,6 +53,9 @@ const (
 
 func NewOrder(
 	userID uuid.UUID,
+	email string,
+	firstName string,
+	lastName string,
 	address string,
 	provider OrderProvider,
 	items []OrderItem,
@@ -66,6 +72,9 @@ func NewOrder(
 	return &Order{
 		ID:          id,
 		UserID:      userID,
+		Email:       email,
+		FirstName:   firstName,
+		LastName:    lastName,
 		Address:     address,
 		Provider:    provider,
 		Status:      OrderStatusPending,

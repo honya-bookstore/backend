@@ -28,6 +28,9 @@ type CreateOrderRequestDTO struct {
 }
 
 type CreateOrderData struct {
+	Email     string                `json:"email"     binding:"required,email"`
+	FirstName string                `json:"firstName" binding:"required"`
+	LastName  string                `json:"lastName"  binding:"required"`
 	Address   string                `json:"address"   binding:"required"`
 	City      string                `json:"city"      binding:"required"`
 	Provider  domain.OrderProvider  `json:"provider"  binding:"required"`
