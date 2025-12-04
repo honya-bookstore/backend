@@ -57,7 +57,10 @@ func (r *Book) List(
 	if err != nil {
 		return nil, toDomainError(err)
 	}
-	// TODO: Fill book medium to each book
+	err = r.fillBooksMedium(ctx, &books)
+	if err != nil {
+		return nil, toDomainError(err)
+	}
 	return &books, nil
 }
 
@@ -87,7 +90,10 @@ func (r *Book) Get(
 	if err != nil {
 		return nil, toDomainError(err)
 	}
-	// TODO: Fill book medium to the book
+	err = r.fillBooksMedium(ctx, &[]domain.Book{*book})
+	if err != nil {
+		return nil, toDomainError(err)
+	}
 	return book, nil
 }
 
@@ -124,12 +130,15 @@ func (r *Book) Save(
 	if err != nil {
 		return toDomainError(err)
 	}
+	err = r.mergeCategories(ctx, r.queries, &params.Book)
+	if err != nil {
+		return toDomainError(err)
+	}
 	err = r.mergeMedium(ctx, r.queries, &params.Book)
 	if err != nil {
 		return toDomainError(err)
 	}
-	// TODO: Merge book medium
-	return toDomainError(err)
+	return nil
 }
 
 func toBookDomain(
@@ -179,6 +188,63 @@ func (r *Book) fillBooksCategories(
 		if categoryIDs, ok := booksCategoriesMap[book.ID]; ok {
 			(*books)[i].CategoryIDs = categoryIDs
 		}
+	}
+	return nil
+}
+
+func (r *Book) fillBooksMedium(
+	ctx context.Context,
+	books *[]domain.Book,
+) error {
+	bookIDs := make([]uuid.UUID, 0, len(*books))
+	for _, book := range *books {
+		bookIDs = append(bookIDs, book.ID)
+	}
+	booksMediumMap := make(map[uuid.UUID][]domain.BookMedia)
+	bookMediumEntities, err := r.queries.ListBooksMedium(ctx, sqlc.ListBooksMediumParams{
+		BookIDs: bookIDs,
+	})
+	if err != nil {
+		return err
+	}
+	for _, bookMediumEntity := range bookMediumEntities {
+		booksMediumMap[bookMediumEntity.BookID] = append(
+			booksMediumMap[bookMediumEntity.BookID],
+			domain.BookMedia{
+				MediaID: bookMediumEntity.MediaID,
+				IsCover: bookMediumEntity.IsCover,
+				Order:   int(bookMediumEntity.Order),
+			},
+		)
+	}
+	for i, book := range *books {
+		if medium, ok := booksMediumMap[book.ID]; ok {
+			(*books)[i].Medium = medium
+		}
+	}
+	return nil
+}
+
+func (r *Book) mergeCategories(
+	ctx context.Context,
+	qtx *sqlc.Queries,
+	book *domain.Book,
+) error {
+	if err := qtx.CreateTempTableBooksCategories(ctx); err != nil {
+		return err
+	}
+	param := make([]sqlc.InsertTempTableBooksCategoriesParams, 0, len(book.CategoryIDs))
+	for _, categoryID := range book.CategoryIDs {
+		param = append(param, sqlc.InsertTempTableBooksCategoriesParams{
+			BookID:     book.ID,
+			CategoryID: categoryID,
+		})
+	}
+	if _, err := qtx.InsertTempTableBooksCategories(ctx, param); err != nil {
+		return err
+	}
+	if err := qtx.MergeBooksCategoriesFromTemp(ctx); err != nil {
+		return err
 	}
 	return nil
 }
