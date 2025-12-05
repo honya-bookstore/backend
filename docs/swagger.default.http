@@ -1,0 +1,149 @@
+###
+
+# List all books
+# Get all books with optional filters
+GET /books HTTP/1.1
+
+###
+
+# Create a new book
+# Create a new book
+POST /books HTTP/1.1
+
+###
+
+# Get book by ID
+# Get book details by ID
+GET /books/{id} HTTP/1.1
+
+###
+
+# Delete book
+# Delete book by ID
+DELETE /books/{id} HTTP/1.1
+
+###
+
+# Update book
+# Update book details
+PATCH /books/{id} HTTP/1.1
+
+###
+
+# Create a new cart
+# Create a new cart
+POST /cart HTTP/1.1
+
+###
+
+# Get current user's cart
+# Get cart details for the authenticated user
+GET /cart/me HTTP/1.1
+
+###
+
+# Get cart by user ID
+# Get cart details by user ID
+GET /cart/user/{id} HTTP/1.1
+
+###
+
+# Get cart by ID
+# Get cart details by ID
+GET /cart/{id} HTTP/1.1
+
+###
+
+# Add item to cart
+# Add a new item to the cart
+POST /cart/{id}/items/ HTTP/1.1
+
+###
+
+# Delete cart item
+# Remove item from cart
+DELETE /cart/{id}/items/{item_id} HTTP/1.1
+
+###
+
+# Update cart item
+# Update cart item quantity
+PATCH /cart/{id}/items/{item_id} HTTP/1.1
+
+###
+
+# List all categories
+# Get all categories
+GET /categories HTTP/1.1
+
+###
+
+# Create a new category
+# Create a new category
+POST /categories HTTP/1.1
+
+###
+
+# Delete category
+# Delete category by ID
+DELETE /categories/{id} HTTP/1.1
+
+###
+
+# Update category
+# Update category details
+PATCH /categories/{id} HTTP/1.1
+
+###
+
+# Get category by Slug
+# Get category details by Slug
+GET /categories/{slug} HTTP/1.1
+
+###
+
+# List all media
+# Get all media with optional search
+GET /media HTTP/1.1
+
+###
+
+# Create a new media
+# Create a new media
+POST /media HTTP/1.1
+
+###
+
+# Get media by ID
+# Get media details by ID
+GET /media/{id} HTTP/1.1
+
+###
+
+# Delete media
+# Delete media by ID
+DELETE /media/{id} HTTP/1.1
+
+###
+
+# List all orders
+# Get all orders
+GET /orders HTTP/1.1
+
+###
+
+# Create a new order
+# Create a new order
+POST /orders HTTP/1.1
+
+###
+
+# Get order by ID
+# Get order details by ID
+GET /orders/{id} HTTP/1.1
+
+###
+
+# Update order
+# Update  order
+PATCH /orders/{id} HTTP/1.1

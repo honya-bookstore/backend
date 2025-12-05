@@ -241,16 +241,12 @@ WHERE
     WHEN cardinality(sqlc.arg('media_ids')::uuid[]) = 0 THEN TRUE
     ELSE media_id = ANY (sqlc.arg('media_ids')::uuid[])
   END
-  AND CASE
-    WHEN sqlc.arg('is_cover')::boolean IS NULL THEN TRUE
-    ELSE is_cover = sqlc.arg('is_cover')::boolean
-  END
 ORDER BY
   book_id ASC,
   media_id ASC;
 
 -- name: CreateTempTableBooksMedium :exec
-CREATE TABLE temp_books_medium (
+CREATE TEMPORARY TABLE temp_books_medium (
   book_id UUID NOT NULL,
   media_id UUID NOT NULL,
   "order" INTEGER NOT NULL,
@@ -294,7 +290,7 @@ WHEN NOT MATCHED THEN
     source.is_cover
   )
 WHEN NOT MATCHED BY SOURCE
-  AND target.book_id = (SELECT DISTINCT book_id FROM temp_books_media) THEN
+  AND target.book_id = (SELECT DISTINCT book_id FROM temp_books_medium) THEN
   DELETE;
 
 -- name: GetBook :one
@@ -332,7 +328,7 @@ ORDER BY
   category_id ASC;
 
 -- name: CreateTempTableBooksCategories :exec
-CREATE TABLE temp_books_categories (
+CREATE TEMPORARY TABLE temp_books_categories (
   book_id UUID NOT NULL,
   category_id UUID NOT NULL,
   PRIMARY KEY (book_id, category_id)
@@ -349,7 +345,7 @@ INSERT INTO temp_books_categories (
 
 -- name: MergeBooksCategoriesFromTemp :exec
 MERGE INTO books_categories AS target
-USING temp_book_categories AS source
+USING temp_books_categories AS source
   ON target.book_id = source.book_id
   AND target.category_id = source.category_id
 WHEN NOT MATCHED THEN
@@ -362,5 +358,5 @@ WHEN NOT MATCHED THEN
     source.category_id
   )
 WHEN NOT MATCHED BY SOURCE
-  AND target.book_id = (SELECT DISTINCT book_id FROM temp_book_categories) THEN
+  AND target.book_id = (SELECT DISTINCT book_id FROM temp_books_categories) THEN
   DELETE;

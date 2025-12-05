@@ -86,15 +86,16 @@ func (r *Book) Get(
 		return nil, toDomainError(err)
 	}
 	book := toBookDomain(&bookEntity)
-	err = r.fillBooksCategories(ctx, &[]domain.Book{*book})
+	books := []domain.Book{*book}
+	err = r.fillBooksCategories(ctx, &books)
 	if err != nil {
 		return nil, toDomainError(err)
 	}
-	err = r.fillBooksMedium(ctx, &[]domain.Book{*book})
+	err = r.fillBooksMedium(ctx, &books)
 	if err != nil {
 		return nil, toDomainError(err)
 	}
-	return book, nil
+	return &books[0], nil
 }
 
 func (r *Book) Save(

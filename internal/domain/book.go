@@ -11,14 +11,14 @@ type Book struct {
 	Title         string      `validate:"required,gte=1,lte=200"`
 	Description   string      `validate:"omitempty,lte=2000"`
 	Author        string      `validate:"required,lte=200"`
-	Price         int64       `validate:"required,gt=0"`
-	PagesCount    int         `validate:"required,gt=0,lte=10000"`
-	YearPublished int         `validate:"required,gte=1000,lte=9999"`
+	Price         int64       `validate:"gt=0"`
+	PagesCount    int         `validate:"gt=0,lte=10000"`
+	YearPublished int         `validate:"gte=1000,lte=9999"`
 	Publisher     string      `validate:"required,lte=200"`
-	Weight        float64     `validate:"omitempty,gt=0"`
-	StockQuantity int         `validate:"required,gte=0"`
-	PurchaseCount int         `validate:"required,gte=0"`
-	Rating        float64     `validate:"required,gte=0,lte=5"`
+	Weight        float64     `validate:"gte=0"`
+	StockQuantity int         `validate:"gte=0"`
+	PurchaseCount int         `validate:"gte=0"`
+	Rating        float64     `validate:"gte=0,lte=5"`
 	CategoryIDs   []uuid.UUID `validate:"required"`
 	Medium        []BookMedia `validate:"required,dive"`
 	CreatedAt     time.Time   `validate:"required"`

@@ -96,7 +96,7 @@ func (q *Queries) CountBooks(ctx context.Context, arg CountBooksParams) (int64, 
 }
 
 const createTempTableBooksCategories = `-- name: CreateTempTableBooksCategories :exec
-CREATE TABLE temp_books_categories (
+CREATE TEMPORARY TABLE temp_books_categories (
   book_id UUID NOT NULL,
   category_id UUID NOT NULL,
   PRIMARY KEY (book_id, category_id)
@@ -109,7 +109,7 @@ func (q *Queries) CreateTempTableBooksCategories(ctx context.Context) error {
 }
 
 const createTempTableBooksMedium = `-- name: CreateTempTableBooksMedium :exec
-CREATE TABLE temp_books_medium (
+CREATE TEMPORARY TABLE temp_books_medium (
   book_id UUID NOT NULL,
   media_id UUID NOT NULL,
   "order" INTEGER NOT NULL,
@@ -426,10 +426,6 @@ WHERE
     WHEN cardinality($2::uuid[]) = 0 THEN TRUE
     ELSE media_id = ANY ($2::uuid[])
   END
-  AND CASE
-    WHEN $3::boolean IS NULL THEN TRUE
-    ELSE is_cover = $3::boolean
-  END
 ORDER BY
   book_id ASC,
   media_id ASC
@@ -438,11 +434,10 @@ ORDER BY
 type ListBooksMediumParams struct {
 	BookIDs  []uuid.UUID
 	MediaIds []uuid.UUID
-	IsCover  bool
 }
 
 func (q *Queries) ListBooksMedium(ctx context.Context, arg ListBooksMediumParams) ([]BooksMedium, error) {
-	rows, err := q.db.Query(ctx, listBooksMedium, arg.BookIDs, arg.MediaIds, arg.IsCover)
+	rows, err := q.db.Query(ctx, listBooksMedium, arg.BookIDs, arg.MediaIds)
 	if err != nil {
 		return nil, err
 	}
@@ -468,7 +463,7 @@ func (q *Queries) ListBooksMedium(ctx context.Context, arg ListBooksMediumParams
 
 const mergeBooksCategoriesFromTemp = `-- name: MergeBooksCategoriesFromTemp :exec
 MERGE INTO books_categories AS target
-USING temp_book_categories AS source
+USING temp_books_categories AS source
   ON target.book_id = source.book_id
   AND target.category_id = source.category_id
 WHEN NOT MATCHED THEN
@@ -481,7 +476,7 @@ WHEN NOT MATCHED THEN
     source.category_id
   )
 WHEN NOT MATCHED BY SOURCE
-  AND target.book_id = (SELECT DISTINCT book_id FROM temp_book_categories) THEN
+  AND target.book_id = (SELECT DISTINCT book_id FROM temp_books_categories) THEN
   DELETE
 `
 
@@ -513,7 +508,7 @@ WHEN NOT MATCHED THEN
     source.is_cover
   )
 WHEN NOT MATCHED BY SOURCE
-  AND target.book_id = (SELECT DISTINCT book_id FROM temp_books_media) THEN
+  AND target.book_id = (SELECT DISTINCT book_id FROM temp_books_medium) THEN
   DELETE
 `
 
