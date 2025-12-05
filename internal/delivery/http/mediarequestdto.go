@@ -24,6 +24,7 @@ type CreateMediaRequestDTO struct {
 }
 
 type CreateMediaRequestData struct {
+	Key     string `json:"key"     binding:"required"`
 	URL     string `json:"url"     binding:"required,url"`
 	AltText string `json:"altText" binding:"omitempty,lte=200"`
 	Order   int    `json:"order"   binding:"required,gte=0"`

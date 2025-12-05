@@ -152,3 +152,51 @@ func (h *MediaHandlerImpl) Delete(ctx *gin.Context) {
 	}
 	ctx.Status(http.StatusNoContent)
 }
+
+// GetUploadImageURL godoc
+//
+//	@Summary		Get presigned URL for image upload
+//	@Description	Get a presigned URL to upload media images
+//	@Tags			Media
+//	@Produce		json
+//	@Success		200	{object}	UploadImageURLResponseDTO
+//	@Failure		500	{object}	Error
+//	@Router			/media/images/upload-url [get]
+//	@Security		OAuth2AccessCode
+//	@Security		OAuth2Password
+func (h *MediaHandlerImpl) GetUploadImageURL(ctx *gin.Context) {
+	uploadURL, err := h.mediaApp.GetUploadImageURL(ctx.Request.Context())
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, uploadURL)
+}
+
+// GetDeleteImageURL godoc
+//
+//	@Summary		Get presigned URL for image deletion
+//	@Description	Get a presigned URL to delete media images
+//	@Tags			Media
+//	@Produce		json
+//	@Param			image_id	path		string	true	"Media Image ID"	format(uuid)
+//	@Success		200			{object}	DeleteImageURLResponseDTO
+//	@Failure		400			{object}	Error
+//	@Failure		500			{object}	Error
+//	@Router			/media/images/{image_id}/delete-url [get]
+//	@Security		OAuth2AccessCode
+//	@Security		OAuth2Password
+func (h *MediaHandlerImpl) GetDeleteImageURL(ctx *gin.Context) {
+	imageID, ok := pathToUUID(ctx, "image_id")
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, NewError(h.ErrInvalidMediaID))
+		return
+	}
+
+	deleteURL, err := h.mediaApp.GetDeleteImageURL(ctx.Request.Context(), imageID)
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, deleteURL)
+}

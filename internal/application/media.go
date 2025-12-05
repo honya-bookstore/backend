@@ -5,20 +5,25 @@ import (
 
 	"backend/internal/delivery/http"
 	"backend/internal/domain"
+
+	"github.com/google/uuid"
 )
 
 type Media struct {
-	mediaRepo    domain.MediaRepository
-	mediaService domain.MediaService
+	mediaRepo          domain.MediaRepository
+	mediaService       domain.MediaService
+	mediaObjectStorage MediaObjectStorage
 }
 
 func ProvideMedia(
 	mediaRepo domain.MediaRepository,
 	mediaService domain.MediaService,
+	mediaObjectStorage MediaObjectStorage,
 ) *Media {
 	return &Media{
-		mediaRepo:    mediaRepo,
-		mediaService: mediaService,
+		mediaRepo:          mediaRepo,
+		mediaService:       mediaService,
+		mediaObjectStorage: mediaObjectStorage,
 	}
 }
 
@@ -89,6 +94,10 @@ func (m *Media) Create(ctx context.Context, param http.CreateMediaRequestDTO) (*
 	if err != nil {
 		return nil, err
 	}
+	err = m.mediaObjectStorage.PersistImageFromTemp(ctx, param.Data.Key, media.ID)
+	if err != nil {
+		return nil, err
+	}
 
 	return http.ToMediaResponseDTO(media), nil
 }
@@ -115,4 +124,20 @@ func (m *Media) Delete(ctx context.Context, param http.DeleteMediaRequestDTO) er
 	}
 
 	return nil
+}
+
+func (m *Media) GetUploadImageURL(ctx context.Context) (*http.UploadImageURLResponseDTO, error) {
+	url, err := m.mediaObjectStorage.GetUploadImageURL(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return url, nil
+}
+
+func (m *Media) GetDeleteImageURL(ctx context.Context, imageID uuid.UUID) (*http.DeleteImageURLResponseDTO, error) {
+	url, err := m.mediaObjectStorage.GetDeleteImageURL(ctx, imageID)
+	if err != nil {
+		return nil, err
+	}
+	return url, nil
 }

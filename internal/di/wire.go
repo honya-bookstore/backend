@@ -11,6 +11,7 @@ import (
 	"backend/internal/client"
 	"backend/internal/delivery/http"
 	"backend/internal/domain"
+	"backend/internal/infrastructure/objectstorages3"
 	"backend/internal/infrastructure/paymentservice"
 	"backend/internal/infrastructure/repositorypostgres"
 	"backend/internal/service"
@@ -26,6 +27,14 @@ var DbSet = wire.NewSet(
 	client.NewDBConnection,
 	client.NewDBQueries,
 	client.NewDBTransactor,
+)
+
+var ObjectStorageSet = wire.NewSet(
+	objectstorages3.ProvideMedia,
+	wire.Bind(
+		new(application.MediaObjectStorage),
+		new(*objectstorages3.Media),
+	),
 )
 
 var ServiceSet = wire.NewSet(
@@ -184,6 +193,7 @@ func InitializeServer(ctx context.Context) *http.Server {
 		RepositorySet,
 		RouterSet,
 		ServiceSet,
+		ObjectStorageSet,
 		http.NewServer,
 	)
 	return nil

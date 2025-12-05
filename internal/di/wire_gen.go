@@ -12,6 +12,7 @@ import (
 	"backend/internal/client"
 	"backend/internal/delivery/http"
 	"backend/internal/domain"
+	"backend/internal/infrastructure/objectstorages3"
 	"backend/internal/infrastructure/paymentservice"
 	"backend/internal/infrastructure/repositorypostgres"
 	"backend/internal/service"
@@ -41,12 +42,15 @@ func InitializeServer(ctx context.Context) *http.Server {
 	cartHandlerImpl := http.ProvideCartHandler(applicationCart)
 	applicationCategory := application.ProvideCategory(category, serviceCategory)
 	categoryHandlerImpl := http.ProvideCategoryHandler(applicationCategory)
-	applicationMedia := application.ProvideMedia(media, serviceMedia)
+	s3Client := client.NewS3(ctx, server)
+	presignClient := client.NewS3Presign(s3Client)
+	objectstorages3Media := objectstorages3.ProvideMedia(s3Client, presignClient, server)
+	applicationMedia := application.ProvideMedia(media, serviceMedia, objectstorages3Media)
 	mediaHandlerImpl := http.ProvideMediaHandler(applicationMedia)
 	order := repositorypostgres.ProvideOrder(queries, pool)
 	serviceOrder := service.ProvideOrder(validate)
 	vnPay := paymentservice.ProvideVNPay(server)
-	applicationOrder := application.ProvideOrder(order, serviceOrder, book, serviceBook, vnPay)
+	applicationOrder := application.ProvideOrder(order, serviceOrder, book, serviceBook, cart, vnPay)
 	orderHandlerImpl := http.ProvideOrderHandler(applicationOrder)
 	routerImpl := http.ProvideRouter(bookHandlerImpl, cartHandlerImpl, categoryHandlerImpl, mediaHandlerImpl, orderHandlerImpl)
 	authHandlerImpl := http.ProvideAuthHandler(server)
@@ -59,6 +63,12 @@ func InitializeServer(ctx context.Context) *http.Server {
 var ConfigSet = wire.NewSet(config.NewServer)
 
 var DbSet = wire.NewSet(client.NewDBConnection, client.NewDBQueries, client.NewDBTransactor)
+
+var ObjectStorageSet = wire.NewSet(objectstorages3.ProvideMedia, wire.Bind(
+	new(application.MediaObjectStorage),
+	new(*objectstorages3.Media),
+),
+)
 
 var ServiceSet = wire.NewSet(service.ProvideBook, wire.Bind(
 	new(domain.BookService),

@@ -9,4 +9,6 @@ type MediaHandler interface {
 	Get(ctx *gin.Context)
 	Create(ctx *gin.Context)
 	Delete(ctx *gin.Context)
+	GetUploadImageURL(ctx *gin.Context)
+	GetDeleteImageURL(ctx *gin.Context)
 }

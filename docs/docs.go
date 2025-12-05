@@ -1119,6 +1119,90 @@ const docTemplate = `{
                 }
             }
         },
+        "/media/images/upload-url": {
+            "get": {
+                "security": [
+                    {
+                        "OAuth2AccessCode": []
+                    },
+                    {
+                        "OAuth2Password": []
+                    }
+                ],
+                "description": "Get a presigned URL to upload media images",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Get presigned URL for image upload",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/UploadImageURLResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/media/images/{image_id}/delete-url": {
+            "get": {
+                "security": [
+                    {
+                        "OAuth2AccessCode": []
+                    },
+                    {
+                        "OAuth2Password": []
+                    }
+                ],
+                "description": "Get a presigned URL to delete media images",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Get presigned URL for image deletion",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Media Image ID",
+                        "name": "image_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/DeleteImageURLResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
         "/media/{id}": {
             "get": {
                 "security": [
@@ -1847,6 +1931,7 @@ const docTemplate = `{
         "CreateMediaRequestData": {
             "type": "object",
             "required": [
+                "key",
                 "order",
                 "url"
             ],
@@ -1854,6 +1939,9 @@ const docTemplate = `{
                 "altText": {
                     "type": "string",
                     "maxLength": 200
+                },
+                "key": {
+                    "type": "string"
                 },
                 "order": {
                     "type": "integer",
@@ -1898,6 +1986,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "DeleteImageURLResponseDTO": {
+            "type": "object",
+            "required": [
+                "url"
+            ],
+            "properties": {
+                "url": {
                     "type": "string"
                 }
             }
@@ -2267,6 +2366,21 @@ const docTemplate = `{
                 },
                 "status": {
                     "$ref": "#/definitions/OrderStatus"
+                }
+            }
+        },
+        "UploadImageURLResponseDTO": {
+            "type": "object",
+            "required": [
+                "key",
+                "url"
+            ],
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
                 }
             }
         }
