@@ -8,11 +8,15 @@ type Router interface {
 
 type RouterImpl struct {
 	// articleHandler  ArticleHandler
-	bookHandler     BookHandler
-	cartHandler     CartHandler
-	categoryHandler CategoryHandler
-	mediaHandler    MediaHandler
-	orderHandler    OrderHandler
+	bookHandler       BookHandler
+	cartHandler       CartHandler
+	categoryHandler   CategoryHandler
+	mediaHandler      MediaHandler
+	orderHandler      OrderHandler
+	authMiddleware    AuthMiddleware
+	loggingMiddleware LoggingMiddleware
+	metricMiddleware  MetricMiddleware
+	roleMiddleware    RoleMiddleware
 }
 
 func ProvideRouter(
@@ -22,14 +26,22 @@ func ProvideRouter(
 	categoryHandler CategoryHandler,
 	mediaHandler MediaHandler,
 	orderHandler OrderHandler,
+	authMiddleware AuthMiddleware,
+	loggingMiddleware LoggingMiddleware,
+	metricMiddleware MetricMiddleware,
+	roleMiddleware RoleMiddleware,
 ) *RouterImpl {
 	return &RouterImpl{
 		// articleHandler:  articleHandler,
-		bookHandler:     bookHandler,
-		cartHandler:     cartHandler,
-		categoryHandler: categoryHandler,
-		mediaHandler:    mediaHandler,
-		orderHandler:    orderHandler,
+		bookHandler:       bookHandler,
+		cartHandler:       cartHandler,
+		categoryHandler:   categoryHandler,
+		mediaHandler:      mediaHandler,
+		orderHandler:      orderHandler,
+		authMiddleware:    authMiddleware,
+		loggingMiddleware: loggingMiddleware,
+		metricMiddleware:  metricMiddleware,
+		roleMiddleware:    roleMiddleware,
 	}
 }
 
@@ -58,7 +70,7 @@ func (r *RouterImpl) RegisterRoutes(
 		{
 			cart.GET("/:id", r.cartHandler.Get)
 			cart.GET("/user/:id", r.cartHandler.GetByUser)
-			cart.GET("/me", r.cartHandler.GetMine)
+			cart.GET("/me", r.authMiddleware.Handler(), r.cartHandler.GetMine)
 			cart.POST("", r.cartHandler.Create)
 			cart.POST("/:id/items", r.cartHandler.CreateItem)
 			cart.PATCH("/:id/items/:item_id", r.cartHandler.UpdateItem)
@@ -78,6 +90,8 @@ func (r *RouterImpl) RegisterRoutes(
 			media.GET("/:id", r.mediaHandler.Get)
 			media.POST("", r.mediaHandler.Create)
 			media.DELETE("/:id", r.mediaHandler.Delete)
+			media.GET("/images/upload-url", r.mediaHandler.GetUploadImageURL)
+			media.GET("/images/:image-id/delete-url/", r.mediaHandler.GetDeleteImageURL)
 		}
 		orders := api.Group("/orders")
 		{

@@ -16,11 +16,17 @@ import (
 	"backend/internal/infrastructure/repositorypostgres"
 	"backend/internal/service"
 
+	"backend/pkg/logger"
 	"github.com/google/wire"
 )
 
 var ConfigSet = wire.NewSet(
 	config.NewServer,
+	logger.NewConfig,
+)
+
+var LoggerSet = wire.NewSet(
+	logger.New,
 )
 
 var DbSet = wire.NewSet(
@@ -159,6 +165,29 @@ var HandlerSet = wire.NewSet(
 	),
 )
 
+var MiddlewareSet = wire.NewSet(
+	http.ProvideAuthMiddleware,
+	wire.Bind(
+		new(http.AuthMiddleware),
+		new(*http.AuthMiddlewareImpl),
+	),
+	http.ProvideLoggingMiddleware,
+	wire.Bind(
+		new(http.LoggingMiddleware),
+		new(*http.LoggingMiddlewareImpl),
+	),
+	http.ProvideMetricMiddleware,
+	wire.Bind(
+		new(http.MetricMiddleware),
+		new(*http.MetricMiddlewareImpl),
+	),
+	http.ProvideRoleMiddleware,
+	wire.Bind(
+		new(http.RoleMiddleware),
+		new(*http.RoleMiddlewareImpl),
+	),
+)
+
 var RouterSet = wire.NewSet(
 	http.ProvideRouter,
 	wire.Bind(
@@ -172,6 +201,7 @@ var ClientSet = wire.NewSet(
 	client.NewValidate,
 	client.NewS3,
 	client.NewS3Presign,
+	client.NewKeycloak,
 )
 
 var PaymentServiceSet = wire.NewSet(
@@ -188,6 +218,8 @@ func InitializeServer(ctx context.Context) *http.Server {
 		ClientSet,
 		ConfigSet,
 		DbSet,
+		LoggerSet,
+		MiddlewareSet,
 		HandlerSet,
 		PaymentServiceSet,
 		RepositorySet,

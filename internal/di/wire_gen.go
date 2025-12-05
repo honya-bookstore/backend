@@ -16,6 +16,7 @@ import (
 	"backend/internal/infrastructure/paymentservice"
 	"backend/internal/infrastructure/repositorypostgres"
 	"backend/internal/service"
+	"backend/pkg/logger"
 	"context"
 	"github.com/google/wire"
 )
@@ -52,7 +53,14 @@ func InitializeServer(ctx context.Context) *http.Server {
 	vnPay := paymentservice.ProvideVNPay(server)
 	applicationOrder := application.ProvideOrder(order, serviceOrder, book, serviceBook, cart, vnPay)
 	orderHandlerImpl := http.ProvideOrderHandler(applicationOrder)
-	routerImpl := http.ProvideRouter(bookHandlerImpl, cartHandlerImpl, categoryHandlerImpl, mediaHandlerImpl, orderHandlerImpl)
+	goCloak := client.NewKeycloak(ctx, server)
+	authMiddlewareImpl := http.ProvideAuthMiddleware(goCloak, server)
+	loggerConfig := logger.NewConfig(server)
+	zapLogger := logger.New(loggerConfig)
+	loggingMiddlewareImpl := http.ProvideLoggingMiddleware(zapLogger)
+	metricMiddlewareImpl := http.ProvideMetricMiddleware()
+	roleMiddlewareImpl := http.ProvideRoleMiddleware(server)
+	routerImpl := http.ProvideRouter(bookHandlerImpl, cartHandlerImpl, categoryHandlerImpl, mediaHandlerImpl, orderHandlerImpl, authMiddlewareImpl, loggingMiddlewareImpl, metricMiddlewareImpl, roleMiddlewareImpl)
 	authHandlerImpl := http.ProvideAuthHandler(server)
 	httpServer := http.NewServer(engine, routerImpl, server, authHandlerImpl)
 	return httpServer
@@ -60,7 +68,9 @@ func InitializeServer(ctx context.Context) *http.Server {
 
 // wire.go:
 
-var ConfigSet = wire.NewSet(config.NewServer)
+var ConfigSet = wire.NewSet(config.NewServer, logger.NewConfig)
+
+var LoggerSet = wire.NewSet(logger.New)
 
 var DbSet = wire.NewSet(client.NewDBConnection, client.NewDBQueries, client.NewDBTransactor)
 
@@ -145,13 +155,28 @@ var HandlerSet = wire.NewSet(http.ProvideBookHandler, wire.Bind(
 ),
 )
 
+var MiddlewareSet = wire.NewSet(http.ProvideAuthMiddleware, wire.Bind(
+	new(http.AuthMiddleware),
+	new(*http.AuthMiddlewareImpl),
+), http.ProvideLoggingMiddleware, wire.Bind(
+	new(http.LoggingMiddleware),
+	new(*http.LoggingMiddlewareImpl),
+), http.ProvideMetricMiddleware, wire.Bind(
+	new(http.MetricMiddleware),
+	new(*http.MetricMiddlewareImpl),
+), http.ProvideRoleMiddleware, wire.Bind(
+	new(http.RoleMiddleware),
+	new(*http.RoleMiddlewareImpl),
+),
+)
+
 var RouterSet = wire.NewSet(http.ProvideRouter, wire.Bind(
 	new(http.Router),
 	new(*http.RouterImpl),
 ),
 )
 
-var ClientSet = wire.NewSet(client.NewGin, client.NewValidate, client.NewS3, client.NewS3Presign)
+var ClientSet = wire.NewSet(client.NewGin, client.NewValidate, client.NewS3, client.NewS3Presign, client.NewKeycloak)
 
 var PaymentServiceSet = wire.NewSet(paymentservice.ProvideVNPay, wire.Bind(
 	new(application.OrderPaymentService),
