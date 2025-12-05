@@ -42,6 +42,11 @@ type OrderItemBookResponseDTO struct {
 	Rating        float64   `json:"rating"        binding:"required"`
 }
 
+type VerifyVNPayIPNResponseDTO struct {
+	RspCode string `json:"RspCode" binding:"required"`
+	Message string `json:"Message" binding:"required"`
+}
+
 func ToOrderResponseDTO(order *domain.Order, bookMap map[uuid.UUID]*domain.Book, returnURL string) *OrderResponseDTO {
 	if order == nil {
 		return nil

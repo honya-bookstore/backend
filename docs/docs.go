@@ -1433,6 +1433,103 @@ const docTemplate = `{
                 }
             }
         },
+        "/orders/vnpay/ipn": {
+            "get": {
+                "description": "Verify VNPay IPN",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Verify VNPay IPN",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "vnp_Amount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "vnp_BankCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "vnp_BankTranNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "vnp_CardType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "vnp_OrderInfo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "vnp_PayDate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "vnp_ResponseCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "vnp_SecureHash",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "vnp_TmnCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "vnp_TransactionNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "vnp_TransactionStatus",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "vnp_TxnRef",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/VerifyVNPayIPNResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
         "/orders/{id}": {
             "get": {
                 "security": [
@@ -2380,6 +2477,21 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "VerifyVNPayIPNResponseDTO": {
+            "type": "object",
+            "required": [
+                "Message",
+                "RspCode"
+            ],
+            "properties": {
+                "Message": {
+                    "type": "string"
+                },
+                "RspCode": {
                     "type": "string"
                 }
             }

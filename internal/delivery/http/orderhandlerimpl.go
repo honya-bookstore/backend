@@ -162,3 +162,32 @@ func (h *OrderHandlerImpl) Update(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, order)
 }
+
+// VerifyVNPayIPN godoc
+//
+//	@Summary		Verify VNPay IPN
+//	@Description	Verify VNPay IPN
+//	@Tags			Order
+//	@Accept			json
+//	@Produce		json
+//	@Param			param query   VerifyVNPayIPNQueryParams true	"VNPay IPN data"
+//	@Success		200		{object}	VerifyVNPayIPNResponseDTO
+//	@Failure		400		{object}	Error
+//	@Failure		500		{object}	Error
+//	@Router			/orders/vnpay/ipn [get]
+func (h *OrderHandlerImpl) VerifyVNPayIPN(ctx *gin.Context) {
+	var queryParams VerifyVNPayIPNQueryParams
+	if err := ctx.ShouldBindQuery(&queryParams); err != nil {
+		ctx.JSON(http.StatusBadRequest, NewError(err.Error()))
+		return
+	}
+
+	response, err := h.orderApp.VerifyVNPayIPN(ctx.Request.Context(), VerifyVNPayIPNRequestDTO{
+		QueryParams: &queryParams,
+	})
+	if err != nil {
+		SendError(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+}

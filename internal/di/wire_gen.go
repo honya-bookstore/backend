@@ -179,7 +179,7 @@ var RouterSet = wire.NewSet(http.ProvideRouter, wire.Bind(
 var ClientSet = wire.NewSet(client.NewGin, client.NewValidate, client.NewS3, client.NewS3Presign, client.NewKeycloak)
 
 var PaymentServiceSet = wire.NewSet(paymentservice.ProvideVNPay, wire.Bind(
-	new(application.OrderPaymentService),
+	new(application.VNPayPaymentService),
 	new(*paymentservice.VNPay),
 ),
 )

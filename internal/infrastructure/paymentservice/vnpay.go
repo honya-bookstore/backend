@@ -2,12 +2,14 @@ package paymentservice
 
 import (
 	"context"
+	"strconv"
 
 	"backend/config"
 	"backend/internal/application"
 	"backend/internal/domain"
 
 	"github.com/hashicorp/go-multierror"
+	govnpayerrors "github.com/lamphusy/go-vnpay/error"
 	"github.com/lamphusy/go-vnpay/govnpay"
 	govnpaymodels "github.com/lamphusy/go-vnpay/model"
 )
@@ -16,13 +18,13 @@ type VNPay struct {
 	srvCfg *config.Server
 }
 
-var _ application.OrderPaymentService = (*VNPay)(nil)
+var _ application.VNPayPaymentService = (*VNPay)(nil)
 
 func ProvideVNPay(srvCfg *config.Server) *VNPay {
 	return &VNPay{srvCfg: srvCfg}
 }
 
-func (o *VNPay) GetPaymentURL(ctx context.Context, param application.GetPaymentURLParam) (string, error) {
+func (o *VNPay) GetPaymentURL(ctx context.Context, param application.GetPaymentURLVNPayParam) (string, error) {
 	url, err := govnpay.GetPaymentURL(&govnpaymodels.GetPaymentURLRequest{
 		Version:        govnpay.Version210,
 		TmnCode:        o.srvCfg.VNPTMNCode,
@@ -42,6 +44,24 @@ func (o *VNPay) GetPaymentURL(ctx context.Context, param application.GetPaymentU
 	return url, nil
 }
 
-func (a *VNPay) VerifyIPN() error {
-	return nil
+func (a *VNPay) VerifyIPN(ctx context.Context, param application.VerifyVNPayIPNParam) (code string, message string) {
+	if param.Data.SecureHash != a.srvCfg.VNPSecureSecret || param.Data.TmnCode != a.srvCfg.VNPTMNCode {
+		code = govnpayerrors.MerchantRespInvalidSignature.ToString()
+		message = govnpayerrors.MerchantRespInvalidSignature.Message()
+		return
+	}
+	amount, err := strconv.ParseInt(param.Data.Amount, 10, 64)
+	if err != nil {
+		code = govnpayerrors.MerchantRespInvalidAmount.ToString()
+		message = govnpayerrors.MerchantRespInvalidAmount.Message()
+		return
+	}
+	if amount != param.Order.TotalAmount {
+		code = govnpayerrors.MerchantRespInvalidAmount.ToString()
+		message = govnpayerrors.MerchantRespInvalidAmount.Message()
+		return
+	}
+	code = govnpayerrors.IPNCodeTransactionSuccess.ToString()
+	message = govnpayerrors.IPNCodeTransactionSuccess.Message()
+	return
 }

@@ -207,7 +207,7 @@ var ClientSet = wire.NewSet(
 var PaymentServiceSet = wire.NewSet(
 	paymentservice.ProvideVNPay,
 	wire.Bind(
-		new(application.OrderPaymentService),
+		new(application.VNPayPaymentService),
 		new(*paymentservice.VNPay),
 	),
 )

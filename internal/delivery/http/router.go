@@ -99,6 +99,7 @@ func (r *RouterImpl) RegisterRoutes(
 			orders.GET("/:id", r.orderHandler.Get)
 			orders.POST("", r.orderHandler.Create)
 			orders.PUT("/:id", r.orderHandler.Update)
+			orders.POST("/vnpay/ipn", r.orderHandler.VerifyVNPayIPN)
 		}
 		// reviews := api.Group("/reviews")
 		// {

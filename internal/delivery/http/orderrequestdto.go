@@ -60,3 +60,22 @@ type DeleteOrderRequestDTO struct {
 type DeleteOrderRequestPathParams struct {
 	OrderID uuid.UUID `json:"id" binding:"required" format:"uuid"`
 }
+
+type VerifyVNPayIPNRequestDTO struct {
+	QueryParams *VerifyVNPayIPNQueryParams
+}
+
+type VerifyVNPayIPNQueryParams struct {
+	Amount            string `json:"vnp_Amount"`
+	BackTranNo        string `json:"vnp_BankTranNo"`
+	BankCode          string `json:"vnp_BankCode"`
+	CartType          string `json:"vnp_CardType"`
+	OrderInfo         string `json:"vnp_OrderInfo"`
+	PayDate           string `json:"vnp_PayDate"`
+	ResponseCode      string `json:"vnp_ResponseCode"`
+	SecureHash        string `json:"vnp_SecureHash"`
+	TmnCode           string `json:"vnp_TmnCode"`
+	TransactionNo     string `json:"vnp_TransactionNo"`
+	TransactionStatus string `json:"vnp_TransactionStatus"`
+	TxnRef            string `json:"vnp_TxnRef"`
+}

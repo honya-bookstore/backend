@@ -7,4 +7,5 @@ type OrderApplication interface {
 	Get(ctx context.Context, param GetOrderRequestDTO) (*OrderResponseDTO, error)
 	Create(ctx context.Context, param CreateOrderRequestDTO) (*OrderResponseDTO, error)
 	Update(ctx context.Context, param UpdateOrderRequestDTO) (*OrderResponseDTO, error)
+	VerifyVNPayIPN(ctx context.Context, param VerifyVNPayIPNRequestDTO) (*VerifyVNPayIPNResponseDTO, error)
 }
