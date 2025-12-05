@@ -1871,7 +1871,6 @@ const docTemplate = `{
                 "city",
                 "email",
                 "firstName",
-                "items",
                 "lastName",
                 "provider",
                 "userId"
@@ -1889,12 +1888,6 @@ const docTemplate = `{
                 "firstName": {
                     "type": "string"
                 },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/CreateOrderItemData"
-                    }
-                },
                 "lastName": {
                     "type": "string"
                 },
@@ -1906,21 +1899,6 @@ const docTemplate = `{
                 },
                 "userId": {
                     "type": "string"
-                }
-            }
-        },
-        "CreateOrderItemData": {
-            "type": "object",
-            "required": [
-                "bookId",
-                "quantity"
-            ],
-            "properties": {
-                "bookId": {
-                    "type": "string"
-                },
-                "quantity": {
-                    "type": "integer"
                 }
             }
         },

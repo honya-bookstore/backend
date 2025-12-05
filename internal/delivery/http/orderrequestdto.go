@@ -28,20 +28,14 @@ type CreateOrderRequestDTO struct {
 }
 
 type CreateOrderData struct {
-	Email     string                `json:"email"     binding:"required,email"`
-	FirstName string                `json:"firstName" binding:"required"`
-	LastName  string                `json:"lastName"  binding:"required"`
-	Address   string                `json:"address"   binding:"required"`
-	City      string                `json:"city"      binding:"required"`
-	Provider  domain.OrderProvider  `json:"provider"  binding:"required"`
-	Items     []CreateOrderItemData `json:"items"     binding:"required,dive"`
-	UserID    uuid.UUID             `json:"userId"    binding:"required"`
-	ReturnURL string                `json:"returnUrl"`
-}
-
-type CreateOrderItemData struct {
-	BookID   uuid.UUID `json:"bookId"   binding:"required"`
-	Quantity int       `json:"quantity" binding:"required"`
+	Email     string               `json:"email"     binding:"required,email"`
+	FirstName string               `json:"firstName" binding:"required"`
+	LastName  string               `json:"lastName"  binding:"required"`
+	Address   string               `json:"address"   binding:"required"`
+	City      string               `json:"city"      binding:"required"`
+	Provider  domain.OrderProvider `json:"provider"  binding:"required"`
+	UserID    uuid.UUID            `json:"userId"    binding:"required"`
+	ReturnURL string               `json:"returnUrl"`
 }
 
 type UpdateOrderRequestDTO struct {

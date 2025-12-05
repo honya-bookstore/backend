@@ -14,6 +14,7 @@ type Order struct {
 	orderService        domain.OrderService
 	bookRepo            domain.BookRepository
 	bookService         domain.BookService
+	cartRepo            domain.CartRepository
 	orderPaymentService OrderPaymentService
 }
 
@@ -22,6 +23,7 @@ func ProvideOrder(
 	orderService domain.OrderService,
 	bookRepo domain.BookRepository,
 	bookService domain.BookService,
+	cartRepo domain.CartRepository,
 	orderPaymentService OrderPaymentService,
 ) *Order {
 	return &Order{
@@ -29,6 +31,7 @@ func ProvideOrder(
 		orderService:        orderService,
 		bookRepo:            bookRepo,
 		bookService:         bookService,
+		cartRepo:            cartRepo,
 		orderPaymentService: orderPaymentService,
 	}
 }
@@ -78,8 +81,18 @@ func (o *Order) Get(ctx context.Context, param http.GetOrderRequestDTO) (*http.O
 }
 
 func (o *Order) Create(ctx context.Context, param http.CreateOrderRequestDTO) (*http.OrderResponseDTO, error) {
-	bookIDs := make([]uuid.UUID, 0, len(param.Data.Items))
-	for _, item := range param.Data.Items {
+	// check out all item in cart
+	cart, err := o.cartRepo.Get(ctx, domain.CartRepositoryGetParam{
+		UserID: param.Data.UserID,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if len(cart.Items) <= 0 {
+		return nil, domain.ErrInvalid
+	}
+	bookIDs := make([]uuid.UUID, 0, len(cart.Items))
+	for _, item := range cart.Items {
 		bookIDs = append(bookIDs, item.BookID)
 	}
 
@@ -95,8 +108,8 @@ func (o *Order) Create(ctx context.Context, param http.CreateOrderRequestDTO) (*
 		bookMap[(*books)[i].ID] = &(*books)[i]
 	}
 
-	items := make([]domain.OrderItem, 0, len(param.Data.Items))
-	for _, itemData := range param.Data.Items {
+	items := make([]domain.OrderItem, 0, len(cart.Items))
+	for _, itemData := range cart.Items {
 		book, ok := bookMap[itemData.BookID]
 		if !ok {
 			return nil, domain.ErrNotFound
