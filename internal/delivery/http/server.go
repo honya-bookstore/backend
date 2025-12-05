@@ -21,9 +21,12 @@ func NewServer(
 	srvCfg *config.Server,
 	authHandler AuthHandler,
 ) *Server {
-	e.Use(cors.New(cors.Config{
-		AllowOrigins: srvCfg.AllowOrigins,
-	}))
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowOrigins = srvCfg.AllowOrigins
+	corsConfig.AllowCredentials = true
+	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type"}
+	e.Use(cors.New(corsConfig))
+
 	r.RegisterRoutes(e)
 	auth := e.Group("/auth")
 	{
