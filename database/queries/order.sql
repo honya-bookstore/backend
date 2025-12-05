@@ -2,6 +2,9 @@
 INSERT INTO orders (
   id,
   user_id,
+  email,
+  first_name,
+  last_name,
   address,
   city,
   total_amount,
@@ -13,6 +16,9 @@ INSERT INTO orders (
 ) VALUES (
   sqlc.arg('id'),
   sqlc.arg('user_id'),
+  sqlc.arg('email'),
+  sqlc.arg('first_name'),
+  sqlc.arg('last_name'),
   sqlc.arg('address'),
   sqlc.arg('city'),
   sqlc.arg('total_amount'),
@@ -24,6 +30,9 @@ INSERT INTO orders (
 )
 ON CONFLICT (id) DO UPDATE SET
   user_id = EXCLUDED.user_id,
+  email = EXCLUDED.email,
+  first_name = EXCLUDED.first_name,
+  last_name = EXCLUDED.last_name,
   address = EXCLUDED.address,
   city = EXCLUDED.city,
   total_amount = EXCLUDED.total_amount,

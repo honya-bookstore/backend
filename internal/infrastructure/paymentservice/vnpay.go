@@ -13,10 +13,14 @@ import (
 )
 
 type VNPay struct {
-	srvCfg config.Server
+	srvCfg *config.Server
 }
 
 var _ application.OrderPaymentService = (*VNPay)(nil)
+
+func ProvideVNPay(srvCfg *config.Server) *VNPay {
+	return &VNPay{srvCfg: srvCfg}
+}
 
 func (o *VNPay) GetPaymentURL(ctx context.Context, param application.GetPaymentURLParam) (string, error) {
 	url, err := govnpay.GetPaymentURL(&govnpaymodels.GetPaymentURLRequest{
@@ -38,4 +42,6 @@ func (o *VNPay) GetPaymentURL(ctx context.Context, param application.GetPaymentU
 	return url, nil
 }
 
-func (a *VNPay) VerifyIPN() error
+func (a *VNPay) VerifyIPN() error {
+	return nil
+}

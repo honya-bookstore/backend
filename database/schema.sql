@@ -106,6 +106,9 @@ CREATE TABLE order_providers (
 
 CREATE TABLE orders (
   id UUID PRIMARY KEY,
+  email TEXT NOT NULL,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
   address TEXT NOT NULL,
   city TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),

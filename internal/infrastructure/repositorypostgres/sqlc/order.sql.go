@@ -65,7 +65,7 @@ func (q *Queries) CreateTempTableOrderItems(ctx context.Context) error {
 
 const getOrder = `-- name: GetOrder :one
 SELECT
-  id, address, city, created_at, updated_at, total_amount, is_paid, user_id, status_id, provider_id
+  id, email, first_name, last_name, address, city, created_at, updated_at, total_amount, is_paid, user_id, status_id, provider_id
 FROM
   orders
 WHERE
@@ -81,6 +81,9 @@ func (q *Queries) GetOrder(ctx context.Context, arg GetOrderParams) (Order, erro
 	var i Order
 	err := row.Scan(
 		&i.ID,
+		&i.Email,
+		&i.FirstName,
+		&i.LastName,
 		&i.Address,
 		&i.City,
 		&i.CreatedAt,
@@ -286,7 +289,7 @@ func (q *Queries) ListOrderStatuses(ctx context.Context, arg ListOrderStatusesPa
 
 const listOrders = `-- name: ListOrders :many
 SELECT
-  id, address, city, created_at, updated_at, total_amount, is_paid, user_id, status_id, provider_id
+  id, email, first_name, last_name, address, city, created_at, updated_at, total_amount, is_paid, user_id, status_id, provider_id
 FROM
   orders
 WHERE
@@ -350,6 +353,9 @@ func (q *Queries) ListOrders(ctx context.Context, arg ListOrdersParams) ([]Order
 		var i Order
 		if err := rows.Scan(
 			&i.ID,
+			&i.Email,
+			&i.FirstName,
+			&i.LastName,
 			&i.Address,
 			&i.City,
 			&i.CreatedAt,
@@ -409,6 +415,9 @@ const upsertOrder = `-- name: UpsertOrder :exec
 INSERT INTO orders (
   id,
   user_id,
+  email,
+  first_name,
+  last_name,
   address,
   city,
   total_amount,
@@ -427,10 +436,16 @@ INSERT INTO orders (
   $7,
   $8,
   $9,
-  $10
+  $10,
+  $11,
+  $12,
+  $13
 )
 ON CONFLICT (id) DO UPDATE SET
   user_id = EXCLUDED.user_id,
+  email = EXCLUDED.email,
+  first_name = EXCLUDED.first_name,
+  last_name = EXCLUDED.last_name,
   address = EXCLUDED.address,
   city = EXCLUDED.city,
   total_amount = EXCLUDED.total_amount,
@@ -444,6 +459,9 @@ ON CONFLICT (id) DO UPDATE SET
 type UpsertOrderParams struct {
 	ID          uuid.UUID
 	UserID      uuid.UUID
+	Email       string
+	FirstName   string
+	LastName    string
 	Address     string
 	City        string
 	TotalAmount pgtype.Numeric
@@ -458,6 +476,9 @@ func (q *Queries) UpsertOrder(ctx context.Context, arg UpsertOrderParams) error 
 	_, err := q.db.Exec(ctx, upsertOrder,
 		arg.ID,
 		arg.UserID,
+		arg.Email,
+		arg.FirstName,
+		arg.LastName,
 		arg.Address,
 		arg.City,
 		arg.TotalAmount,

@@ -8,8 +8,13 @@ package di
 
 import (
 	"backend/config"
+	"backend/internal/application"
 	"backend/internal/client"
 	"backend/internal/delivery/http"
+	"backend/internal/domain"
+	"backend/internal/infrastructure/paymentservice"
+	"backend/internal/infrastructure/repositorypostgres"
+	"backend/internal/service"
 	"context"
 	"github.com/google/wire"
 )
@@ -19,13 +24,32 @@ import (
 func InitializeServer(ctx context.Context) *http.Server {
 	engine := client.NewGin()
 	articleHandlerImpl := http.ProvideArticleHandler()
-	bookHandlerImpl := http.ProvideBookHandler()
-	cartHandlerImpl := http.ProvideCartHandler()
-	categoryHandlerImpl := http.ProvideCategoryHandler()
-	mediaHandlerImpl := http.ProvideMediaHandler()
-	orderHandlerImpl := http.ProvideOrderHandler()
-	routerImpl := http.ProvideRouter(articleHandlerImpl, bookHandlerImpl, cartHandlerImpl, categoryHandlerImpl, mediaHandlerImpl, orderHandlerImpl)
 	server := config.NewServer()
+	pool := client.NewDBConnection(ctx, server)
+	queries := client.NewDBQueries(pool)
+	book := repositorypostgres.ProvideBook(queries, pool)
+	validate := client.NewValidate()
+	serviceBook := service.ProvideBook(validate)
+	category := repositorypostgres.ProvideCategory(queries, pool)
+	serviceCategory := service.ProvideCategory(validate)
+	media := repositorypostgres.ProvideMedia(queries, pool)
+	serviceMedia := service.ProvideMedia(validate)
+	applicationBook := application.ProvideBook(book, serviceBook, category, serviceCategory, media, serviceMedia)
+	bookHandlerImpl := http.ProvideBookHandler(applicationBook)
+	cart := repositorypostgres.ProvideCart(queries, pool)
+	serviceCart := service.ProvideCart(validate)
+	applicationCart := application.ProvideCart(cart, serviceCart, book, serviceBook)
+	cartHandlerImpl := http.ProvideCartHandler(applicationCart)
+	applicationCategory := application.ProvideCategory(category, serviceCategory)
+	categoryHandlerImpl := http.ProvideCategoryHandler(applicationCategory)
+	applicationMedia := application.ProvideMedia(media, serviceMedia)
+	mediaHandlerImpl := http.ProvideMediaHandler(applicationMedia)
+	order := repositorypostgres.ProvideOrder(queries, pool)
+	serviceOrder := service.ProvideOrder(validate)
+	vnPay := paymentservice.ProvideVNPay(server)
+	applicationOrder := application.ProvideOrder(order, serviceOrder, book, serviceBook, vnPay)
+	orderHandlerImpl := http.ProvideOrderHandler(applicationOrder)
+	routerImpl := http.ProvideRouter(articleHandlerImpl, bookHandlerImpl, cartHandlerImpl, categoryHandlerImpl, mediaHandlerImpl, orderHandlerImpl)
 	authHandlerImpl := http.ProvideAuthHandler(server)
 	httpServer := http.NewServer(engine, routerImpl, server, authHandlerImpl)
 	return httpServer
@@ -34,6 +58,62 @@ func InitializeServer(ctx context.Context) *http.Server {
 // wire.go:
 
 var ConfigSet = wire.NewSet(config.NewServer)
+
+var DbSet = wire.NewSet(client.NewDBConnection, client.NewDBQueries, client.NewDBTransactor)
+
+var ServiceSet = wire.NewSet(service.ProvideBook, wire.Bind(
+	new(domain.BookService),
+	new(*service.Book),
+), service.ProvideCategory, wire.Bind(
+	new(domain.CategoryService),
+	new(*service.Category),
+), service.ProvideCart, wire.Bind(
+	new(domain.CartService),
+	new(*service.Cart),
+), service.ProvideOrder, wire.Bind(
+	new(domain.OrderService),
+	new(*service.Order),
+), service.ProvideMedia, wire.Bind(
+	new(domain.MediaService),
+	new(*service.Media),
+),
+)
+
+var RepositorySet = wire.NewSet(repositorypostgres.ProvideCategory, wire.Bind(
+	new(domain.CategoryRepository),
+	new(*repositorypostgres.Category),
+), repositorypostgres.ProvideBook, wire.Bind(
+	new(domain.BookRepository),
+	new(*repositorypostgres.Book),
+), repositorypostgres.ProvideCart, wire.Bind(
+	new(domain.CartRepository),
+	new(*repositorypostgres.Cart),
+), repositorypostgres.ProvideOrder, wire.Bind(
+	new(domain.OrderRepository),
+	new(*repositorypostgres.Order),
+), repositorypostgres.ProvideMedia, wire.Bind(
+	new(domain.MediaRepository),
+	new(*repositorypostgres.Media),
+),
+)
+
+var ApplicationSet = wire.NewSet(application.ProvideBook, wire.Bind(
+	new(http.BookApplication),
+	new(*application.Book),
+), application.ProvideCategory, wire.Bind(
+	new(http.CategoryApplication),
+	new(*application.Category),
+), application.ProvideCart, wire.Bind(
+	new(http.CartApplication),
+	new(*application.Cart),
+), application.ProvideOrder, wire.Bind(
+	new(http.OrderApplication),
+	new(*application.Order),
+), application.ProvideMedia, wire.Bind(
+	new(http.MediaApplication),
+	new(*application.Media),
+),
+)
 
 var HandlerSet = wire.NewSet(http.ProvideArticleHandler, wire.Bind(
 	new(http.ArticleHandler),
@@ -65,4 +145,10 @@ var RouterSet = wire.NewSet(http.ProvideRouter, wire.Bind(
 ),
 )
 
-var ClientSet = wire.NewSet(client.NewGin)
+var ClientSet = wire.NewSet(client.NewGin, client.NewValidate, client.NewS3, client.NewS3Presign)
+
+var PaymentServiceSet = wire.NewSet(paymentservice.ProvideVNPay, wire.Bind(
+	new(application.OrderPaymentService),
+	new(*paymentservice.VNPay),
+),
+)

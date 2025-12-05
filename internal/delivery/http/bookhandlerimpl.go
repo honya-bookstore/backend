@@ -36,8 +36,6 @@ func ProvideBookHandler(
 //	@Success		200			{object}	PaginationResponseDTO[BookResponseDTO]
 //	@Failure		500			{object}	Error
 //	@Router			/books [get]
-//	@Security		OAuth2AccessCode
-//	@Security		OAuth2Password
 func (h *BookHandlerImpl) List(ctx *gin.Context) {
 	paginate, error := createPaginationRequestDtoFromQuery(ctx)
 	if error != nil {
@@ -100,8 +98,6 @@ func (h *BookHandlerImpl) List(ctx *gin.Context) {
 //	@Failure		404			{object}	Error
 //	@Failure		500			{object}	Error
 //	@Router			/books/{id} [get]
-//	@Security		OAuth2AccessCode
-//	@Security		OAuth2Password
 func (h *BookHandlerImpl) Get(ctx *gin.Context) {
 	bookID, ok := pathToUUID(ctx, "id")
 	if !ok {

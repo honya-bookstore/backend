@@ -35,8 +35,6 @@ func ProvideCategoryHandler(categoryApp CategoryApplication) *CategoryHandlerImp
 //	@Success		200			{object}	PaginationResponseDTO[CategoryResponseDTO]
 //	@Failure		500			{object}	Error
 //	@Router			/categories [get]
-//	@Security		OAuth2AccessCode
-//	@Security		OAuth2Password
 func (h *CategoryHandlerImpl) List(ctx *gin.Context) {
 	paginate, err := createPaginationRequestDtoFromQuery(ctx)
 	if err != nil {
@@ -59,8 +57,8 @@ func (h *CategoryHandlerImpl) List(ctx *gin.Context) {
 
 // GetCategoryBySlug godoc
 //
-//	@Summary		GetBySlug category by Slug
-//	@Description	GetBySlug category details by Slug
+//	@Summary		Get category by Slug
+//	@Description	Get category details by Slug
 //	@Tags			Category
 //	@Accept			json
 //	@Produce		json
@@ -69,8 +67,6 @@ func (h *CategoryHandlerImpl) List(ctx *gin.Context) {
 //	@Failure		404			{object}	Error
 //	@Failure		500			{object}	Error
 //	@Router			/categories/{slug} [get]
-//	@Security		OAuth2AccessCode
-//	@Security		OAuth2Password
 func (h *CategoryHandlerImpl) GetBySlug(ctx *gin.Context) {
 	slug := ctx.Param("slug")
 	if slug == "" {

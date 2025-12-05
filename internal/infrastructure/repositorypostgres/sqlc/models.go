@@ -85,6 +85,9 @@ type Medium struct {
 
 type Order struct {
 	ID          uuid.UUID
+	Email       string
+	FirstName   string
+	LastName    string
 	Address     string
 	City        string
 	CreatedAt   pgtype.Timestamptz
