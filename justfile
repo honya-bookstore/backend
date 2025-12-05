@@ -57,7 +57,7 @@ gen-wire:
 
 [doc("Generate swagger output to ./docs/")]
 gen-swag *args="":
-    swag init -g {{ main-go }} {{ args }}
+    swag init -g {{ main-go }} --parseDependency --parseInternal --useStructName {{ args }}
 
 [doc("Generate sqlc code")]
 gen-sqlc *args="":

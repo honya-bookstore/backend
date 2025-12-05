@@ -165,7 +165,9 @@ func (b *Book) Get(ctx context.Context, param http.GetBookRequestDTO) (*http.Boo
 	if len(categoryIDsMap) > 0 {
 		categories, err = b.categoryRepo.List(
 			ctx,
-			domain.CategoryRepositoryListParam{},
+			domain.CategoryRepositoryListParam{
+				CategoryIDs: book.CategoryIDs,
+			},
 		)
 		if err != nil {
 			return nil, err

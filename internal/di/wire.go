@@ -113,11 +113,11 @@ var ApplicationSet = wire.NewSet(
 )
 
 var HandlerSet = wire.NewSet(
-	http.ProvideArticleHandler,
-	wire.Bind(
-		new(http.ArticleHandler),
-		new(*http.ArticleHandlerImpl),
-	),
+	// http.ProvideArticleHandler,
+	// wire.Bind(
+	// 	new(http.ArticleHandler),
+	// 	new(*http.ArticleHandlerImpl),
+	// ),
 	http.ProvideBookHandler,
 	wire.Bind(
 		new(http.BookHandler),

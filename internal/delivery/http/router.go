@@ -7,7 +7,7 @@ type Router interface {
 }
 
 type RouterImpl struct {
-	articleHandler  ArticleHandler
+	// articleHandler  ArticleHandler
 	bookHandler     BookHandler
 	cartHandler     CartHandler
 	categoryHandler CategoryHandler
@@ -16,7 +16,7 @@ type RouterImpl struct {
 }
 
 func ProvideRouter(
-	articleHandler ArticleHandler,
+	// articleHandler ArticleHandler,
 	bookHandler BookHandler,
 	cartHandler CartHandler,
 	categoryHandler CategoryHandler,
@@ -24,7 +24,7 @@ func ProvideRouter(
 	orderHandler OrderHandler,
 ) *RouterImpl {
 	return &RouterImpl{
-		articleHandler:  articleHandler,
+		// articleHandler:  articleHandler,
 		bookHandler:     bookHandler,
 		cartHandler:     cartHandler,
 		categoryHandler: categoryHandler,
@@ -38,14 +38,14 @@ func (r *RouterImpl) RegisterRoutes(
 ) {
 	api := e.Group("/api")
 	{
-		articles := api.Group("/articles")
-		{
-			articles.GET("", r.articleHandler.List)
-			articles.POST("", r.articleHandler.Create)
-			articles.GET("/:id", r.articleHandler.Get)
-			articles.PATCH("/:id", r.articleHandler.Update)
-			articles.DELETE("/:id", r.articleHandler.Delete)
-		}
+		// articles := api.Group("/articles")
+		// {
+		// 	articles.GET("", r.articleHandler.List)
+		// 	articles.POST("", r.articleHandler.Create)
+		// 	articles.GET("/:id", r.articleHandler.Get)
+		// 	articles.PATCH("/:id", r.articleHandler.Update)
+		// 	articles.DELETE("/:id", r.articleHandler.Delete)
+		// }
 		books := api.Group("/books")
 		{
 			books.GET("", r.bookHandler.List)

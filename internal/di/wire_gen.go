@@ -23,7 +23,6 @@ import (
 
 func InitializeServer(ctx context.Context) *http.Server {
 	engine := client.NewGin()
-	articleHandlerImpl := http.ProvideArticleHandler()
 	server := config.NewServer()
 	pool := client.NewDBConnection(ctx, server)
 	queries := client.NewDBQueries(pool)
@@ -49,7 +48,7 @@ func InitializeServer(ctx context.Context) *http.Server {
 	vnPay := paymentservice.ProvideVNPay(server)
 	applicationOrder := application.ProvideOrder(order, serviceOrder, book, serviceBook, vnPay)
 	orderHandlerImpl := http.ProvideOrderHandler(applicationOrder)
-	routerImpl := http.ProvideRouter(articleHandlerImpl, bookHandlerImpl, cartHandlerImpl, categoryHandlerImpl, mediaHandlerImpl, orderHandlerImpl)
+	routerImpl := http.ProvideRouter(bookHandlerImpl, cartHandlerImpl, categoryHandlerImpl, mediaHandlerImpl, orderHandlerImpl)
 	authHandlerImpl := http.ProvideAuthHandler(server)
 	httpServer := http.NewServer(engine, routerImpl, server, authHandlerImpl)
 	return httpServer
@@ -115,10 +114,7 @@ var ApplicationSet = wire.NewSet(application.ProvideBook, wire.Bind(
 ),
 )
 
-var HandlerSet = wire.NewSet(http.ProvideArticleHandler, wire.Bind(
-	new(http.ArticleHandler),
-	new(*http.ArticleHandlerImpl),
-), http.ProvideBookHandler, wire.Bind(
+var HandlerSet = wire.NewSet(http.ProvideBookHandler, wire.Bind(
 	new(http.BookHandler),
 	new(*http.BookHandlerImpl),
 ), http.ProvideCartHandler, wire.Bind(
