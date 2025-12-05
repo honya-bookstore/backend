@@ -155,7 +155,6 @@ func (b *Book) Get(ctx context.Context, param http.GetBookRequestDTO) (*http.Boo
 		return nil, err
 	}
 
-	// Fetch categories
 	categoryIDsMap := make(map[string]struct{})
 	for _, catID := range book.CategoryIDs {
 		categoryIDsMap[catID.String()] = struct{}{}
@@ -180,11 +179,18 @@ func (b *Book) Get(ctx context.Context, param http.GetBookRequestDTO) (*http.Boo
 		mediaIDsMap[bookMedia.MediaID.String()] = struct{}{}
 	}
 
+	var mediaIDs []uuid.UUID
+	for _, bookMedia := range book.Medium {
+		mediaIDs = append(mediaIDs, bookMedia.MediaID)
+	}
+
 	var media *[]domain.Media
 	if len(mediaIDsMap) > 0 {
 		media, err = b.mediaRepo.List(
 			ctx,
-			domain.MediaRepositoryListParam{},
+			domain.MediaRepositoryListParam{
+				MediaIDs: mediaIDs,
+			},
 		)
 		if err != nil {
 			return nil, err
