@@ -15,12 +15,12 @@ type Order struct {
 	City        string        `validate:"required"`
 	Provider    OrderProvider `validate:"required,oneof=COD VNPAY MOMO ZALOPAY"`
 	Status      OrderStatus   `validate:"required,oneof=Pending Processing Shipped Delivered Cancelled"`
-	IsPaid      bool          `validate:"required"`
-	CreatedAt   time.Time     `validate:"required"`
-	UpdatedAt   time.Time     `validate:"required,gtefield=CreatedAt"`
-	Items       []OrderItem   `validate:"omitempty,dive"`
-	TotalAmount int64         `validate:"required"`
-	UserID      uuid.UUID     `validate:"required"`
+	IsPaid      bool
+	CreatedAt   time.Time   `validate:"required"`
+	UpdatedAt   time.Time   `validate:"required,gtefield=CreatedAt"`
+	Items       []OrderItem `validate:"omitempty,dive"`
+	TotalAmount int64       `validate:"required"`
+	UserID      uuid.UUID   `validate:"required"`
 }
 
 type OrderItem struct {
@@ -58,6 +58,7 @@ func NewOrder(
 	lastName string,
 	address string,
 	provider OrderProvider,
+	city string,
 	items []OrderItem,
 ) (*Order, error) {
 	id, err := uuid.NewV7()
@@ -76,6 +77,7 @@ func NewOrder(
 		FirstName:   firstName,
 		LastName:    lastName,
 		Address:     address,
+		City:        city,
 		Provider:    provider,
 		Status:      OrderStatusPending,
 		IsPaid:      false,

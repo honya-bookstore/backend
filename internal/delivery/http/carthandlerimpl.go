@@ -173,7 +173,7 @@ func (h *CartHandlerImpl) Create(ctx *gin.Context) {
 //	@Failure		400			{object}	Error
 //	@Failure		409			{object}	Error
 //	@Failure		500			{object}	Error
-//	@Router			/cart/{id}/items/ [post]
+//	@Router			/cart/{id}/items [post]
 //	@Security		OAuth2AccessCode
 //	@Security		OAuth2Password
 func (h *CartHandlerImpl) CreateItem(ctx *gin.Context) {
