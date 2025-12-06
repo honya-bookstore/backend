@@ -1,0 +1,3 @@
+[submodule "govnpay"]
+	path = govnpay
+	url = git@github.com:electricilies/govnpay.git

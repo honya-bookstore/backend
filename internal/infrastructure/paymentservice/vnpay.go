@@ -9,9 +9,9 @@ import (
 	"backend/internal/domain"
 
 	"github.com/hashicorp/go-multierror"
-	govnpayerrors "github.com/lamphusy/go-vnpay/error"
-	"github.com/lamphusy/go-vnpay/govnpay"
-	govnpaymodels "github.com/lamphusy/go-vnpay/model"
+	govnpayerrors "github.com/electricilies/govnpay/error"
+	"github.com/electricilies/govnpay/govnpay"
+	govnpaymodels "github.com/electricilies/govnpay/model"
 )
 
 type VNPay struct {

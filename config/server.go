@@ -3,7 +3,7 @@ package config
 import (
 	"log"
 
-	govnpayhelper "github.com/lamphusy/go-vnpay/helper"
+	govnpayhelper "github.com/electricilies/govnpay/helper"
 	"github.com/spf13/viper"
 )
 
