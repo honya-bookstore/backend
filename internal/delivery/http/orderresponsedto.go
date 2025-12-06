@@ -9,21 +9,21 @@ import (
 )
 
 type OrderResponseDTO struct {
-	ID          uuid.UUID              `json:"id"                  binding:"required"`
-	Email       string                 `json:"email"               binding:"required"`
-	FirstName   string                 `json:"firstName"           binding:"required"`
-	LastName    string                 `json:"lastName"            binding:"required"`
-	Address     string                 `json:"address"             binding:"required"`
-	City        string                 `json:"city"                binding:"required"`
-	Provider    domain.OrderProvider   `json:"provider"            binding:"required"`
-	Status      domain.OrderStatus     `json:"status"              binding:"required"`
-	IsPaid      bool                   `json:"isPaid"              binding:"required"`
-	CreatedAt   time.Time              `json:"createdAt"           binding:"required"`
-	UpdatedAt   time.Time              `json:"updatedAt"           binding:"required"`
-	Items       []OrderItemResponseDTO `json:"items"               binding:"required"`
-	TotalAmount int64                  `json:"totalAmount"         binding:"required"`
-	UserID      uuid.UUID              `json:"userId"              binding:"required"`
-	ReturnURL   string                 `json:"returnUrl,omitempty"`
+	ID          uuid.UUID              `json:"id"                   binding:"required"`
+	Email       string                 `json:"email"                binding:"required"`
+	FirstName   string                 `json:"firstName"            binding:"required"`
+	LastName    string                 `json:"lastName"             binding:"required"`
+	Address     string                 `json:"address"              binding:"required"`
+	City        string                 `json:"city"                 binding:"required"`
+	Provider    domain.OrderProvider   `json:"provider"             binding:"required"`
+	Status      domain.OrderStatus     `json:"status"               binding:"required"`
+	IsPaid      bool                   `json:"isPaid"               binding:"required"`
+	CreatedAt   time.Time              `json:"createdAt"            binding:"required"`
+	UpdatedAt   time.Time              `json:"updatedAt"            binding:"required"`
+	Items       []OrderItemResponseDTO `json:"items"                binding:"required"`
+	TotalAmount int64                  `json:"totalAmount"          binding:"required"`
+	UserID      uuid.UUID              `json:"userId"               binding:"required"`
+	PaymentURL  string                 `json:"paymentUrl,omitempty"`
 }
 
 type OrderItemResponseDTO struct {
@@ -47,7 +47,7 @@ type VerifyVNPayIPNResponseDTO struct {
 	Message string `json:"Message" binding:"required"`
 }
 
-func ToOrderResponseDTO(order *domain.Order, bookMap map[uuid.UUID]*domain.Book, returnURL string) *OrderResponseDTO {
+func ToOrderResponseDTO(order *domain.Order, bookMap map[uuid.UUID]*domain.Book, paymentURL string) *OrderResponseDTO {
 	if order == nil {
 		return nil
 	}
@@ -90,6 +90,6 @@ func ToOrderResponseDTO(order *domain.Order, bookMap map[uuid.UUID]*domain.Book,
 		Items:       items,
 		TotalAmount: order.TotalAmount,
 		UserID:      order.UserID,
-		ReturnURL:   returnURL,
+		PaymentURL:  paymentURL,
 	}
 }

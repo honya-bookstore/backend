@@ -77,7 +77,14 @@ func (r *Cart) Save(
 	if err != nil {
 		return toDomainError(err)
 	}
-	err = r.mergeCartItems(ctx, qtx, &params.Cart)
+
+	if len(params.Cart.Items) == 0 {
+		err = qtx.DeleteCartItems(ctx, sqlc.DeleteCartItemsParams{
+			CartID: params.Cart.ID,
+		})
+	} else {
+		err = r.mergeCartItems(ctx, qtx, &params.Cart)
+	}
 	if err != nil {
 		return toDomainError(err)
 	}

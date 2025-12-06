@@ -5,6 +5,7 @@ linters:
   enable:
     - lll
     - testifylint
+    # - exhaustruct
   disable:
     - unused
   exclusions:
@@ -25,6 +26,7 @@ formatters:
   settings:
     gofumpt:
       module-path: backend
+      extra-rules: true
   exclusions:
     generated: strict
     paths:

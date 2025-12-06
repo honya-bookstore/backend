@@ -185,48 +185,27 @@ FROM
   books
 LEFT JOIN (
   SELECT
-    categories.id AS category_id,
-    pdb.score(books.id) AS category_score
-  FROM books
-  INNER JOIN books_categories
-    ON books.id = books_categories.book_id
+    bc.book_id,
+    SUM(pdb.score(categories.id)) AS category_score
+  FROM books_categories bc
   INNER JOIN categories
-    ON books_categories.category_id = categories.id
+    ON bc.category_id = categories.id
   WHERE
     CASE
-      WHEN $1::text = '' THEN TRUE
+      WHEN $1::text = '' THEN FALSE
       ELSE (
         categories.name ||| $1::text
         AND categories.deleted_at IS NULL
       )
     END
+  GROUP BY bc.book_id
 ) AS category_scores
-  ON books.id = (SELECT bc.book_id FROM books_categories bc WHERE bc.category_id = category_scores.category_id LIMIT 1)
-LEFT JOIN (
-  SELECT
-    book_id
-  FROM
-    books_categories
-  WHERE
-    CASE
-      WHEN $2::uuid[] IS NULL THEN TRUE
-      WHEN cardinality($2::uuid[]) = 0 THEN TRUE
-      ELSE category_id = ANY ($2::uuid[])
-    END
-  GROUP BY
-    book_id
-  HAVING
-    COUNT(DISTINCT category_id) >= CASE
-      WHEN $2::uuid[] IS NULL THEN 0
-      ELSE cardinality($2::uuid[])
-    END
-) AS category_filter
-  ON books.id = category_filter.book_id
+  ON books.id = category_scores.book_id
 WHERE
   CASE
-    WHEN $3::uuid[] IS NULL THEN TRUE
-    WHEN cardinality($3::uuid[]) = 0 THEN TRUE
-    ELSE books.id = ANY ($3::uuid[])
+    WHEN $2::uuid[] IS NULL THEN TRUE
+    WHEN cardinality($2::uuid[]) = 0 THEN TRUE
+    ELSE books.id = ANY ($2::uuid[])
   END
   AND CASE
     WHEN $1::text = '' THEN TRUE
@@ -235,9 +214,16 @@ WHERE
       OR books.description ||| $1::text
   END
   AND CASE
-    WHEN $2::uuid[] IS NULL THEN TRUE
-    WHEN cardinality($2::uuid[]) = 0 THEN TRUE
-    ELSE category_filter.book_id IS NOT NULL
+    WHEN $3::uuid[] IS NULL THEN TRUE
+    WHEN cardinality($3::uuid[]) = 0 THEN TRUE
+    ELSE EXISTS (
+      SELECT 1
+      FROM books_categories bc
+      WHERE bc.book_id = books.id
+        AND bc.category_id = ANY ($3::uuid[])
+      GROUP BY bc.book_id
+      HAVING COUNT(DISTINCT bc.category_id) >= cardinality($3::uuid[])
+    )
   END
   AND CASE
     WHEN $4::decimal IS NULL THEN TRUE
@@ -298,8 +284,8 @@ LIMIT NULLIF($14::integer, 0)
 
 type ListBooksParams struct {
 	Search      string
-	CategoryIDs []uuid.UUID
 	IDs         []uuid.UUID
+	CategoryIDs []uuid.UUID
 	MinPrice    pgtype.Numeric
 	MaxPrice    pgtype.Numeric
 	Rating      float32
@@ -316,8 +302,8 @@ type ListBooksParams struct {
 func (q *Queries) ListBooks(ctx context.Context, arg ListBooksParams) ([]Book, error) {
 	rows, err := q.db.Query(ctx, listBooks,
 		arg.Search,
-		arg.CategoryIDs,
 		arg.IDs,
+		arg.CategoryIDs,
 		arg.MinPrice,
 		arg.MaxPrice,
 		arg.Rating,

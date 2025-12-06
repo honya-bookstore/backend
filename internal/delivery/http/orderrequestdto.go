@@ -66,16 +66,16 @@ type VerifyVNPayIPNRequestDTO struct {
 }
 
 type VerifyVNPayIPNQueryParams struct {
-	Amount            string `json:"vnp_Amount"`
-	BackTranNo        string `json:"vnp_BankTranNo"`
-	BankCode          string `json:"vnp_BankCode"`
-	CartType          string `json:"vnp_CardType"`
-	OrderInfo         string `json:"vnp_OrderInfo"`
-	PayDate           string `json:"vnp_PayDate"`
-	ResponseCode      string `json:"vnp_ResponseCode"`
-	SecureHash        string `json:"vnp_SecureHash"`
-	TmnCode           string `json:"vnp_TmnCode"`
-	TransactionNo     string `json:"vnp_TransactionNo"`
-	TransactionStatus string `json:"vnp_TransactionStatus"`
-	TxnRef            string `json:"vnp_TxnRef"`
+	Amount            string `form:"vnp_Amount"            binding:"required"`
+	BankTranNo        string `form:"vnp_BankTranNo"        binding:"required"`
+	BankCode          string `form:"vnp_BankCode"          binding:"required"`
+	CardType          string `form:"vnp_CardType"          binding:"required"`
+	OrderInfo         string `form:"vnp_OrderInfo"         binding:"required"`
+	PayDate           string `form:"vnp_PayDate"           binding:"required"`
+	ResponseCode      string `form:"vnp_ResponseCode"      binding:"required"`
+	SecureHash        string `form:"vnp_SecureHash"        binding:"required"`
+	TmnCode           string `form:"vnp_TmnCode"           binding:"required"`
+	TransactionNo     string `form:"vnp_TransactionNo"     binding:"required"`
+	TransactionStatus string `form:"vnp_TransactionStatus" binding:"required"`
+	TxnRef            string `form:"vnp_TxnRef"            binding:"required"`
 }

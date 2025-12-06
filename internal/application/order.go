@@ -203,20 +203,21 @@ func (o *Order) Update(ctx context.Context, param http.UpdateOrderRequestDTO) (*
 }
 
 func (o *Order) VerifyVNPayIPN(ctx context.Context, param http.VerifyVNPayIPNRequestDTO) (*http.VerifyVNPayIPNResponseDTO, error) {
-	tnxRef, err := uuid.Parse(param.QueryParams.TxnRef)
-	if err != nil {
-		return nil, err
+	verifyParam := VerifyIPNVNPayParam{
+		Amount:            param.QueryParams.Amount,
+		BankTranNo:        param.QueryParams.BankTranNo,
+		BankCode:          param.QueryParams.BankCode,
+		CardType:          param.QueryParams.CardType,
+		OrderInfo:         param.QueryParams.OrderInfo,
+		PayDate:           param.QueryParams.PayDate,
+		ResponseCode:      param.QueryParams.ResponseCode,
+		SecureHash:        param.QueryParams.SecureHash,
+		TmnCode:           param.QueryParams.TmnCode,
+		TransactionNo:     param.QueryParams.TransactionNo,
+		TransactionStatus: param.QueryParams.TransactionStatus,
+		TxnRef:            param.QueryParams.TxnRef,
 	}
-	verifyParam := VerifyVNPayIPNParam{
-		OrderID: tnxRef,
-		Data: &VerifyVNPayIPNData{
-			Amount:       param.QueryParams.Amount,
-			ResponseCode: param.QueryParams.ResponseCode,
-			SecureHash:   param.QueryParams.SecureHash,
-			TmnCode:      param.QueryParams.TmnCode,
-		},
-	}
-	rspCode, message := o.VNPayPaymentService.VerifyIPN(
+	rspCode, message, err := o.VNPayPaymentService.VerifyIPN(
 		ctx,
 		verifyParam,
 		o.getOrder,
@@ -226,7 +227,7 @@ func (o *Order) VerifyVNPayIPN(ctx context.Context, param http.VerifyVNPayIPNReq
 	return &http.VerifyVNPayIPNResponseDTO{
 		RspCode: rspCode,
 		Message: message,
-	}, nil
+	}, err
 }
 
 func (o *Order) enrichOrder(ctx context.Context, order *domain.Order, returnURL string) (*http.OrderResponseDTO, error) {

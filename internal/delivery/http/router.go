@@ -48,6 +48,8 @@ func ProvideRouter(
 func (r *RouterImpl) RegisterRoutes(
 	e *gin.Engine,
 ) {
+	e.Use(r.loggingMiddleware.Handler())
+	e.Use(r.metricMiddleware.Handler())
 	api := e.Group("/api")
 	{
 		// articles := api.Group("/articles")

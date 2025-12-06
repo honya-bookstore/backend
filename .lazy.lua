@@ -50,6 +50,9 @@ return {
     ---@type conform.setupOpts
     opts = {
       formatters = {
+        gofumpt = {
+          append_args = { "-extra" },
+        },
         swag_fmt = {
           command = "swag",
           args = {

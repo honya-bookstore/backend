@@ -186,7 +186,7 @@ func (h *OrderHandlerImpl) VerifyVNPayIPN(ctx *gin.Context) {
 		QueryParams: &queryParams,
 	})
 	if err != nil {
-		SendError(ctx, err)
+		SendVNPayError(ctx, response, err)
 		return
 	}
 	ctx.JSON(http.StatusOK, response)

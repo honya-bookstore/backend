@@ -56,43 +56,22 @@ FROM
   books
 LEFT JOIN (
   SELECT
-    categories.id AS category_id,
-    pdb.score(books.id) AS category_score
-  FROM books
-  INNER JOIN books_categories
-    ON books.id = books_categories.book_id
+    bc.book_id,
+    SUM(pdb.score(categories.id)) AS category_score
+  FROM books_categories bc
   INNER JOIN categories
-    ON books_categories.category_id = categories.id
+    ON bc.category_id = categories.id
   WHERE
     CASE
-      WHEN sqlc.arg('search')::text = '' THEN TRUE
+      WHEN sqlc.arg('search')::text = '' THEN FALSE
       ELSE (
         categories.name ||| sqlc.arg('search')::text
         AND categories.deleted_at IS NULL
       )
     END
+  GROUP BY bc.book_id
 ) AS category_scores
-  ON books.id = (SELECT bc.book_id FROM books_categories bc WHERE bc.category_id = category_scores.category_id LIMIT 1)
-LEFT JOIN (
-  SELECT
-    book_id
-  FROM
-    books_categories
-  WHERE
-    CASE
-      WHEN sqlc.arg('category_ids')::uuid[] IS NULL THEN TRUE
-      WHEN cardinality(sqlc.arg('category_ids')::uuid[]) = 0 THEN TRUE
-      ELSE category_id = ANY (sqlc.arg('category_ids')::uuid[])
-    END
-  GROUP BY
-    book_id
-  HAVING
-    COUNT(DISTINCT category_id) >= CASE
-      WHEN sqlc.arg('category_ids')::uuid[] IS NULL THEN 0
-      ELSE cardinality(sqlc.arg('category_ids')::uuid[])
-    END
-) AS category_filter
-  ON books.id = category_filter.book_id
+  ON books.id = category_scores.book_id
 WHERE
   CASE
     WHEN sqlc.arg('ids')::uuid[] IS NULL THEN TRUE
@@ -108,7 +87,14 @@ WHERE
   AND CASE
     WHEN sqlc.arg('category_ids')::uuid[] IS NULL THEN TRUE
     WHEN cardinality(sqlc.arg('category_ids')::uuid[]) = 0 THEN TRUE
-    ELSE category_filter.book_id IS NOT NULL
+    ELSE EXISTS (
+      SELECT 1
+      FROM books_categories bc
+      WHERE bc.book_id = books.id
+        AND bc.category_id = ANY (sqlc.arg('category_ids')::uuid[])
+      GROUP BY bc.book_id
+      HAVING COUNT(DISTINCT bc.category_id) >= cardinality(sqlc.arg('category_ids')::uuid[])
+    )
   END
   AND CASE
     WHEN sqlc.arg('min_price')::decimal IS NULL THEN TRUE

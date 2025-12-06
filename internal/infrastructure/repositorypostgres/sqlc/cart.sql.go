@@ -26,6 +26,22 @@ func (q *Queries) CreateTempTableCartItems(ctx context.Context) error {
 	return err
 }
 
+const deleteCartItems = `-- name: DeleteCartItems :exec
+DELETE FROM
+  cart_items
+WHERE
+  cart_id = $1
+`
+
+type DeleteCartItemsParams struct {
+	CartID uuid.UUID
+}
+
+func (q *Queries) DeleteCartItems(ctx context.Context, arg DeleteCartItemsParams) error {
+	_, err := q.db.Exec(ctx, deleteCartItems, arg.CartID)
+	return err
+}
+
 const getCart = `-- name: GetCart :one
 SELECT
   id, user_id, updated_at

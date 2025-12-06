@@ -19,6 +19,7 @@ type Querier interface {
 	CreateTempTableBooksMedium(ctx context.Context) error
 	CreateTempTableCartItems(ctx context.Context) error
 	CreateTempTableOrderItems(ctx context.Context) error
+	DeleteCartItems(ctx context.Context, arg DeleteCartItemsParams) error
 	GetArticle(ctx context.Context, arg GetArticleParams) (Article, error)
 	GetBook(ctx context.Context, arg GetBookParams) (Book, error)
 	GetCart(ctx context.Context, arg GetCartParams) (Cart, error)

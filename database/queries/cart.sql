@@ -87,3 +87,9 @@ WHEN NOT MATCHED THEN
 WHEN NOT MATCHED BY SOURCE
   AND target.cart_id IN (SELECT DISTINCT cart_id FROM temp_cart_items) THEN
   DELETE;
+
+-- name: DeleteCartItems :exec
+DELETE FROM
+  cart_items
+WHERE
+  cart_id = sqlc.arg('cart_id');

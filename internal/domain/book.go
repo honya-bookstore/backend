@@ -28,8 +28,8 @@ type Book struct {
 
 type BookMedia struct {
 	MediaID uuid.UUID `validate:"required"`
-	IsCover bool      `validate:"required"`
-	Order   int       `validate:"required,gte=0"`
+	IsCover bool
+	Order   int `validate:"gte=0"`
 }
 
 func NewBook(

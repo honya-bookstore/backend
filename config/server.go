@@ -74,7 +74,7 @@ func NewServer() *Server {
 	viper.SetDefault(LogStdout, true)
 	viper.SetDefault(LogFile, false)
 	viper.SetDefault(AllowOrigins, []string{"*"})
-	viper.SetDefault(VNPHashAlgo, govnpayhelper.HmacSha512)
+	viper.SetDefault(VNPHashAlgo, govnpayhelper.Sha256)
 
 	viper.SetDefault(TimeZone, "Asia/Ho_Chi_Minh")
 	if viper.GetString(S3Bucket) == "" {

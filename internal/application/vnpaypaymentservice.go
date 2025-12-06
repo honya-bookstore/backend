@@ -16,11 +16,11 @@ type VNPayPaymentService interface {
 
 	VerifyIPN(
 		ctx context.Context,
-		param VerifyVNPayIPNParam,
+		param VerifyIPNVNPayParam,
 		getOrder func(ctx context.Context, orderID uuid.UUID) (*domain.Order, error),
 		onSuccess func(ctx context.Context, order *domain.Order) error,
 		onFailure func(ctx context.Context, order *domain.Order) error,
-	) (code string, message string)
+	) (code, message string, err error)
 }
 
 type GetPaymentURLVNPayParam struct {
@@ -28,14 +28,17 @@ type GetPaymentURLVNPayParam struct {
 	Order     *domain.Order
 }
 
-type VerifyVNPayIPNParam struct {
-	OrderID uuid.UUID
-	Data    *VerifyVNPayIPNData
-}
-
-type VerifyVNPayIPNData struct {
-	Amount       string
-	ResponseCode string
-	SecureHash   string
-	TmnCode      string
+type VerifyIPNVNPayParam struct {
+	Amount            string
+	BankTranNo        string
+	BankCode          string
+	CardType          string
+	OrderInfo         string
+	PayDate           string
+	ResponseCode      string
+	SecureHash        string
+	TmnCode           string
+	TransactionNo     string
+	TransactionStatus string
+	TxnRef            string
 }

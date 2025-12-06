@@ -2,7 +2,7 @@ package paymentservice
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"strconv"
 
 	"backend/config"
@@ -52,37 +52,63 @@ func (v *VNPay) GetPaymentURL(
 
 func (v *VNPay) VerifyIPN(
 	ctx context.Context,
-	param application.VerifyVNPayIPNParam,
+	param application.VerifyIPNVNPayParam,
 	getOrder func(ctx context.Context, orderID uuid.UUID) (*domain.Order, error),
 	onSuccess func(ctx context.Context, order *domain.Order) error,
 	onFailure func(ctx context.Context, order *domain.Order) error,
-) (code string, message string) {
+) (code, message string, err error) {
 	codeEnum := govnpayerrors.IPNCodeTransactionSuccess
-	var err error
 	defer func() {
 		code = codeEnum.ToString()
 		message = codeEnum.Message()
-		if err != nil {
-			message = fmt.Sprintf("%s: %s", message, err.Error())
-		}
 	}()
-	if param.Data.SecureHash != v.srvCfg.VNPSecureSecret || param.Data.TmnCode != v.srvCfg.VNPTMNCode {
-		codeEnum = govnpayerrors.IPNCodeInvalidSignature
-		return
+	tnxRef, err := uuid.Parse(param.TxnRef)
+	if err != nil {
+		codeEnum = govnpayerrors.IPNCodeOtherErrors
+		err = multierror.Append(domain.ErrInvalid, err)
+		return code, message, err
 	}
-	order, err := getOrder(ctx, param.OrderID)
+	verifyIPNRequest := &govnpaymodels.VerifyIPNRequest{
+		TxnRef:            param.TxnRef,
+		Amount:            param.Amount,
+		ResponseCode:      param.ResponseCode,
+		SecureHash:        param.SecureHash,
+		TmnCode:           param.TmnCode,
+		TransactionStatus: param.TransactionStatus,
+		BankTranNo:        param.BankTranNo,
+		CardType:          param.CardType,
+		BankCode:          param.BankCode,
+		OrderInfo:         param.OrderInfo,
+		PayDate:           param.PayDate,
+		TransactionNo:     param.TransactionNo,
+		HashSecret:        v.srvCfg.VNPSecureSecret,
+		HashAlgo:          govnpayhelper.HashAlgo(v.srvCfg.VNPHashAlgo),
+	}
+	if ok, err := govnpay.VerifyIPN(verifyIPNRequest); !ok || err != nil {
+		codeEnum = govnpayerrors.IPNCodeInvalidSignature
+		err = multierror.Append(domain.ErrInvalid, errors.New("invalid signature or tmn code"), err)
+		return code, message, err
+	}
+	order, err := getOrder(ctx, tnxRef)
 	if err != nil {
 		codeEnum = govnpayerrors.IPNCodeOrderNotFound
-		return
+		return code, message, err
 	}
-	amount, err := strconv.ParseInt(param.Data.Amount, 10, 64)
-	if err != nil || amount != order.TotalAmount {
+	amount, err := strconv.ParseInt(param.Amount, 10, 64)
+	if err != nil {
 		codeEnum = govnpayerrors.IPNCodeInvalidAmount
-		onFailure(ctx, order)
-		return
+		err = multierror.Append(domain.ErrInvalid, err)
+		return code, message, err
+	}
+	if amount/100 != order.TotalAmount {
+		codeEnum = govnpayerrors.IPNCodeInvalidAmount
+		err = multierror.Append(domain.ErrInvalid, onFailure(ctx, order))
+		return code, message, err
 	}
 	if err := onSuccess(ctx, order); err != nil {
 		codeEnum = govnpayerrors.IPNCodeOtherErrors
+		err = multierror.Append(domain.ErrInternal, err)
+		return code, message, err
 	}
-	return
+	return code, message, err
 }

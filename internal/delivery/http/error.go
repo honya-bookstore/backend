@@ -12,6 +12,8 @@ type Error struct {
 	Message string `json:"message"`
 }
 
+type VNPayError VerifyVNPayIPNResponseDTO
+
 func NewError(message string) *Error {
 	return &Error{Message: message}
 }
@@ -37,4 +39,13 @@ func SendError(ctx *gin.Context, err error) {
 		httpErrCode = 500
 	}
 	ctx.JSON(httpErrCode, NewError(err.Error()))
+}
+
+func SendVNPayError(ctx *gin.Context, responseDTO *VerifyVNPayIPNResponseDTO, err error) {
+	switch {
+	case errors.Is(err, domain.ErrInvalid):
+		ctx.JSON(400, responseDTO)
+	default:
+		ctx.JSON(500, responseDTO)
+	}
 }

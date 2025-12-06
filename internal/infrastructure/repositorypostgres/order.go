@@ -185,6 +185,9 @@ func (r *Order) Save(
 	err = qtx.UpsertOrder(ctx, sqlc.UpsertOrderParams{
 		ID:          params.Order.ID,
 		UserID:      params.Order.UserID,
+		Email:       params.Order.Email,
+		FirstName:   params.Order.FirstName,
+		LastName:    params.Order.LastName,
 		Address:     params.Order.Address,
 		City:        params.Order.City,
 		TotalAmount: int64ToNumeric(params.Order.TotalAmount),
@@ -273,6 +276,9 @@ func (r *Order) toOrderDomain(
 		IsPaid:      orderEntity.IsPaid,
 		CreatedAt:   orderEntity.CreatedAt.Time,
 		UpdatedAt:   orderEntity.UpdatedAt.Time,
+		Email:       orderEntity.Email,
+		FirstName:   orderEntity.FirstName,
+		LastName:    orderEntity.LastName,
 		Items:       items,
 		TotalAmount: numericToInt64(orderEntity.TotalAmount),
 	}, nil
