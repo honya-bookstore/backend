@@ -100,13 +100,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.PaginationResponseDTO-http_BookResponseDTO"
+                            "$ref": "#/definitions/PaginationResponseDTO-internal_delivery_http_BookResponseDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -138,7 +138,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.CreateBookData"
+                            "$ref": "#/definitions/CreateBookData"
                         }
                     }
                 ],
@@ -146,25 +146,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/http.BookResponseDTO"
+                            "$ref": "#/definitions/BookResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -196,19 +196,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.BookResponseDTO"
+                            "$ref": "#/definitions/BookResponseDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -249,13 +249,13 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -294,7 +294,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateBookData"
+                            "$ref": "#/definitions/UpdateBookData"
                         }
                     }
                 ],
@@ -302,31 +302,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.BookResponseDTO"
+                            "$ref": "#/definitions/BookResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -360,7 +360,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.CreateCartData"
+                            "$ref": "#/definitions/CreateCartData"
                         }
                     }
                 ],
@@ -368,25 +368,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/http.CartResponseDTO"
+                            "$ref": "#/definitions/CartResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -417,19 +417,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.CartResponseDTO"
+                            "$ref": "#/definitions/CartResponseDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -469,19 +469,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.CartResponseDTO"
+                            "$ref": "#/definitions/CartResponseDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -521,19 +521,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.CartResponseDTO"
+                            "$ref": "#/definitions/CartResponseDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -574,7 +574,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.CreateCartItemData"
+                            "$ref": "#/definitions/CreateCartItemData"
                         }
                     }
                 ],
@@ -582,25 +582,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/http.CartResponseDTO"
+                            "$ref": "#/definitions/CartResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -650,13 +650,13 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -702,7 +702,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateCartItemData"
+                            "$ref": "#/definitions/UpdateCartItemData"
                         }
                     }
                 ],
@@ -710,25 +710,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.CartResponseDTO"
+                            "$ref": "#/definitions/CartResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -772,13 +772,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.PaginationResponseDTO-http_CategoryResponseDTO"
+                            "$ref": "#/definitions/PaginationResponseDTO-internal_delivery_http_CategoryResponseDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -810,7 +810,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.CreateCategoryRequestData"
+                            "$ref": "#/definitions/CreateCategoryRequestData"
                         }
                     }
                 ],
@@ -818,25 +818,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/http.CategoryResponseDTO"
+                            "$ref": "#/definitions/CategoryResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -878,13 +878,13 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -922,7 +922,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateCategoryRequestData"
+                            "$ref": "#/definitions/UpdateCategoryRequestData"
                         }
                     }
                 ],
@@ -930,31 +930,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.CategoryResponseDTO"
+                            "$ref": "#/definitions/CategoryResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -985,19 +985,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.CategoryResponseDTO"
+                            "$ref": "#/definitions/CategoryResponseDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1049,13 +1049,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.PaginationResponseDTO-http_MediaResponseDTO"
+                            "$ref": "#/definitions/PaginationResponseDTO-internal_delivery_http_MediaResponseDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1087,7 +1087,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.CreateMediaRequestData"
+                            "$ref": "#/definitions/CreateMediaRequestData"
                         }
                     }
                 ],
@@ -1095,25 +1095,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/http.MediaResponseDTO"
+                            "$ref": "#/definitions/MediaResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1141,13 +1141,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.UploadImageURLResponseDTO"
+                            "$ref": "#/definitions/UploadImageURLResponseDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1185,19 +1185,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.DeleteImageURLResponseDTO"
+                            "$ref": "#/definitions/DeleteImageURLResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1236,19 +1236,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.MediaResponseDTO"
+                            "$ref": "#/definitions/MediaResponseDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1288,13 +1288,13 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1362,14 +1362,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/http.OrderResponseDTO"
+                                "$ref": "#/definitions/OrderResponseDTO"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1401,7 +1401,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.CreateOrderData"
+                            "$ref": "#/definitions/CreateOrderData"
                         }
                     }
                 ],
@@ -1409,25 +1409,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/http.OrderResponseDTO"
+                            "$ref": "#/definitions/OrderResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1450,81 +1450,93 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "vnp_Amount",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
                         "name": "vnp_BankCode",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
                         "name": "vnp_BankTranNo",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
                         "name": "vnp_CardType",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
                         "name": "vnp_OrderInfo",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
                         "name": "vnp_PayDate",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
                         "name": "vnp_ResponseCode",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
                         "name": "vnp_SecureHash",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
                         "name": "vnp_TmnCode",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
                         "name": "vnp_TransactionNo",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
                         "name": "vnp_TransactionStatus",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     },
                     {
                         "type": "string",
                         "name": "vnp_TxnRef",
-                        "in": "query"
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.VerifyVNPayIPNResponseDTO"
+                            "$ref": "#/definitions/VerifyVNPayIPNResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1564,19 +1576,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.OrderResponseDTO"
+                            "$ref": "#/definitions/OrderResponseDTO"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1615,7 +1627,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/http.UpdateOrderData"
+                            "$ref": "#/definitions/UpdateOrderData"
                         }
                     }
                 ],
@@ -1623,31 +1635,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/http.OrderResponseDTO"
+                            "$ref": "#/definitions/OrderResponseDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/http.Error"
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -1655,33 +1667,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "domain.OrderProvider": {
-            "type": "string",
-            "enum": [
-                "COD"
-            ],
-            "x-enum-varnames": [
-                "PaymentProviderCOD"
-            ]
-        },
-        "domain.OrderStatus": {
-            "type": "string",
-            "enum": [
-                "Pending",
-                "Processing",
-                "Shipped",
-                "Delivered",
-                "Cancelled"
-            ],
-            "x-enum-varnames": [
-                "OrderStatusPending",
-                "OrderStatusProcessing",
-                "OrderStatusShipped",
-                "OrderStatusDelivered",
-                "OrderStatusCancelled"
-            ]
-        },
-        "http.BookCategoryResponseDTO": {
+        "BookCategoryResponseDTO": {
             "type": "object",
             "required": [
                 "id",
@@ -1703,7 +1689,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.BookMediaResponseDTO": {
+        "BookMediaResponseDTO": {
             "type": "object",
             "required": [
                 "fileName",
@@ -1732,7 +1718,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.BookResponseDTO": {
+        "BookResponseDTO": {
             "type": "object",
             "required": [
                 "author",
@@ -1757,7 +1743,7 @@ const docTemplate = `{
                 "categories": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/http.BookCategoryResponseDTO"
+                        "$ref": "#/definitions/BookCategoryResponseDTO"
                     }
                 },
                 "createdAt": {
@@ -1775,7 +1761,7 @@ const docTemplate = `{
                 "media": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/http.BookMediaResponseDTO"
+                        "$ref": "#/definitions/BookMediaResponseDTO"
                     }
                 },
                 "pagesCount": {
@@ -1810,7 +1796,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CartItemBookResponseDTO": {
+        "CartItemBookResponseDTO": {
             "type": "object",
             "required": [
                 "id",
@@ -1859,7 +1845,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CartItemResponseDTO": {
+        "CartItemResponseDTO": {
             "type": "object",
             "required": [
                 "book",
@@ -1868,7 +1854,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "book": {
-                    "$ref": "#/definitions/http.CartItemBookResponseDTO"
+                    "$ref": "#/definitions/CartItemBookResponseDTO"
                 },
                 "id": {
                     "type": "string"
@@ -1878,7 +1864,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CartResponseDTO": {
+        "CartResponseDTO": {
             "type": "object",
             "required": [
                 "id",
@@ -1893,7 +1879,7 @@ const docTemplate = `{
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/http.CartItemResponseDTO"
+                        "$ref": "#/definitions/CartItemResponseDTO"
                     }
                 },
                 "updatedAt": {
@@ -1904,7 +1890,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CategoryResponseDTO": {
+        "CategoryResponseDTO": {
             "type": "object",
             "required": [
                 "createdAt",
@@ -1937,7 +1923,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CreateBookData": {
+        "CreateBookData": {
             "type": "object",
             "required": [
                 "author",
@@ -1966,7 +1952,7 @@ const docTemplate = `{
                 "media": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/http.CreateBookMediaData"
+                        "$ref": "#/definitions/CreateBookMediaData"
                     }
                 },
                 "pagesCount": {
@@ -1992,7 +1978,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CreateBookMediaData": {
+        "CreateBookMediaData": {
             "type": "object",
             "required": [
                 "isCover",
@@ -2007,7 +1993,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CreateCartData": {
+        "CreateCartData": {
             "type": "object",
             "required": [
                 "userId"
@@ -2018,7 +2004,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CreateCartItemData": {
+        "CreateCartItemData": {
             "type": "object",
             "required": [
                 "bookId",
@@ -2033,7 +2019,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CreateCategoryRequestData": {
+        "CreateCategoryRequestData": {
             "type": "object",
             "required": [
                 "name",
@@ -2051,7 +2037,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CreateMediaRequestData": {
+        "CreateMediaRequestData": {
             "type": "object",
             "required": [
                 "key",
@@ -2075,7 +2061,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.CreateOrderData": {
+        "CreateOrderData": {
             "type": "object",
             "required": [
                 "address",
@@ -2103,7 +2089,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "provider": {
-                    "$ref": "#/definitions/domain.OrderProvider"
+                    "$ref": "#/definitions/OrderProvider"
                 },
                 "returnUrl": {
                     "type": "string"
@@ -2113,7 +2099,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.DeleteImageURLResponseDTO": {
+        "DeleteImageURLResponseDTO": {
             "type": "object",
             "required": [
                 "url"
@@ -2124,7 +2110,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.Error": {
+        "Error": {
             "type": "object",
             "properties": {
                 "message": {
@@ -2132,7 +2118,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.MediaResponseDTO": {
+        "MediaResponseDTO": {
             "type": "object",
             "required": [
                 "createdAt",
@@ -2163,7 +2149,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.OrderItemBookResponseDTO": {
+        "OrderItemBookResponseDTO": {
             "type": "object",
             "required": [
                 "author",
@@ -2194,7 +2180,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.OrderItemResponseDTO": {
+        "OrderItemResponseDTO": {
             "type": "object",
             "required": [
                 "book",
@@ -2204,7 +2190,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "book": {
-                    "$ref": "#/definitions/http.OrderItemBookResponseDTO"
+                    "$ref": "#/definitions/OrderItemBookResponseDTO"
                 },
                 "id": {
                     "type": "string"
@@ -2217,7 +2203,16 @@ const docTemplate = `{
                 }
             }
         },
-        "http.OrderResponseDTO": {
+        "OrderProvider": {
+            "type": "string",
+            "enum": [
+                "COD"
+            ],
+            "x-enum-varnames": [
+                "PaymentProviderCOD"
+            ]
+        },
+        "OrderResponseDTO": {
             "type": "object",
             "required": [
                 "address",
@@ -2260,20 +2255,20 @@ const docTemplate = `{
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/http.OrderItemResponseDTO"
+                        "$ref": "#/definitions/OrderItemResponseDTO"
                     }
                 },
                 "lastName": {
                     "type": "string"
                 },
-                "provider": {
-                    "$ref": "#/definitions/domain.OrderProvider"
-                },
-                "returnUrl": {
+                "paymentUrl": {
                     "type": "string"
                 },
+                "provider": {
+                    "$ref": "#/definitions/OrderProvider"
+                },
                 "status": {
-                    "$ref": "#/definitions/domain.OrderStatus"
+                    "$ref": "#/definitions/OrderStatus"
                 },
                 "totalAmount": {
                     "type": "integer"
@@ -2286,7 +2281,24 @@ const docTemplate = `{
                 }
             }
         },
-        "http.PaginationMetaResponseDTO": {
+        "OrderStatus": {
+            "type": "string",
+            "enum": [
+                "Pending",
+                "Processing",
+                "Shipped",
+                "Delivered",
+                "Cancelled"
+            ],
+            "x-enum-varnames": [
+                "OrderStatusPending",
+                "OrderStatusProcessing",
+                "OrderStatusShipped",
+                "OrderStatusDelivered",
+                "OrderStatusCancelled"
+            ]
+        },
+        "PaginationMetaResponseDTO": {
             "type": "object",
             "required": [
                 "currentPage",
@@ -2312,7 +2324,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.PaginationResponseDTO-http_BookResponseDTO": {
+        "PaginationResponseDTO-internal_delivery_http_BookResponseDTO": {
             "type": "object",
             "required": [
                 "data",
@@ -2322,15 +2334,15 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/http.BookResponseDTO"
+                        "$ref": "#/definitions/BookResponseDTO"
                     }
                 },
                 "meta": {
-                    "$ref": "#/definitions/http.PaginationMetaResponseDTO"
+                    "$ref": "#/definitions/PaginationMetaResponseDTO"
                 }
             }
         },
-        "http.PaginationResponseDTO-http_CategoryResponseDTO": {
+        "PaginationResponseDTO-internal_delivery_http_CategoryResponseDTO": {
             "type": "object",
             "required": [
                 "data",
@@ -2340,15 +2352,15 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/http.CategoryResponseDTO"
+                        "$ref": "#/definitions/CategoryResponseDTO"
                     }
                 },
                 "meta": {
-                    "$ref": "#/definitions/http.PaginationMetaResponseDTO"
+                    "$ref": "#/definitions/PaginationMetaResponseDTO"
                 }
             }
         },
-        "http.PaginationResponseDTO-http_MediaResponseDTO": {
+        "PaginationResponseDTO-internal_delivery_http_MediaResponseDTO": {
             "type": "object",
             "required": [
                 "data",
@@ -2358,15 +2370,15 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/http.MediaResponseDTO"
+                        "$ref": "#/definitions/MediaResponseDTO"
                     }
                 },
                 "meta": {
-                    "$ref": "#/definitions/http.PaginationMetaResponseDTO"
+                    "$ref": "#/definitions/PaginationMetaResponseDTO"
                 }
             }
         },
-        "http.UpdateBookData": {
+        "UpdateBookData": {
             "type": "object",
             "properties": {
                 "author": {
@@ -2384,7 +2396,7 @@ const docTemplate = `{
                 "media": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/http.UpdateBookMediaData"
+                        "$ref": "#/definitions/UpdateBookMediaData"
                     }
                 },
                 "pagesCount": {
@@ -2410,7 +2422,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.UpdateBookMediaData": {
+        "UpdateBookMediaData": {
             "type": "object",
             "required": [
                 "isCover",
@@ -2425,7 +2437,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.UpdateCartItemData": {
+        "UpdateCartItemData": {
             "type": "object",
             "properties": {
                 "quantity": {
@@ -2433,7 +2445,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.UpdateCategoryRequestData": {
+        "UpdateCategoryRequestData": {
             "type": "object",
             "properties": {
                 "description": {
@@ -2447,7 +2459,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.UpdateOrderData": {
+        "UpdateOrderData": {
             "type": "object",
             "required": [
                 "address",
@@ -2462,11 +2474,11 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "status": {
-                    "$ref": "#/definitions/domain.OrderStatus"
+                    "$ref": "#/definitions/OrderStatus"
                 }
             }
         },
-        "http.UploadImageURLResponseDTO": {
+        "UploadImageURLResponseDTO": {
             "type": "object",
             "required": [
                 "key",
@@ -2481,7 +2493,7 @@ const docTemplate = `{
                 }
             }
         },
-        "http.VerifyVNPayIPNResponseDTO": {
+        "VerifyVNPayIPNResponseDTO": {
             "type": "object",
             "required": [
                 "Message",

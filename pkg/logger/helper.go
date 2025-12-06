@@ -5,7 +5,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-func CreateRedisGetField(id string, key string, err error) *[]zapcore.Field {
+func CreateRedisGetField(id, key string, err error) *[]zapcore.Field {
 	return &[]zapcore.Field{
 		zap.String("id", id),
 		zap.String("cache_key", key),

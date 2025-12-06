@@ -16,7 +16,7 @@ type Category struct {
 	DeletedAt   time.Time `validate:"omitempty,gtefield=CreatedAt"`
 }
 
-func NewCategory(slug string, name string, description string) (*Category, error) {
+func NewCategory(slug, name, description string) (*Category, error) {
 	now := time.Now()
 	id, err := uuid.NewV7()
 	if err != nil {
@@ -33,7 +33,7 @@ func NewCategory(slug string, name string, description string) (*Category, error
 	return category, nil
 }
 
-func (c *Category) Update(name string, description string, slug string) {
+func (c *Category) Update(name, description, slug string) {
 	if c == nil {
 		return
 	}
