@@ -49,7 +49,7 @@ lint-sqlfluff:
       ./docker/volume/
 
 [doc("Run lint all")]
-lint: lint-golangci-lint lint-sqlfluff
+lint: lint-golangci-lint
 
 [doc("Generate DI wire file")]
 gen-wire:

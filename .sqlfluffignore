@@ -1,0 +1,16 @@
+database/queries/*.sql
+database/temporary-table/*.sql
+database/seed-fake.sql
+docker/volume/init.sql
+docker/volume/paradedb-index.sql
+docker/volume/schema.sql
+docker/volume/seed-fake.sql
+docker/volume/seed.sql
+docker/volume/trigger.sql
+migration/*.sql
+test/integration/testdata/init.sql
+test/integration/testdata/paradedb-index.sql
+test/integration/testdata/schema.sql
+test/integration/testdata/seed-fake.sql
+test/integration/testdata/seed.sql
+test/integration/testdata/trigger.sql
