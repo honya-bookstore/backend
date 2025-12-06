@@ -148,3 +148,16 @@ func (b *Book) Update(
 func (b *Book) Remove() {
 	b.DeletedAt = time.Now()
 }
+
+func (b *Book) DecreaseQuantity(quantity int) {
+	if quantity <= 0 {
+		return
+	}
+	if b.StockQuantity >= quantity {
+		b.StockQuantity -= quantity
+	} else {
+		b.StockQuantity = 0
+	}
+	b.PurchaseCount += quantity
+	b.UpdatedAt = time.Now()
+}

@@ -207,14 +207,8 @@ func (o *Order) VerifyVNPayIPN(ctx context.Context, param http.VerifyVNPayIPNReq
 	if err != nil {
 		return nil, err
 	}
-	order, err := o.orderRepo.Get(ctx, domain.OrderRepositoryGetParam{
-		OrderID: tnxRef,
-	})
-	if err != nil {
-		return nil, err
-	}
 	verifyParam := VerifyVNPayIPNParam{
-		Order: order,
+		OrderID: tnxRef,
 		Data: &VerifyVNPayIPNData{
 			Amount:       param.QueryParams.Amount,
 			ResponseCode: param.QueryParams.ResponseCode,
@@ -222,7 +216,13 @@ func (o *Order) VerifyVNPayIPN(ctx context.Context, param http.VerifyVNPayIPNReq
 			TmnCode:      param.QueryParams.TmnCode,
 		},
 	}
-	rspCode, message := o.VNPayPaymentService.VerifyIPN(ctx, verifyParam)
+	rspCode, message := o.VNPayPaymentService.VerifyIPN(
+		ctx,
+		verifyParam,
+		o.getOrder,
+		o.onVerifySuccess,
+		o.onVerifyFailure,
+	)
 	return &http.VerifyVNPayIPNResponseDTO{
 		RspCode: rspCode,
 		Message: message,
@@ -255,4 +255,88 @@ func (o *Order) enrichOrder(ctx context.Context, order *domain.Order, returnURL 
 	}
 
 	return http.ToOrderResponseDTO(order, bookMap, returnURL), nil
+}
+
+func (o *Order) getOrder(
+	ctx context.Context,
+	orderID uuid.UUID,
+) (*domain.Order, error) {
+	return o.orderRepo.Get(ctx, domain.OrderRepositoryGetParam{
+		OrderID: orderID,
+	})
+}
+
+func (o *Order) onVerifySuccess(
+	ctx context.Context,
+	order *domain.Order,
+) error {
+	order.Update(
+		order.Address,
+		domain.OrderStatusProcessing,
+		true,
+	)
+	cart, err := o.cartRepo.Get(ctx, domain.CartRepositoryGetParam{
+		UserID: order.UserID,
+	})
+	if err != nil {
+		return err
+	}
+	cart.ClearItems()
+	err = o.cartRepo.Save(ctx, domain.CartRepositorySaveParam{
+		Cart: *cart,
+	})
+	if err != nil {
+		return err
+	}
+	bookIDs := make([]uuid.UUID, 0, len(order.Items))
+	for _, item := range order.Items {
+		bookIDs = append(bookIDs, item.BookID)
+	}
+	books, err := o.bookRepo.List(ctx, domain.BookRepositoryListParam{
+		BookIDs: bookIDs,
+	})
+	if err != nil {
+		return err
+	}
+	bookIDBookMap := make(map[uuid.UUID]*domain.Book)
+	for i := range *books {
+		book := &(*books)[i]
+		bookIDBookMap[book.ID] = book
+	}
+	for _, item := range order.Items {
+		book, ok := bookIDBookMap[item.BookID]
+		if !ok {
+			return domain.ErrNotFound
+		}
+		book.DecreaseQuantity(item.Quantity)
+	}
+	for _, book := range bookIDBookMap {
+		err := o.bookService.Validate(*book)
+		if err != nil {
+			return err
+		}
+		err = o.bookRepo.Save(ctx, domain.BookRepositorySaveParam{
+			Book: *book,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return o.orderRepo.Save(ctx, domain.OrderRepositorySaveParam{
+		Order: *order,
+	})
+}
+
+func (o *Order) onVerifyFailure(
+	ctx context.Context,
+	order *domain.Order,
+) error {
+	order.Update(
+		order.Address,
+		domain.OrderStatusCancelled,
+		false,
+	)
+	return o.orderRepo.Save(ctx, domain.OrderRepositorySaveParam{
+		Order: *order,
+	})
 }

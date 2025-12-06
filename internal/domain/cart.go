@@ -86,3 +86,7 @@ func (c *Cart) UpdateItem(
 		}
 	}
 }
+
+func (c *Cart) ClearItems() {
+	c.Items = []CartItem{}
+}
