@@ -192,6 +192,7 @@ locals {
 
   users = {
     admin = {
+      username    = "honyabookstoreadmin",
       password    = "admin",
       role        = "admin"
       firstName   = "admin",
@@ -203,6 +204,7 @@ locals {
       birthdate   = "2001-01-01"
     },
     staff = {
+      username    = "honyabookstorestaff",
       password    = "staff",
       role        = "staff",
       firstName   = "staff",
@@ -214,6 +216,7 @@ locals {
       birthdate   = "2001-01-01"
     },
     customer = {
+      username    = "honyabookstorecustomer",
       password    = "customer",
       role        = "customer"
       firstName   = "customer",
@@ -276,7 +279,7 @@ resource "keycloak_user" "users" {
 
   import         = true
   realm_id       = keycloak_realm.honyabookstore.id
-  username       = each.key
+  username       = each.value.username
   first_name     = each.value.firstName
   last_name      = each.value.lastName
   email          = each.value.email
