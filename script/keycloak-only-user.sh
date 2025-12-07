@@ -4,14 +4,14 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 keycloak_realm_json='../keycloak/honyabookstore-realm-export.json'
 jq '
   .users |= map(select(
-    .username == "admin" or
-    .username == "staff" or
-    .username == "customer"
-  ) | if .username == "admin" then
+    .username == "honyabookstoreadmin" or
+    .username == "honyabookstorestaff" or
+    .username == "honyabookstorecustomer"
+  ) | if .username == "honyabookstoreadmin" then
         .id = "00000000-0000-7000-0000-000000000004"
-      elif .username == "staff" then
+      elif .username == "honyabookstorestaff" then
         .id = "00000000-0000-7000-0000-000000000005"
-      elif .username == "customer" then
+      elif .username == "honyabookstorecustomer" then
         .id = "00000000-0000-7000-0000-000000000006"
       end
   )

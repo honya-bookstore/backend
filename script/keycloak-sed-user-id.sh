@@ -5,11 +5,11 @@ keycloak_realm_json='../keycloak/honyabookstore-realm-export.json'
 tmpfile="$(mktemp)"
 jq '
   .users |= map(
-    if .username == "admin" then
+    if .username == "honyabookstoreadmin" then
       .id = "00000000-0000-7000-0000-000000000004"
-    elif .username == "staff" then
+    elif .username == "honyabookstoerstaff" then
       .id = "00000000-0000-7000-0000-000000000005"
-    elif .username == "customer" then
+    elif .username == "honyabookstorecustomer" then
       .id = "00000000-0000-7000-0000-000000000006"
     else
       .
