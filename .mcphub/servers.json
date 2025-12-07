@@ -1,16 +1,25 @@
 {
   "mcpServers": {
+    "language-server": {
+      "args": [
+        "--workspace",
+        "${CWD}",
+        "--lsp",
+        "gopls"
+      ],
+      "command": "mcp-language-server",
+      "disabled": true
+    },
     "postgres": {
-      "args": ["postgres-mcp", "--access-mode=unrestricted"],
+      "args": [
+        "postgres-mcp",
+        "--access-mode=unrestricted"
+      ],
       "command": "uvx",
       "disabled": true,
       "env": {
         "DATABASE_URI": "postgresql://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}"
       }
-    },
-    "language-server": {
-      "command": "mcp-language-server",
-      "args": ["--workspace", "${CWD}", "--lsp", "gopls"]
     }
   }
 }
