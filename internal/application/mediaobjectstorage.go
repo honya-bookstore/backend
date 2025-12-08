@@ -11,5 +11,5 @@ import (
 type MediaObjectStorage interface {
 	GetUploadImageURL(ctx context.Context) (*http.UploadImageURLResponseDTO, error)
 	GetDeleteImageURL(ctx context.Context, imageID uuid.UUID) (*http.DeleteImageURLResponseDTO, error)
-	PersistImageFromTemp(ctx context.Context, key string, imageID uuid.UUID) error
+	PersistImageFromTemp(ctx context.Context, key string) error
 }

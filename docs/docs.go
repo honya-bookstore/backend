@@ -435,7 +435,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/cart/user/{id}": {
+        "/cart/user/{user_id}": {
             "get": {
                 "security": [
                     {
@@ -2041,8 +2041,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "key",
-                "order",
-                "url"
+                "order"
             ],
             "properties": {
                 "altText": {
@@ -2055,9 +2054,6 @@ const docTemplate = `{
                 "order": {
                     "type": "integer",
                     "minimum": 0
-                },
-                "url": {
-                    "type": "string"
                 }
             }
         },

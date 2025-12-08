@@ -46,7 +46,7 @@ func InitializeServer(ctx context.Context) *http.Server {
 	s3Client := client.NewS3(ctx, server)
 	presignClient := client.NewS3Presign(s3Client)
 	objectstorages3Media := objectstorages3.ProvideMedia(s3Client, presignClient, server)
-	applicationMedia := application.ProvideMedia(media, serviceMedia, objectstorages3Media)
+	applicationMedia := application.ProvideMedia(media, serviceMedia, objectstorages3Media, server)
 	mediaHandlerImpl := http.ProvideMediaHandler(applicationMedia)
 	order := repositorypostgres.ProvideOrder(queries, pool)
 	serviceOrder := service.ProvideOrder(validate)

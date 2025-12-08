@@ -2,7 +2,9 @@ package application
 
 import (
 	"context"
+	"fmt"
 
+	"backend/config"
 	"backend/internal/delivery/http"
 	"backend/internal/domain"
 
@@ -13,17 +15,20 @@ type Media struct {
 	mediaRepo          domain.MediaRepository
 	mediaService       domain.MediaService
 	mediaObjectStorage MediaObjectStorage
+	srvCfg             *config.Server
 }
 
 func ProvideMedia(
 	mediaRepo domain.MediaRepository,
 	mediaService domain.MediaService,
 	mediaObjectStorage MediaObjectStorage,
+	srvCfg *config.Server,
 ) *Media {
 	return &Media{
 		mediaRepo:          mediaRepo,
 		mediaService:       mediaService,
 		mediaObjectStorage: mediaObjectStorage,
+		srvCfg:             srvCfg,
 	}
 }
 
@@ -76,8 +81,9 @@ func (m *Media) Get(ctx context.Context, param http.GetMediaRequestDTO) (*http.M
 }
 
 func (m *Media) Create(ctx context.Context, param http.CreateMediaRequestDTO) (*http.MediaResponseDTO, error) {
+	url := fmt.Sprintf("https://%s.s3.%s.amazonaws.com/%s", m.srvCfg.S3Bucket, m.srvCfg.S3RegionName, param.Data.Key)
 	media, err := domain.NewMedia(
-		param.Data.URL,
+		url,
 		param.Data.AltText,
 	)
 	if err != nil {
@@ -94,7 +100,7 @@ func (m *Media) Create(ctx context.Context, param http.CreateMediaRequestDTO) (*
 	if err != nil {
 		return nil, err
 	}
-	err = m.mediaObjectStorage.PersistImageFromTemp(ctx, param.Data.Key, media.ID)
+	err = m.mediaObjectStorage.PersistImageFromTemp(ctx, param.Data.Key)
 	if err != nil {
 		return nil, err
 	}

@@ -73,11 +73,11 @@ func (p *Media) GetDeleteImageURL(ctx context.Context, imageID uuid.UUID) (*http
 	}, nil
 }
 
-func (p *Media) PersistImageFromTemp(ctx context.Context, key string, imageID uuid.UUID) error {
+func (p *Media) PersistImageFromTemp(ctx context.Context, key string) error {
 	_, err := p.s3Client.CopyObject(ctx, &s3.CopyObjectInput{
 		Bucket:     aws.String(p.cfgSrv.S3Bucket),
 		CopySource: aws.String(p.cfgSrv.S3Bucket + "/" + S3MediaFolderTemp + key),
-		Key:        aws.String(S3MediaFolder + imageID.String()),
+		Key:        aws.String(S3MediaFolder + key),
 	})
 	if err != nil {
 		return ToDomainErrorFromS3(err)
