@@ -1,6 +1,6 @@
 package objectstorages3
 
 const (
-	S3MediaFolderTemp = "media/temp/"
-	S3MediaFolder     = "media/"
+	S3MediaFolderTemp = "medium/temp/"
+	S3MediaFolder     = "medium/"
 )
