@@ -76,7 +76,7 @@ func (h *CartHandlerImpl) Get(ctx *gin.Context) {
 //	@Success		200			{object}	CartResponseDTO
 //	@Failure		404			{object}	Error
 //	@Failure		500			{object}	Error
-//	@Router			/cart/user/{id} [get]
+//	@Router			/cart/user/{user_id} [get]
 //	@Security		OAuth2AccessCode
 //	@Security		OAuth2Password
 func (h *CartHandlerImpl) GetByUser(ctx *gin.Context) {
