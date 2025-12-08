@@ -39,9 +39,9 @@ func (p *Media) GetUploadImageURL(ctx context.Context) (*http.UploadImageURLResp
 		return nil, ToDomainErrorFromS3(err)
 	}
 	idStr := id.String()
-	url, err := p.s3PresignClient.PresignDeleteObject(
+	url, err := p.s3PresignClient.PresignPutObject(
 		ctx,
-		&s3.DeleteObjectInput{
+		&s3.PutObjectInput{
 			Bucket: aws.String(p.cfgSrv.S3Bucket),
 			Key:    aws.String(S3MediaFolderTemp + idStr),
 		},
