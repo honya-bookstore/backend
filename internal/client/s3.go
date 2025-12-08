@@ -12,6 +12,18 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
+type S3 struct {
+	S3Client        *s3.Client
+	S3PresignClient *s3.PresignClient
+}
+
+func ProvideS3(s3Client *s3.Client, s3PreSignClient *s3.PresignClient) *S3 {
+	return &S3{
+		S3Client:        s3Client,
+		S3PresignClient: s3PreSignClient,
+	}
+}
+
 func NewS3(ctx context.Context, cfgSrv *config.Server) *s3.Client {
 	c, err := awsconfig.LoadDefaultConfig(
 		ctx,

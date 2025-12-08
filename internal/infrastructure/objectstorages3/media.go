@@ -2,6 +2,8 @@ package objectstorages3
 
 import (
 	"context"
+	"net/url"
+	"path"
 	"time"
 
 	"backend/config"
@@ -73,11 +75,11 @@ func (p *Media) GetDeleteImageURL(ctx context.Context, imageID uuid.UUID) (*http
 	}, nil
 }
 
-func (p *Media) PersistImageFromTemp(ctx context.Context, key string) error {
+func (p *Media) PersistImageFromTemp(ctx context.Context, key string, mediaID uuid.UUID) error {
 	_, err := p.s3Client.CopyObject(ctx, &s3.CopyObjectInput{
 		Bucket:     aws.String(p.cfgSrv.S3Bucket),
 		CopySource: aws.String(p.cfgSrv.S3Bucket + "/" + S3MediaFolderTemp + key),
-		Key:        aws.String(S3MediaFolder + key),
+		Key:        aws.String(S3MediaFolder + mediaID.String()),
 	})
 	if err != nil {
 		return ToDomainErrorFromS3(err)
@@ -90,4 +92,10 @@ func (p *Media) PersistImageFromTemp(ctx context.Context, key string) error {
 		return ToDomainErrorFromS3(err)
 	}
 	return nil
+}
+
+func (p *Media) BuildMediaURL(mediaID uuid.UUID) string {
+	u, _ := url.Parse(p.cfgSrv.S3Endpoint)
+	u.Path = path.Join(u.Path, p.cfgSrv.S3Bucket, S3MediaFolder, mediaID.String())
+	return u.String()
 }

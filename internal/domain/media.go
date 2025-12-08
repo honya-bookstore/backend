@@ -15,13 +15,14 @@ type Media struct {
 }
 
 func NewMedia(
-	url string,
 	altText string,
+	buildMediaURl func(mediaID uuid.UUID) string,
 ) (*Media, error) {
 	id, err := uuid.NewV7()
 	if err != nil {
 		return nil, err
 	}
+	url := buildMediaURl(id)
 	now := time.Now()
 	return &Media{
 		ID:        id,

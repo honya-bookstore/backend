@@ -2,7 +2,6 @@ package application
 
 import (
 	"context"
-	"fmt"
 
 	"backend/config"
 	"backend/internal/delivery/http"
@@ -81,10 +80,9 @@ func (m *Media) Get(ctx context.Context, param http.GetMediaRequestDTO) (*http.M
 }
 
 func (m *Media) Create(ctx context.Context, param http.CreateMediaRequestDTO) (*http.MediaResponseDTO, error) {
-	url := fmt.Sprintf("https://%s.s3.%s.amazonaws.com/%s", m.srvCfg.S3Bucket, m.srvCfg.S3RegionName, param.Data.Key)
 	media, err := domain.NewMedia(
-		url,
 		param.Data.AltText,
+		m.mediaObjectStorage.BuildMediaURL,
 	)
 	if err != nil {
 		return nil, err
@@ -100,7 +98,7 @@ func (m *Media) Create(ctx context.Context, param http.CreateMediaRequestDTO) (*
 	if err != nil {
 		return nil, err
 	}
-	err = m.mediaObjectStorage.PersistImageFromTemp(ctx, param.Data.Key)
+	err = m.mediaObjectStorage.PersistImageFromTemp(ctx, param.Data.Key, media.ID)
 	if err != nil {
 		return nil, err
 	}

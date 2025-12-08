@@ -202,6 +202,7 @@ var ClientSet = wire.NewSet(
 	client.NewS3,
 	client.NewS3Presign,
 	client.NewKeycloak,
+	client.ProvideS3,
 )
 
 var PaymentServiceSet = wire.NewSet(
