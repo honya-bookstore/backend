@@ -29,12 +29,6 @@ S3_REGION_NAME = "us-east-1"
 S3_ENDPOINT = "http://localhost:9000"
 S3_BUCKET = "honyabookstore"
 
-# Public, mostly used in Swagger
-PUBLIC_KEYCLOAK_URL = ""
-
-# Redis / Redis Compatible
-REDIS_ADDRESS = "localhost:6379"
-
 # VNPay
 VNP_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
 VNP_HASH_ALGO = "SHA256"
