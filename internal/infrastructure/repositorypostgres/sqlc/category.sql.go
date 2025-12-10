@@ -97,7 +97,7 @@ WHERE
     WHEN $2::text = '' THEN TRUE
     ELSE (
       name ||| ($2::text)
-      AND description ||| ($2::text)
+      OR description ||| ($2::text)
     )
   END
   AND CASE

@@ -40,7 +40,7 @@ WHERE
     WHEN sqlc.arg('search')::text = '' THEN TRUE
     ELSE (
       name ||| (sqlc.arg('search')::text)
-      AND description ||| (sqlc.arg('search')::text)
+      OR description ||| (sqlc.arg('search')::text)
     )
   END
   AND CASE
