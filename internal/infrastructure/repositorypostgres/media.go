@@ -36,6 +36,7 @@ func (r *Media) List(
 		IDs:    params.MediaIDs,
 		Offset: int32(params.Offset),
 		Limit:  int32(params.Limit),
+		Search: params.Search,
 	})
 	if err != nil {
 		return nil, toDomainError(err)

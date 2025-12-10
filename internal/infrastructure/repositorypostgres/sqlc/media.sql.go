@@ -88,19 +88,30 @@ WHERE
     ELSE id = ANY ($1::uuid[])
   END
   AND CASE
-    WHEN $2::text = 'exclude' THEN deleted_at IS NULL
-    WHEN $2::text = 'only' THEN deleted_at IS NOT NULL
-    WHEN $2::text = 'all' THEN TRUE
+    WHEN $2::text = '' THEN TRUE
+    ELSE (
+      url ||| ($2::text)
+      OR alt_text ||| ($2::text)
+    )
+  END
+  AND CASE
+    WHEN $3::text = 'exclude' THEN deleted_at IS NULL
+    WHEN $3::text = 'only' THEN deleted_at IS NOT NULL
+    WHEN $3::text = 'all' THEN TRUE
     ELSE deleted_at IS NULL
   END
 ORDER BY
+  CASE WHEN
+    $2::text <> '' THEN pdb.score(id)
+  END DESC,
   id ASC
-OFFSET $3::integer
-LIMIT NULLIF($4::integer, 0)
+OFFSET $4::integer
+LIMIT NULLIF($5::integer, 0)
 `
 
 type ListMediumParams struct {
 	IDs     []uuid.UUID
+	Search  string
 	Deleted string
 	Offset  int32
 	Limit   int32
@@ -109,6 +120,7 @@ type ListMediumParams struct {
 func (q *Queries) ListMedium(ctx context.Context, arg ListMediumParams) ([]Medium, error) {
 	rows, err := q.db.Query(ctx, listMedium,
 		arg.IDs,
+		arg.Search,
 		arg.Deleted,
 		arg.Offset,
 		arg.Limit,

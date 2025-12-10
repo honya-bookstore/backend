@@ -5,3 +5,7 @@ WITH (key_field = 'id');
 CREATE INDEX IF NOT EXISTS books_search_idx ON books
 USING bm25 (id, title, author, description)
 WITH (key_field = 'id');
+
+CREATE INDEX IF NOT EXISTS medium_search_idx ON medium
+USING bm25 (id, url, alt_text)
+WITH (key_field = 'id');
