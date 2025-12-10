@@ -14,7 +14,7 @@ type Order struct {
 	Address     string        `validate:"required"`
 	City        string        `validate:"required"`
 	Provider    OrderProvider `validate:"required,oneof=COD VNPAY MOMO ZALOPAY"`
-	Status      OrderStatus   `validate:"required,oneof=Pending Processing Shipped Delivered Cancelled"`
+	Status      OrderStatus   `validate:"required,oneof=Pending Processing Shipping Delivered Cancelled"`
 	IsPaid      bool
 	CreatedAt   time.Time   `validate:"required"`
 	UpdatedAt   time.Time   `validate:"required,gtefield=CreatedAt"`
@@ -46,7 +46,7 @@ type OrderStatus string
 const (
 	OrderStatusPending    OrderStatus = "Pending"
 	OrderStatusProcessing OrderStatus = "Processing"
-	OrderStatusShipped    OrderStatus = "Shipped"
+	OrderStatusShipping   OrderStatus = "Shipping"
 	OrderStatusDelivered  OrderStatus = "Delivered"
 	OrderStatusCancelled  OrderStatus = "Cancelled"
 )

@@ -1340,7 +1340,7 @@ const docTemplate = `{
                         "enum": [
                             "Pending",
                             "Processing",
-                            "Shipped",
+                            "Shipping",
                             "Delivered",
                             "Cancelled"
                         ],
@@ -1348,7 +1348,7 @@ const docTemplate = `{
                         "x-enum-varnames": [
                             "OrderStatusPending",
                             "OrderStatusProcessing",
-                            "OrderStatusShipped",
+                            "OrderStatusShipping",
                             "OrderStatusDelivered",
                             "OrderStatusCancelled"
                         ],
@@ -2282,14 +2282,14 @@ const docTemplate = `{
             "enum": [
                 "Pending",
                 "Processing",
-                "Shipped",
+                "Shipping",
                 "Delivered",
                 "Cancelled"
             ],
             "x-enum-varnames": [
                 "OrderStatusPending",
                 "OrderStatusProcessing",
-                "OrderStatusShipped",
+                "OrderStatusShipping",
                 "OrderStatusDelivered",
                 "OrderStatusCancelled"
             ]
