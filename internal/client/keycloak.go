@@ -14,7 +14,6 @@ func NewKeycloak(ctx context.Context, srvCfg *config.Server) *gocloak.GoCloak {
 	token, err := client.LoginClient(ctx, srvCfg.KCClientId, srvCfg.KCClientSecret, srvCfg.KCRealm)
 	if err != nil || token == nil {
 		log.Printf("error when connecting to keycloak:%s", err)
-		return nil
 	}
 	return client
 }
