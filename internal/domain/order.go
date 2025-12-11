@@ -35,10 +35,16 @@ type OrderProvider string
 type OrderProviderOnline OrderProvider
 
 const (
-	PaymentProviderCOD     OrderProvider       = "COD"
-	PaymentProviderVNPAY   OrderProviderOnline = "VNPAY"
-	PaymentProviderMOMO    OrderProviderOnline = "MOMO"
-	PaymentProviderZALOPAY OrderProviderOnline = "ZALOPAY"
+	PaymentProviderCOD     OrderProvider = "COD"
+	PaymentProviderVNPAY   OrderProvider = "VNPAY"
+	PaymentProviderMOMO    OrderProvider = "MOMO"
+	PaymentProviderZALOPAY OrderProvider = "ZALOPAY"
+)
+
+const (
+	PaymentProviderOnlineVNPAY   OrderProviderOnline = "VNPAY"
+	PaymentProviderOnlineMOMO    OrderProviderOnline = "MOMO"
+	PaymentProviderOnlineZALOPAY OrderProviderOnline = "ZALOPAY"
 )
 
 type OrderStatus string
