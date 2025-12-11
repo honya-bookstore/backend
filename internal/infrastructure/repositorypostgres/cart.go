@@ -96,8 +96,9 @@ func (r *Cart) Save(
 
 func toCartDomain(cartEntity *sqlc.Cart) *domain.Cart {
 	return &domain.Cart{
-		ID:     cartEntity.ID,
-		UserID: cartEntity.UserID,
+		ID:        cartEntity.ID,
+		UserID:    cartEntity.UserID,
+		UpdatedAt: cartEntity.UpdatedAt.Time,
 	}
 }
 
