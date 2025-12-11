@@ -14,6 +14,7 @@ type Cart struct {
 	cartService domain.CartService
 	bookRepo    domain.BookRepository
 	bookService domain.BookService
+	mediaRepo   domain.MediaRepository
 }
 
 func ProvideCart(
@@ -21,12 +22,14 @@ func ProvideCart(
 	cartService domain.CartService,
 	bookRepo domain.BookRepository,
 	bookService domain.BookService,
+	mediaRepo domain.MediaRepository,
 ) *Cart {
 	return &Cart{
 		cartRepo:    cartRepo,
 		cartService: cartService,
 		bookRepo:    bookRepo,
 		bookService: bookService,
+		mediaRepo:   mediaRepo,
 	}
 }
 
@@ -197,16 +200,14 @@ func (c *Cart) DeleteItem(ctx context.Context, param http.DeleteCartItemRequestD
 
 func (c *Cart) enrichCart(ctx context.Context, cart *domain.Cart) (*http.CartResponseDTO, error) {
 	if len(cart.Items) == 0 {
-		return http.ToCartResponseDTO(cart, nil), nil
+		return http.ToCartResponseDTO(cart, nil, nil), nil
 	}
 
-	// Collect unique book IDs
 	bookIDs := make([]uuid.UUID, 0, len(cart.Items))
 	for _, item := range cart.Items {
 		bookIDs = append(bookIDs, item.BookID)
 	}
 
-	// Fetch all books at once
 	books, err := c.bookRepo.List(
 		ctx,
 		domain.BookRepositoryListParam{
@@ -217,11 +218,25 @@ func (c *Cart) enrichCart(ctx context.Context, cart *domain.Cart) (*http.CartRes
 		return nil, err
 	}
 
-	// Create map for quick lookup
 	bookMap := make(map[uuid.UUID]*domain.Book)
 	for i := range *books {
 		bookMap[(*books)[i].ID] = &(*books)[i]
 	}
-
-	return http.ToCartResponseDTO(cart, bookMap), nil
+	mediaIDs := make([]uuid.UUID, 0)
+	for _, book := range *books {
+		for _, m := range book.Medium {
+			mediaIDs = append(mediaIDs, m.MediaID)
+		}
+	}
+	mediaList, err := c.mediaRepo.List(ctx, domain.MediaRepositoryListParam{
+		MediaIDs: mediaIDs,
+	})
+	if err != nil {
+		return nil, err
+	}
+	mediaMap := make(map[uuid.UUID]*domain.Media)
+	for i := range *mediaList {
+		mediaMap[(*mediaList)[i].ID] = &(*mediaList)[i]
+	}
+	return http.ToCartResponseDTO(cart, bookMap, mediaMap), nil
 }

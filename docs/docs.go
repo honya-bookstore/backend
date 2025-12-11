@@ -1692,19 +1692,13 @@ const docTemplate = `{
         "BookMediaResponseDTO": {
             "type": "object",
             "required": [
-                "fileName",
-                "fileUrl",
                 "id",
-                "isCover"
+                "isCover",
+                "order",
+                "url"
             ],
             "properties": {
                 "altText": {
-                    "type": "string"
-                },
-                "fileName": {
-                    "type": "string"
-                },
-                "fileUrl": {
                     "type": "string"
                 },
                 "id": {
@@ -1715,6 +1709,9 @@ const docTemplate = `{
                 },
                 "order": {
                     "type": "integer"
+                },
+                "url": {
+                    "type": "string"
                 }
             }
         },
@@ -1796,15 +1793,46 @@ const docTemplate = `{
                 }
             }
         },
-        "CartItemBookResponseDTO": {
+        "CartItemBookMediaResponseDTO": {
             "type": "object",
             "required": [
                 "id",
+                "isCover",
+                "order",
+                "url"
+            ],
+            "properties": {
+                "altText": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isCover": {
+                    "type": "boolean"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "CartItemBookResponseDTO": {
+            "type": "object",
+            "required": [
+                "author",
+                "id",
+                "medium",
+                "pagesCount",
                 "price",
+                "publisher",
                 "purchaseCount",
                 "rating",
                 "stockQuantity",
-                "title"
+                "title",
+                "yearPublished"
             ],
             "properties": {
                 "author": {
@@ -1815,6 +1843,12 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "medium": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/CartItemBookMediaResponseDTO"
+                    }
                 },
                 "pagesCount": {
                     "type": "integer"
@@ -2202,10 +2236,16 @@ const docTemplate = `{
         "OrderProvider": {
             "type": "string",
             "enum": [
-                "COD"
+                "COD",
+                "VNPAY",
+                "MOMO",
+                "ZALOPAY"
             ],
             "x-enum-varnames": [
-                "PaymentProviderCOD"
+                "PaymentProviderCOD",
+                "PaymentProviderVNPAY",
+                "PaymentProviderMOMO",
+                "PaymentProviderZALOPAY"
             ]
         },
         "OrderResponseDTO": {

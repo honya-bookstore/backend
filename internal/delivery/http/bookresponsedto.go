@@ -29,12 +29,11 @@ type BookResponseDTO struct {
 }
 
 type BookMediaResponseDTO struct {
-	ID       uuid.UUID `json:"id"       binding:"required"`
-	IsCover  bool      `json:"isCover"  binding:"required"`
-	Order    int       `json:"order"`
-	FileName string    `json:"fileName" binding:"required"`
-	FileURL  string    `json:"fileUrl"  binding:"required"`
-	AltText  string    `json:"altText"`
+	ID      uuid.UUID `json:"id"      binding:"required"`
+	IsCover bool      `json:"isCover" binding:"required"`
+	Order   int       `json:"order"   binding:"required"`
+	AltText string    `json:"altText"`
+	URL     string    `json:"url"     binding:"required"`
 }
 
 type BookCategoryResponseDTO struct {
@@ -69,12 +68,11 @@ func ToBookResponseDTO(
 	for _, bookMedia := range book.Medium {
 		if m, exists := mediaMap[bookMedia.MediaID.String()]; exists && m != nil {
 			mediaDtos = append(mediaDtos, BookMediaResponseDTO{
-				ID:       m.ID,
-				IsCover:  bookMedia.IsCover,
-				Order:    bookMedia.Order,
-				FileName: m.AltText,
-				FileURL:  m.URL,
-				AltText:  m.AltText,
+				ID:      m.ID,
+				IsCover: bookMedia.IsCover,
+				URL:     m.URL,
+				Order:   bookMedia.Order,
+				AltText: m.AltText,
 			})
 		}
 	}

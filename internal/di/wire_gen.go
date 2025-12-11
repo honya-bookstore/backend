@@ -39,7 +39,7 @@ func InitializeServer(ctx context.Context) *http.Server {
 	bookHandlerImpl := http.ProvideBookHandler(applicationBook)
 	cart := repositorypostgres.ProvideCart(queries, pool)
 	serviceCart := service.ProvideCart(validate)
-	applicationCart := application.ProvideCart(cart, serviceCart, book, serviceBook)
+	applicationCart := application.ProvideCart(cart, serviceCart, book, serviceBook, media)
 	cartHandlerImpl := http.ProvideCartHandler(applicationCart)
 	applicationCategory := application.ProvideCategory(category, serviceCategory)
 	categoryHandlerImpl := http.ProvideCategoryHandler(applicationCategory)
