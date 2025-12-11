@@ -33,6 +33,7 @@ type CreateOrderData struct {
 	LastName  string               `json:"lastName"  binding:"required"`
 	Address   string               `json:"address"   binding:"required"`
 	City      string               `json:"city"      binding:"required"`
+	Phone     string               `json:"phone"     binding:"required,e164"`
 	Provider  domain.OrderProvider `json:"provider"  binding:"required"`
 	UserID    uuid.UUID            `json:"userId"    binding:"required"`
 	ReturnURL string               `json:"returnUrl"`

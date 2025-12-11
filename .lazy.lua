@@ -62,10 +62,7 @@ return {
           },
           condition = function(_, ctx)
             local filename = ctx.filename
-            return filename:match("internal/interface/api/handler") ~= nil
-              or filename:match("internal/interface/api/mapper") ~= nil
-              or filename:match("internal/interface/api/request") ~= nil
-              or filename:match("internal/interface/api/response") ~= nil
+            return filename:match("internal/delivery/http/%.conform%.%d+%.handler%w*%.go") ~= nil
               or filename:match("cmd") ~= nil
           end,
           stdin = false,
@@ -78,15 +75,16 @@ return {
             "./cmd/main.go",
             "-ot",
             "go",
+            "--parseDependency",
+            "--parseInternal",
+            "--useStructName",
           },
           condition = function(_, ctx)
             local filename = ctx.filename
             return not g.dev_no_gen
               and (
-                filename:match("internal/interface/api/handler") ~= nil
-                or filename:match("internal/interface/api/mapper") ~= nil
-                or filename:match("internal/interface/api/request") ~= nil
-                or filename:match("internal/interface/api/response") ~= nil
+                filename:match("internal/delivery/http/%.conform%.%d+%.handler%w*%.go") ~= nil
+                or filename:match("internal/delivery/http/%.conform%.%d+%.%w*dto%.go") ~= nil
                 or filename:match("cmd") ~= nil
               )
           end,

@@ -13,6 +13,7 @@ type Order struct {
 	LastName    string        `validate:"required"`
 	Address     string        `validate:"required"`
 	City        string        `validate:"required"`
+	Phone       string        `validate:"required,e164"`
 	Provider    OrderProvider `validate:"required,oneof=COD VNPAY MOMO ZALOPAY"`
 	Status      OrderStatus   `validate:"required,oneof=Pending Processing Shipping Delivered Cancelled"`
 	IsPaid      bool
@@ -65,6 +66,7 @@ func NewOrder(
 	address string,
 	provider OrderProvider,
 	city string,
+	phone string,
 	items []OrderItem,
 ) (*Order, error) {
 	id, err := uuid.NewV7()
@@ -84,6 +86,7 @@ func NewOrder(
 		LastName:    lastName,
 		Address:     address,
 		City:        city,
+		Phone:       phone,
 		Provider:    provider,
 		Status:      OrderStatusPending,
 		IsPaid:      false,

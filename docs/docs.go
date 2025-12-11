@@ -2099,6 +2099,7 @@ const docTemplate = `{
                 "email",
                 "firstName",
                 "lastName",
+                "phone",
                 "provider",
                 "userId"
             ],
@@ -2116,6 +2117,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "lastName": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 },
                 "provider": {
@@ -2260,6 +2264,7 @@ const docTemplate = `{
                 "isPaid",
                 "items",
                 "lastName",
+                "phone",
                 "provider",
                 "status",
                 "totalAmount",
@@ -2298,6 +2303,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "paymentUrl": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 },
                 "provider": {

@@ -138,6 +138,7 @@ func (o *Order) Create(ctx context.Context, param http.CreateOrderRequestDTO) (*
 		param.Data.Address,
 		param.Data.Provider,
 		param.Data.City,
+		param.Data.Phone,
 		items,
 	)
 	if err != nil {

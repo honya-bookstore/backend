@@ -90,6 +90,7 @@ type Order struct {
 	LastName    string
 	Address     string
 	City        string
+	Phone       string
 	CreatedAt   pgtype.Timestamptz
 	UpdatedAt   pgtype.Timestamptz
 	TotalAmount pgtype.Numeric

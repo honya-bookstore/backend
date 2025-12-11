@@ -15,6 +15,7 @@ type OrderResponseDTO struct {
 	LastName    string                 `json:"lastName"             binding:"required"`
 	Address     string                 `json:"address"              binding:"required"`
 	City        string                 `json:"city"                 binding:"required"`
+	Phone       string                 `json:"phone"                binding:"required"`
 	Provider    domain.OrderProvider   `json:"provider"             binding:"required"`
 	Status      domain.OrderStatus     `json:"status"               binding:"required"`
 	IsPaid      bool                   `json:"isPaid"               binding:"required"`
@@ -82,6 +83,7 @@ func ToOrderResponseDTO(order *domain.Order, bookMap map[uuid.UUID]*domain.Book,
 		LastName:    order.LastName,
 		Address:     order.Address,
 		City:        order.City,
+		Phone:       order.Phone,
 		Provider:    order.Provider,
 		Status:      order.Status,
 		IsPaid:      order.IsPaid,

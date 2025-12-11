@@ -65,7 +65,7 @@ func (q *Queries) CreateTempTableOrderItems(ctx context.Context) error {
 
 const getOrder = `-- name: GetOrder :one
 SELECT
-  id, email, first_name, last_name, address, city, created_at, updated_at, total_amount, is_paid, user_id, status_id, provider_id
+  id, email, first_name, last_name, address, city, phone, created_at, updated_at, total_amount, is_paid, user_id, status_id, provider_id
 FROM
   orders
 WHERE
@@ -86,6 +86,7 @@ func (q *Queries) GetOrder(ctx context.Context, arg GetOrderParams) (Order, erro
 		&i.LastName,
 		&i.Address,
 		&i.City,
+		&i.Phone,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.TotalAmount,
@@ -289,7 +290,7 @@ func (q *Queries) ListOrderStatuses(ctx context.Context, arg ListOrderStatusesPa
 
 const listOrders = `-- name: ListOrders :many
 SELECT
-  id, email, first_name, last_name, address, city, created_at, updated_at, total_amount, is_paid, user_id, status_id, provider_id
+  id, email, first_name, last_name, address, city, phone, created_at, updated_at, total_amount, is_paid, user_id, status_id, provider_id
 FROM
   orders
 WHERE
@@ -358,6 +359,7 @@ func (q *Queries) ListOrders(ctx context.Context, arg ListOrdersParams) ([]Order
 			&i.LastName,
 			&i.Address,
 			&i.City,
+			&i.Phone,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.TotalAmount,
@@ -420,6 +422,7 @@ INSERT INTO orders (
   last_name,
   address,
   city,
+  phone,
   total_amount,
   is_paid,
   provider_id,
@@ -439,7 +442,8 @@ INSERT INTO orders (
   $10,
   $11,
   $12,
-  $13
+  $13,
+  $14
 )
 ON CONFLICT (id) DO UPDATE SET
   user_id = EXCLUDED.user_id,
@@ -448,6 +452,7 @@ ON CONFLICT (id) DO UPDATE SET
   last_name = EXCLUDED.last_name,
   address = EXCLUDED.address,
   city = EXCLUDED.city,
+  phone = EXCLUDED.phone,
   total_amount = EXCLUDED.total_amount,
   is_paid = EXCLUDED.is_paid,
   provider_id = EXCLUDED.provider_id,
@@ -464,6 +469,7 @@ type UpsertOrderParams struct {
 	LastName    string
 	Address     string
 	City        string
+	Phone       string
 	TotalAmount pgtype.Numeric
 	IsPaid      bool
 	ProviderID  uuid.UUID
@@ -481,6 +487,7 @@ func (q *Queries) UpsertOrder(ctx context.Context, arg UpsertOrderParams) error 
 		arg.LastName,
 		arg.Address,
 		arg.City,
+		arg.Phone,
 		arg.TotalAmount,
 		arg.IsPaid,
 		arg.ProviderID,
