@@ -17,7 +17,7 @@ ON CONFLICT (id) DO UPDATE SET
   url = EXCLUDED.url,
   alt_text = EXCLUDED.alt_text,
   created_at = EXCLUDED.created_at,
-  deleted_at = COALESCE(EXCLUDED.deleted_at, media.deleted_at);
+  deleted_at = COALESCE(EXCLUDED.deleted_at, medium.deleted_at);
 
 -- name: ListMedium :many
 SELECT
