@@ -34,8 +34,8 @@ type CreateBookData struct {
 	Publisher     string                `json:"publisher"     binding:"required"`
 	Weight        float64               `json:"weight"`
 	StockQuantity int                   `json:"stockQuantity" binding:"required"`
-	CategoryIDs   []uuid.UUID           `json:"categoryIds"   binding:"required"`
-	Media         []CreateBookMediaData `json:"media"         binding:"required"`
+	CategoryIDs   []uuid.UUID           `json:"categoryIds"   binding:"required,dive"`
+	Media         []CreateBookMediaData `json:"media"         binding:"required,dive"`
 }
 
 type CreateBookMediaData struct {
