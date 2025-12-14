@@ -17,37 +17,21 @@ SELECT
   COUNT(*) AS count
 FROM
   books
-LEFT JOIN (
-  SELECT
-    book_id
-  FROM
-    books_categories
-  WHERE
-    CASE
-      WHEN $1::uuid[] IS NULL THEN TRUE
-      WHEN cardinality($1::uuid[]) = 0 THEN TRUE
-      ELSE category_id = ANY ($1::uuid[])
-    END
-  GROUP BY
-    book_id
-  HAVING
-    COUNT(DISTINCT category_id) >= CASE
-      WHEN $1::uuid[] IS NULL THEN 0
-      WHEN cardinality($1::uuid[]) = 0 THEN 0
-      ELSE cardinality($1::uuid[])
-    END
-) AS category_filter
-  ON books.id = category_filter.book_id
 WHERE
   CASE
-    WHEN $2::uuid[] IS NULL THEN TRUE
-    WHEN cardinality($2::uuid[]) = 0 THEN TRUE
-    ELSE books.id = ANY ($2::uuid[])
-  END
-  AND CASE
     WHEN $1::uuid[] IS NULL THEN TRUE
     WHEN cardinality($1::uuid[]) = 0 THEN TRUE
-    ELSE category_filter.book_id IS NOT NULL
+    ELSE books.id = ANY ($1::uuid[])
+  END
+  AND CASE
+    WHEN $2::uuid[] IS NULL THEN TRUE
+    WHEN cardinality($2::uuid[]) = 0 THEN TRUE
+    ELSE EXISTS (
+      SELECT 1
+      FROM books_categories bc
+      WHERE bc.book_id = books.id
+        AND bc.category_id = ANY ($2::uuid[])
+    )
   END
   AND CASE
     WHEN $3::decimal IS NULL THEN TRUE
@@ -73,8 +57,8 @@ WHERE
 `
 
 type CountBooksParams struct {
-	CategoryIDs []uuid.UUID
 	IDs         []uuid.UUID
+	CategoryIDs []uuid.UUID
 	MinPrice    pgtype.Numeric
 	MaxPrice    pgtype.Numeric
 	Rating      float32
@@ -83,8 +67,8 @@ type CountBooksParams struct {
 
 func (q *Queries) CountBooks(ctx context.Context, arg CountBooksParams) (int64, error) {
 	row := q.db.QueryRow(ctx, countBooks,
-		arg.CategoryIDs,
 		arg.IDs,
+		arg.CategoryIDs,
 		arg.MinPrice,
 		arg.MaxPrice,
 		arg.Rating,
@@ -221,8 +205,6 @@ WHERE
       FROM books_categories bc
       WHERE bc.book_id = books.id
         AND bc.category_id = ANY ($3::uuid[])
-      GROUP BY bc.book_id
-      HAVING COUNT(DISTINCT bc.category_id) >= cardinality($3::uuid[])
     )
   END
   AND CASE
