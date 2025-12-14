@@ -40,7 +40,7 @@ type CreateBookData struct {
 
 type CreateBookMediaData struct {
 	MediaID uuid.UUID `json:"mediaId" binding:"required"`
-	IsCover bool      `json:"isCover" binding:"required"`
+	IsCover bool      `json:"isCover"`
 }
 
 type GetBookRequestDTO struct {
