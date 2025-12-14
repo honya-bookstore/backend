@@ -25,7 +25,7 @@ func NewCategory(slug, name, description string) (*Category, error) {
 	category := &Category{
 		ID:          id,
 		Name:        name,
-		Slug:        slug,
+		Slug:        slug + id.String(),
 		Description: description,
 		CreatedAt:   now,
 		UpdatedAt:   now,
