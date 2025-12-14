@@ -47,7 +47,6 @@ func (b *Book) List(ctx context.Context, param http.ListBookRequestDTO) (*http.P
 	books, err := b.bookRepo.List(
 		ctx,
 		domain.BookRepositoryListParam{
-			BookIDs:     queryParams.CategoryIDs,
 			Search:      queryParams.Search,
 			CategoryIDs: queryParams.CategoryIDs,
 			Publisher:   queryParams.Publisher,
