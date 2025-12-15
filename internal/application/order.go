@@ -45,7 +45,7 @@ func ProvideOrder(
 
 var _ http.OrderApplication = &Order{}
 
-func (o *Order) List(ctx context.Context, param http.ListOrderRequestDTO) ([]http.OrderResponseDTO, error) {
+func (o *Order) List(ctx context.Context, param http.ListOrderRequestDTO) (*http.PaginationResponseDTO[http.OrderResponseDTO], error) {
 	queryParams := param.QueryParams
 	if queryParams == nil {
 		queryParams = &http.ListOrderRequestQueryParams{}
@@ -72,8 +72,19 @@ func (o *Order) List(ctx context.Context, param http.ListOrderRequestDTO) ([]htt
 		}
 		orderDtos = append(orderDtos, *orderDto)
 	}
-
-	return orderDtos, nil
+	count, err := o.orderRepo.Count(
+		ctx,
+	)
+	if err != nil {
+		return nil, err
+	}
+	pagination := newPaginationResponseDto(
+		orderDtos,
+		*count,
+		queryParams.Page,
+		queryParams.Limit,
+	)
+	return pagination, nil
 }
 
 func (o *Order) Get(ctx context.Context, param http.GetOrderRequestDTO) (*http.OrderResponseDTO, error) {
@@ -166,6 +177,14 @@ func (o *Order) Create(ctx context.Context, param http.CreateOrderRequestDTO) (*
 	var paymentServiceErr error
 	switch param.Data.Provider {
 	case domain.OrderProvider(domain.PaymentProviderCOD):
+		err = o.onCreateOrderSuccessClearCart(ctx, order)
+		if err != nil {
+			return nil, err
+		}
+		err = o.onCreateOrderSuccessDecreaseBookQuantity(ctx, order)
+		if err != nil {
+			return nil, err
+		}
 	case domain.OrderProvider(domain.PaymentProviderVNPAY):
 		paymentURL, paymentServiceErr = o.VNPayPaymentService.GetPaymentURL(ctx, GetPaymentURLVNPayParam{
 			Order:     order,
@@ -272,6 +291,63 @@ func (o *Order) getOrder(
 	return o.orderRepo.Get(ctx, domain.OrderRepositoryGetParam{
 		OrderID: orderID,
 	})
+}
+
+func (o *Order) onCreateOrderSuccessClearCart(
+	ctx context.Context,
+	order *domain.Order,
+) error {
+	cart, err := o.cartRepo.Get(ctx, domain.CartRepositoryGetParam{
+		UserID: order.UserID,
+	})
+	if err != nil {
+		return err
+	}
+	cart.ClearItems()
+	return o.cartRepo.Save(ctx, domain.CartRepositorySaveParam{
+		Cart: *cart,
+	})
+}
+
+func (o *Order) onCreateOrderSuccessDecreaseBookQuantity(
+	ctx context.Context,
+	order *domain.Order,
+) error {
+	bookIDs := make([]uuid.UUID, 0, len(order.Items))
+	for _, item := range order.Items {
+		bookIDs = append(bookIDs, item.BookID)
+	}
+	books, err := o.bookRepo.List(ctx, domain.BookRepositoryListParam{
+		BookIDs: bookIDs,
+	})
+	if err != nil {
+		return err
+	}
+	bookIDBookMap := make(map[uuid.UUID]*domain.Book)
+	for i := range *books {
+		book := &(*books)[i]
+		bookIDBookMap[book.ID] = book
+	}
+	for _, item := range order.Items {
+		book, ok := bookIDBookMap[item.BookID]
+		if !ok {
+			return domain.ErrNotFound
+		}
+		book.DecreaseQuantity(item.Quantity)
+	}
+	for _, book := range bookIDBookMap {
+		err := o.bookService.Validate(*book)
+		if err != nil {
+			return err
+		}
+		err = o.bookRepo.Save(ctx, domain.BookRepositorySaveParam{
+			Book: *book,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (o *Order) onVerifySuccess(

@@ -1362,7 +1362,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/OrderResponseDTO"
+                                "$ref": "#/definitions/PaginationResponseDTO-internal_delivery_http_OrderResponseDTO"
                             }
                         }
                     },
@@ -2421,6 +2421,24 @@ const docTemplate = `{
                 }
             }
         },
+        "PaginationResponseDTO-internal_delivery_http_OrderResponseDTO": {
+            "type": "object",
+            "required": [
+                "data",
+                "meta"
+            ],
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/OrderResponseDTO"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/PaginationMetaResponseDTO"
+                }
+            }
+        },
         "UpdateBookData": {
             "type": "object",
             "properties": {
@@ -2506,7 +2524,6 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "address",
-                "isPaid",
                 "status"
             ],
             "properties": {

@@ -32,7 +32,7 @@ func ProvideOrderHandler(orderApp OrderApplication) *OrderHandlerImpl {
 //	@Accept			json
 //	@Produce		json
 //	@Param	queryParams query ListOrderRequestQueryParams true "Query parameters"
-//	@Success		200			{array}		OrderResponseDTO
+//	@Success		200			{array}		PaginationResponseDTO[OrderResponseDTO]
 //	@Failure		500			{object}	Error
 //	@Router			/orders [get]
 //	@Security		OAuth2AccessCode
