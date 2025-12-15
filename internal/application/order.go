@@ -2,11 +2,18 @@ package application
 
 import (
 	"context"
+	"errors"
 
 	"backend/internal/delivery/http"
 	"backend/internal/domain"
 
 	"github.com/google/uuid"
+	"github.com/hashicorp/go-multierror"
+)
+
+var (
+	ErrOrderBookQuantityNotEnough = errors.New("requested quantity exceeds available stock for")
+	ErrCartIsEmpty                = errors.New("cart is empty")
 )
 
 type Order struct {
@@ -89,7 +96,7 @@ func (o *Order) Create(ctx context.Context, param http.CreateOrderRequestDTO) (*
 		return nil, err
 	}
 	if len(cart.Items) <= 0 {
-		return nil, domain.ErrInvalid
+		return nil, multierror.Append(nil, domain.ErrInvalid, ErrCartIsEmpty)
 	}
 	bookIDs := make([]uuid.UUID, 0, len(cart.Items))
 	for _, item := range cart.Items {
@@ -116,7 +123,7 @@ func (o *Order) Create(ctx context.Context, param http.CreateOrderRequestDTO) (*
 		}
 
 		if book.StockQuantity < itemData.Quantity {
-			return nil, domain.ErrInvalid
+			return nil, multierror.Append(nil, domain.ErrInvalid, errors.New(ErrOrderBookQuantityNotEnough.Error()+" "+book.Title))
 		}
 
 		item, err := domain.NewOrderItem(
