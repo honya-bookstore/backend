@@ -2015,7 +2015,6 @@ const docTemplate = `{
         "CreateBookMediaData": {
             "type": "object",
             "required": [
-                "isCover",
                 "mediaId"
             ],
             "properties": {
