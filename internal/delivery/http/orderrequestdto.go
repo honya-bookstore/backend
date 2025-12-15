@@ -51,7 +51,7 @@ type UpdateOrderRequestPathParams struct {
 type UpdateOrderData struct {
 	Address string             `json:"address" binding:"required"`
 	Status  domain.OrderStatus `json:"status"  binding:"required"`
-	IsPaid  bool               `json:"isPaid"  `
+	IsPaid  bool               `json:"isPaid"`
 }
 
 type DeleteOrderRequestDTO struct {

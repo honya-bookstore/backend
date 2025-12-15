@@ -71,7 +71,7 @@ func (r *RouterImpl) RegisterRoutes(
 		cart := api.Group("/cart")
 		{
 			cart.GET("/:id", r.cartHandler.Get)
-			cart.GET("/user/:id", r.cartHandler.GetByUser)
+			cart.GET("/user/:user_id", r.cartHandler.GetByUser)
 			cart.GET("/me", r.authMiddleware.Handler(), r.cartHandler.GetMine)
 			cart.POST("", r.cartHandler.Create)
 			cart.POST("/:id/items", r.cartHandler.CreateItem)
