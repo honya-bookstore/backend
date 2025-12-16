@@ -222,11 +222,7 @@ func (c *Cart) enrichCart(ctx context.Context, cart *domain.Cart) (*http.CartRes
 	for i := range *books {
 		bookMap[(*books)[i].ID] = &(*books)[i]
 	}
-	for _, item := range cart.Items {
-		if _, exists := bookMap[item.BookID]; !exists {
-			return nil, domain.ErrNotFound // or create a specific error
-		}
-	}
+
 	mediaIDs := make([]uuid.UUID, 0)
 	for _, book := range *books {
 		for _, m := range book.Medium {
