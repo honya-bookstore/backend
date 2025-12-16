@@ -53,6 +53,9 @@ func ToCartResponseDTO(cart *domain.Cart, bookMap map[uuid.UUID]*domain.Book, me
 	items := make([]CartItemResponseDTO, 0, len(cart.Items))
 	for _, item := range cart.Items {
 		book := bookMap[item.BookID]
+		if book == nil {
+			continue
+		}
 		items = append(items, CartItemResponseDTO{
 			ID: item.ID,
 			Book: &CartItemBookResponseDTO{
