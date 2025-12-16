@@ -130,7 +130,7 @@ func (o *Order) Create(ctx context.Context, param http.CreateOrderRequestDTO) (*
 	for _, itemData := range cart.Items {
 		book, ok := bookMap[itemData.BookID]
 		if !ok {
-			return nil, domain.ErrNotFound
+			continue
 		}
 
 		if book.StockQuantity < itemData.Quantity {
